@@ -1,0 +1,11 @@
+SRC_DIR = src/
+EXEC_SRCS_DIR = $(SRC_DIR)exec/
+PARSING_SRCS_DIR = $(SRC_DIR)parsing/
+
+EXEC_FILES = cmd_handler.c
+PARSING_FILES = cli_to_args.c
+
+EXEC_SOURCES = $(addprefix $(EXEC_SRCS_DIR), $(EXEC_FILES))
+PARSING_SOURCES = $(addprefix $(PARSING_SRCS_DIR), $(PARSING_FILES))
+
+SOURCES = $(EXEC_SOURCES) $(PARSING_SOURCES)
