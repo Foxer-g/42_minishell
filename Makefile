@@ -28,8 +28,8 @@ $(BUILD_DIR)%.o: src/%.c
 	$(CC) $(CFLAGS) -I $(INCLUDES) -c $< -o $@
 
 libft.a:
-	make -C tlibft/5BNeumann
-	cp tlibft/libft.a .
+	make -C libft
+	cp libft/libft.a .
 
 $(NAME): $(BUILD_DIR) $(OBJECTS) libft.a
 	ar rv $(NAME) $(OBJECTS)
