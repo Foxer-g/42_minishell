@@ -4,6 +4,8 @@ int32_t	safe_exec_setup(t_ffile out, t_ffile in)
 {
 	int32_t	failed;
 
+	if (out == STDOUT_FILENO && in == STDIN_FILENO)
+		return (0);
 	failed = -1;
 	if (in >= 0)
 		failed = dup2(in, STDIN_FILENO);
@@ -17,9 +19,10 @@ int32_t	safe_exec_setup(t_ffile out, t_ffile in)
 	}
 	if (out >= 0)
 		failed = dup2(out, STDOUT_FILENO);
-	if (out >= 0)
+	if (out >= 0 && out != STDOUT_FILENO && out != STDIN_FILENO)
 		ft_ffclose(out);
-	ft_ffclose(in);
+	if (in >= 0 && in != STDOUT_FILENO && in != STDIN_FILENO)
+		ft_ffclose(in);
 	if (failed < 0 || out < 0)
 		return (-1);
 	return (0);
@@ -40,4 +43,12 @@ int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 	free_nt_tab(cmd.arguments, nt_tablen((void **)cmd.arguments));
 	clear_filelist();
 	exit(127 * (failed == ENOENT) | 1);
+}
+
+int8_t	exec_single(t_command *command, char **env)
+{
+	int8_t	status;
+	
+	status = execute(*command, command->outfd, command->infd, env);
+	return (status);
 }

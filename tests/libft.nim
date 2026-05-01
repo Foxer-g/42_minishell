@@ -10,13 +10,18 @@
 ##
 ##  **************************************************************************
 
+import file
+
 type
-  t_ffile* = cint
   int32_t* = cint
   uint32_t* = cuint
   uintmax_t = culong
   uint64_t = culong
   uintptr_t = culong
+
+const
+    STDOUT_FILENO* = 1
+    STDIN_FILENO* = 0
 
 {.passL: "./libft.a".}
 proc ft_isalpha*(c: int32_t): bool {.importc.}

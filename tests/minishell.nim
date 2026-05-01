@@ -1,13 +1,35 @@
+##  **************************************************************************
+##
+##                                                         :::      ::::::::
+##    minishell.h                                        :+:      :+:    :+:
+##                                                     +:+ +:+         +:+
+##    By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+
+##                                                 +#+#+#+#+#+   +#+
+##    Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#
+##    Updated: 2026/04/24 01:44:38 by f0xer            ###   ########.fr
+##
+##  **************************************************************************
+
 import
-  libft
+  libft, file
+
+const
+  WE* = 1
+  RE* = 0
 
 type
-  pid_t* {.importc: "pid_t", header: "<sys/types.h>".} = object
+  pid_t = cint
   t_command* {.bycopy.} = object
     path*: cstring
     arguments*: cstringArray
     pid*: pid_t
+    infd*: t_ffile
+    outfd*: t_ffile
+    infile*: cstring
+    outfile*: cstring
 
 {.passL: "./minishell.a ./libft.a".}
 proc execute*(cmd: t_command; `out`: t_ffile; `in`: t_ffile; env: cstringArray): cchar {.importc.}
 proc command_to_args*(command: cstring): cstringArray {.importc.}
+proc entrypoint*(cmds: ptr ptr t_command; env: cstringArray) {.importc.}
+proc exec_single*(command: ptr t_command; env: cstringArray): cchar {.importc.}
