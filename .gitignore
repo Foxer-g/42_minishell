@@ -19,3 +19,4 @@ tests/parsing/*
 !tests/parsing/*.nim
 *.sav*
 compile_commands.json
+minishell
