@@ -6,16 +6,17 @@
 #    By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/13 13:42:42 by rboutelo          #+#    #+#              #
-#    Updated: 2025/10/21 11:26:54 by rboutelo         ###   ########.fr        #
+#    Updated: 2026/05/01 22:26:12 by f0xer            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 include sources.mk
-NAME	=	minishell.a
+NAME	=	minishell
 INCLUDES = ./includes
 BUILD_DIR = build/
 OBJECTS = $(SOURCES:src/%.c=$(BUILD_DIR)%.o)
-CFLAGS = -Wall -Werror -Wextra -ggdb
+CFLAGS = -Wall -Wextra -ggdb
+LDFLAGS = -lft -lreadline
 CC = cc
 
 all: $(NAME)
@@ -32,7 +33,8 @@ libft.a:
 	cp libft/libft.a .
 
 $(NAME): $(BUILD_DIR) $(OBJECTS) libft.a
-	ar rv $(NAME) $(OBJECTS)
+	$(CC)  $(NAME) $(OBJECTS) -o $@ libft.a $(LDFLAGS)
+
 
 clean:
 	-rm -f $(OBJECTS)
