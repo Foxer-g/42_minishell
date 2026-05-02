@@ -6,17 +6,25 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 14:45:16 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/03/10 01:41:28 by rboutelo         ###   ########.fr       */
+/*   Updated: 2026/05/01 22:25:43 by f0xer            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include "file.h"
+#ifndef LIBFT_H
+# define LIBFT_H
+# if BUFFER_SIZE >= SIZE_MAX
+#  undef BUFFER_SIZE
+# endif
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1024
+# endif //BUFFER_SIZE
+# include <unistd.h>
+# include <stdlib.h>
+# include <stdbool.h>
+# include <stdint.h>
+# include <stdarg.h>
+# include "file.h"
+//# include "dynamic_list.h"
 
 bool		ft_isalpha(int32_t c);
 bool		ft_isdigit(int32_t c);
@@ -25,6 +33,8 @@ bool		ft_isascii(int32_t c);
 bool		ft_isprint(int32_t c);
 bool		ft_isspace(int32_t c);
 uintmax_t	ft_strlen(const char *str);
+uintmax_t	ft_strlen_until(const char *str, char c);
+char		*extend(char *to_extend, char *extender);
 uint64_t	ft_fwlen(const char *str);
 void		*ft_memset(void *s, int32_t c, size_t n);
 void		ft_bzero(void *s, size_t n);
@@ -42,6 +52,7 @@ int32_t		ft_memcmp(const void *s1, const void *s2, size_t n);
 char		*ft_strnstr(const char *big, const char *little, size_t len);
 int32_t		ft_atoi(const char *str);
 void		*ft_calloc(size_t nmemb, size_t size);
+void		*ft_realloc(void *ptr, size_t size);
 char		*ft_strdup(const char *s);
 char		*ft_strndup(const char *s, uint64_t n);
 char		*ft_substr(char const *s, uint32_t start, size_t len);
@@ -51,14 +62,21 @@ char		**ft_split(char const *s, char c);
 char		*ft_itoa(int32_t n);
 char		*ft_strmapi(char const *s, char (*f)(uint32_t, char));
 void		ft_striteri(char *s, void (*f)(uint32_t, char*));
-void		ft_putchar_fd(char c, t_ffile fd);
-void		ft_putstr_fd(char *s, t_ffile fd);
-void		ft_putendl_fd(char *s, t_ffile fd);
-void		ft_putnbr_fd(int32_t n, t_ffile fd);
+int32_t		ft_putchar_fd(char c, t_ffile fd);
+int32_t		ft_putstr_fd(const char *s, t_ffile fd);
+int32_t		ft_putstrn_fd(const char *s, t_ffile fd, int32_t len);
+int32_t		ft_putstr_fd_null(const char *s, int32_t fd);
+int32_t		ft_putendl_fd(const char *s, t_ffile fd);
+int32_t		ft_putendl_fd_null(const char *s, int32_t fd);
+int32_t		ft_putnbr_fd(int32_t n, t_ffile fd);
+int32_t 	ft_dprintf(t_ffile fd, const char *format, ...);
+int32_t 	ft_printf(const char *format, ...);
 int32_t		ft_strcmp(const char *s1, const char *s2);
 char		*get_env(const char *name, char *const *env);
 char		*get_executable(const char *str);
 char		*find_exec(const char *name, char const **env);
+char		*get_next_line(int fd);
+uintmax_t	min(uintmax_t a, uintmax_t b);
 void		*free_nt_tab(char **str, int32_t alloc_count);
 int32_t		nt_tablen(void **tab);
 typedef union u_ptr
@@ -72,10 +90,10 @@ typedef struct s_list
 	struct s_list	*next;
 }				t_list;
 t_list		*ft_lstnew(void *content);
-void		ft_lstadd_front(t_list **lst, t_list *new_elm);
+void		ft_lstadd_front(t_list **lst, t_list *new);
 int32_t		ft_lstsize(t_list *lst);
 t_list		*ft_lstlast(t_list *lst);
-void		ft_lstadd_back(t_list **lst, t_list *new_elm);
+void		ft_lstadd_back(t_list **lst, t_list *new);
 void		ft_lstdelone(t_list *lst, void (*del)(void *));
 void		ft_lstclear(t_list **lst, void (*del)(void *));
 void		ft_lstiter(t_list *lst, void (*f)(void *));
@@ -91,4 +109,6 @@ typedef enum e_validator
 	ALNUM
 }	t_validator;
 
-typedef bool	t_validator_fn(int32_t val);
+typedef bool	(*t_validator_fn)(int32_t val);
+
+#endif
