@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 14:45:16 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/05/01 22:25:43 by f0xer            ###   ########.fr       */
+/*   Updated: 2026/05/02 02:33:25 by f0xer            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <stdarg.h>
 # include "file.h"
 //# include "dynamic_list.h"
+# undef SPACE
 
 bool		ft_isalpha(int32_t c);
 bool		ft_isdigit(int32_t c);

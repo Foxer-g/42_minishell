@@ -6,7 +6,7 @@
 #    By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/13 13:42:42 by rboutelo          #+#    #+#              #
-#    Updated: 2026/05/01 22:26:12 by f0xer            ###   ########.fr        #
+#    Updated: 2026/05/02 02:36:28 by f0xer            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ INCLUDES = ./includes
 BUILD_DIR = build/
 OBJECTS = $(SOURCES:src/%.c=$(BUILD_DIR)%.o)
 CFLAGS = -Wall -Wextra -ggdb
-LDFLAGS = -lft -lreadline
+LDFLAGS = -L libft -lft -lreadline
 CC = cc
 
 all: $(NAME)
@@ -30,10 +30,9 @@ $(BUILD_DIR)%.o: src/%.c
 
 libft.a:
 	make -C libft
-	cp libft/libft.a .
 
 $(NAME): $(BUILD_DIR) $(OBJECTS) libft.a
-	$(CC)  $(NAME) $(OBJECTS) -o $@ libft.a $(LDFLAGS)
+	$(CC)  $(OBJECTS) -o $@ $(LDFLAGS)
 
 
 clean:
@@ -58,4 +57,4 @@ eva: kernel
 
 frama-c: eva
 
-.PHONY: clean all re fclean frama-c-available frama-c kernel eva
+.PHONY: clean all re fclean frama-c-available frama-c kernel eva libft.a

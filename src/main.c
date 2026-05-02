@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 03:09:23 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/01 22:23:32 by f0xer            ###   ########.fr       */
+/*   Updated: 2026/05/02 04:12:20 by f0xer            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,27 @@
 
 char	*prompt(void)
 {
-	char	*prompt;
+	char	*str_prompt;
 	char	*out;
 	char	*path;
 	char	*usr;
 
-	prompt = "\001";
+	str_prompt = ft_strdup("\\001");
 	usr = getenv("USER");
 	path = getenv("PWD");
-	if (ft_strlen(path) > (ft_strlen(usr) + 6))
+	if (ft_strlen(path) > (ft_strlen(getenv("HOME"))))
 	{
-		path += ft_strlen(usr) + 5;
+		path += ft_strlen(getenv("HOME")) + 5;
 		path[0] = '~';
 	}
-	prompt = extend(prompt, PROMPT_A);
-	prompt = extend(prompt, usr);
-	prompt = extend(prompt, PROMPT_B);
-	prompt = extend(prompt, path);
-	prompt = extend(prompt, PROMPT_C);
-	prompt = extend(prompt, "\002");
-	out = readline(prompt);
+	str_prompt = extend(str_prompt, PROMPT_A);
+	str_prompt = extend(str_prompt, usr);
+	str_prompt = extend(str_prompt, PROMPT_B);
+	str_prompt = extend(str_prompt, path);
+	str_prompt = extend(str_prompt, PROMPT_C);
+	str_prompt = extend(str_prompt, "\\002");
+	out = readline(str_prompt);
+	free(str_prompt);
 	return (out);
 }
 
