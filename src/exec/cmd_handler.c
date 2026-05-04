@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   cmd_handler.c                                              _             */
+/*                                                            _ \'-_,#        */
+/*   By: neumann </var/spool/mail/neumann>                   _\'--','`|       */
+/*                                                           \`---`  /        */
+/*   Created: 2026/05/04 04:59:40 by neumann                  `----'`         */
+/*   Updated: 2026/05/04 05:00:03 by neumann                                  */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int32_t	safe_exec_setup(t_ffile out, t_ffile in)
@@ -48,7 +60,7 @@ int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 int8_t	exec_single(t_command *command, char **env)
 {
 	int8_t	status;
-	
+
 	status = execute(*command, command->outfd, command->infd, env);
 	return (status);
 }

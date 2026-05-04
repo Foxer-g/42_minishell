@@ -1,13 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   entrypoint.c                                               _             */
+/*                                                            _ \'-_,#        */
+/*   By: neumann </var/spool/mail/neumann>                   _\'--','`|       */
+/*                                                           \`---`  /        */
+/*   Created: 2026/05/04 04:59:46 by neumann                  `----'`         */
+/*   Updated: 2026/05/04 05:01:17 by neumann                                  */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void	entrypoint(t_command **cmds, char **env) {
+void	entrypoint(t_command **cmds, char **env)
+{
 	t_ffile			wpipe[2];
 
 	while (*cmds)
 	{
 		(*cmds)->infd = STDIN_FILENO;
 		(*cmds)->outfd = STDOUT_FILENO;
-		if (ft_strcmp((*cmds)->infile, "stdin") && ft_strcmp((*cmds)->infile, "|"))
+		if (ft_strcmp((*cmds)->infile, "stdin")
+			&& ft_strcmp((*cmds)->infile, "|"))
 			(*cmds)->infd = ft_ffopen((*cmds)->infile, "r");
 		if (ft_strcmp((*cmds)->infile, "stdout"))
 			(*cmds)->outfd = ft_ffopen((*cmds)->outfile, "w");

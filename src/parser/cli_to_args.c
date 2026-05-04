@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                                            */
+/*   cli_to_args.c                                              _             */
+/*                                                            _ \'-_,#        */
+/*   By: neumann </var/spool/mail/neumann>                   _\'--','`|       */
+/*                                                           \`---`  /        */
+/*   Created: 2026/05/04 05:00:15 by neumann                  `----'`         */
+/*   Updated: 2026/05/04 05:00:42 by neumann                                  */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static uint32_t	get_tokens(char *command)
@@ -57,7 +69,7 @@ static void	fill_args(char **args, char *command)
 
 char	**command_to_args(char *command)
 {
-	char **result;
+	char	**result;
 
 	result = ft_calloc(get_tokens(command) + 1, sizeof(char *));
 	fill_args(result, command);
