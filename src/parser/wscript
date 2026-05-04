@@ -1,0 +1,10 @@
+def build(bld):
+	sources = [
+		"cli_to_args.c",
+	]
+	lparse = bld.objects(
+		source		= sources,
+		features	= "c",
+		target		= "parserobjs",
+		includes	= bld.env.INCLUDES_ROOT
+	)

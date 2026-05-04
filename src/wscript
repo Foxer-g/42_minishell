@@ -1,0 +1,19 @@
+def build(bld):
+	sources = [
+		"main.c"
+	]
+	minishell = bld.program(
+		source		= sources,
+		features	= "c",
+		target		= "minishell",
+		includes	= bld.env.INCLUDES_ROOT,
+		use			= "minish ft"
+	)
+	lminishell = bld.stlib(
+		features	= "c",
+		target		= "minish",
+		includes	= bld.env.INCLUDES_ROOT,
+		use			= "execobjs parserobjs"
+	)
+	bld.recurse("exec")
+	bld.recurse("parser")

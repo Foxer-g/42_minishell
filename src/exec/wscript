@@ -1,0 +1,12 @@
+def build(bld):
+	sources = [
+		"cmd_handler.c",
+		"entrypoint.c"
+	]
+	lexec = bld.objects(
+		source		= sources,
+		features	= "c",
+		target		= "execobjs",
+		includes	= bld.env.INCLUDES_ROOT,
+		use			= "ft"
+	)
