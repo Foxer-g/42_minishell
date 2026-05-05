@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/02 08:28:42 by f0xer            ###   ########.fr       */
+/*   Updated: 2026/05/04 06:25:06 by f0xer            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 # include <errno.h>
 # include <stdio.h>
+# include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "libft.h"
@@ -38,10 +39,13 @@ typedef struct s_command
 	char	*outfile;
 }	t_command;
 
+extern sig_atomic_t	g_sig_handle;
+
 int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env);
 char	**command_to_args(char *command);
 void	entrypoint(t_command **cmds, char **env);
 int8_t	exec_single(t_command *command, char **env);
 char	*join_tab(char **tab);
 char	*prompt(char **aenv);
+void	sig_handle(int32_t signal, siginfo_t *info, void *context);
 #endif
