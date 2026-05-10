@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/04 06:25:06 by f0xer            ###   ########.fr       */
+/*   Updated: 2026/05/05 05:29:40 by f0xer            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <readline/history.h>
 # include "libft.h"
 # include "file.h"
+# include "parser.h"
 
 # define WE 1
 # define RE 0
