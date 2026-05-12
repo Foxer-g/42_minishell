@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   minishell.h                                                   ___        */
 /*                                                    +:+ +:+         +:+     */
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/05 05:29:40 by f0xer            ###   ########.fr       */
+/*   Updated: 2026/05/12 07:10:54 by neumann                                  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,9 @@
 # define PROMPT_B "\x1b[0m @ \x1b[32;45m"
 # define PROMPT_C "\x1b[0m $ "
 
+// @doc t_command
+// @kind type
+// @desc Bloated representation of a command.
 typedef struct s_command
 {
 	char	*path;
