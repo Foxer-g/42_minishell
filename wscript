@@ -14,7 +14,6 @@ def configure(conf):
 		"-Wextra",
 		"-Werror",
 		"-Wno-unused-variable",
-		"-Wno-unused-parameter",
 		"-fshort-enums",
 		"-O2",
 		"-march=native"

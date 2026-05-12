@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
+#    Makefile                                                   _              #
 #                                                     +:+ +:+         +:+      #
 #    By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/13 13:42:42 by rboutelo          #+#    #+#              #
-#    Updated: 2026/05/02 02:36:28 by f0xer            ###   ########.fr        #
+#    Updated: 2026/05/04 06:10:19 by neumann                                   #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,5 +56,8 @@ eva: kernel
 	@frama-c -load kernel.sav -eva -eva-precision 3 -save eva.sav
 
 frama-c: eva
+
+test: all
+	testament all
 
 .PHONY: clean all re fclean frama-c-available frama-c kernel eva libft.a
