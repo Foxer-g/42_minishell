@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                                   ___        */
+/*   minishell.h                                         ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/12 07:10:54 by neumann                                  */
+/*   Updated: 2026/05/19 17:36:16 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,12 @@
 # include <readline/history.h>
 # include "libft.h"
 # include "file.h"
-# include "parser.h"
+//# include "parser.h"
+# ifndef EXEC_SOURCE
+#  include "exec.h"
+# else
+# include "exec_int.h"
+#endif
 
 # define WE 1
 # define RE 0
@@ -45,11 +50,9 @@ typedef struct s_command
 
 extern sig_atomic_t	g_sig_handle;
 
-int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env);
 char	**command_to_args(char *command);
-void	entrypoint(t_command **cmds, char **env);
-int8_t	exec_single(t_command *command, char **env);
 char	*join_tab(char **tab);
 char	*prompt(char **aenv);
 void	sig_handle(int32_t signal, siginfo_t *info, void *context);
+void 	error(const char *err_message);
 #endif

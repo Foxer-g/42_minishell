@@ -1,15 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                                            */
-/*   cmd_handler.c                                                 ___        */
-/*                                                            _ \'-_,#        */
-/*   By: neumann </var/spool/mail/neumann>                   _\'--','`|       */
-/*                                                           \`---`  /        */
-/*   Created: 2026/05/04 04:59:40 by neumann                  `----'`         */
-/*   Updated: 2026/05/12 07:03:24 by neumann                                  */
+/*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
+/*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
+/*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
+/*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
+/*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
+/*   Updated: 2026/05/20 20:58:11 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
+/*   Created: 2026/05/04 04:59:40 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
+#define EXEC_SOURCE
 #include "minishell.h"
 
 // @doc safe_exec_setup
@@ -49,7 +50,7 @@ int32_t	safe_exec_setup(t_ffile out, t_ffile in)
 // @doc execute
 // @kind func
 // @desc Ececute a prepared command with a specific stdin and stdout file.
-// @param cmd: t_command, the command to execute.
+// @param cmd: [[t_command]], the command to execute.
 // @param out: t_ffile, the file that serves as stdout.
 // @param in: t_ffile, the file that serves as stdin.
 // @param env: char **, the environment that will be passed to execve.
@@ -74,7 +75,7 @@ int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 // @doc exec_single
 // @kind func
 // @desc Execute a single command/handles builtins.
-// @param command: t_command *, the command to execute.
+// @param command: [[t_command]] *, the command to execute.
 // @param env: char **, the environment to work off of.
 // @returns int8_t, exit status.
 int8_t	exec_single(t_command *command, char **env)

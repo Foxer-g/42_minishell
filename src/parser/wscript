@@ -1,6 +1,5 @@
 def build(bld):
 	sources = [
-		"parser.c",
 	]
 	lparse = bld.objects(
 		source		= sources,
