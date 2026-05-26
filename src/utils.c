@@ -34,6 +34,7 @@ char	*join_tab(char **tab)
 void	sig_handle(int32_t signal, siginfo_t *info, void *context)
 {
 	(void)context;
+	(void)info;
 	g_sig_handle = signal;
 }
 
