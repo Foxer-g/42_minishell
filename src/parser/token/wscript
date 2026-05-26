@@ -1,12 +1,11 @@
 def build(bld):
 	sources = [
-		"parser.c",
+		"tokenizer.c",
+		"utils.c",
 	]
-	lparse = bld.objects(
+	ltoken = bld.objects(
 		source		= sources,
 		features	= "c",
-		target		= "parserobjs",
-		use			= "tokenobjs",
+		target		= "tokenobjs",
 		includes	= bld.env.INCLUDES_ROOT
 	)
-	bld.recurse("token")
