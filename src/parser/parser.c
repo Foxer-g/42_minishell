@@ -12,7 +12,3 @@
 
 #include "parser.h"
 
-t_command	parser(char *input)
-{
-
-}
