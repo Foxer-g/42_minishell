@@ -3,7 +3,7 @@ wbuild
 .lock-waf*
 .idea
 .project.gf
-.waf-*
+.waf*
 **.a
 *.tape
 */*.o
