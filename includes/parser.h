@@ -12,8 +12,7 @@
 
 #ifndef PARSER_H
 # define PARSER_H 
-
-# include "minishell.h"
+# include "libft.h" 
 
 typedef enum e_token_type
 {
@@ -27,13 +26,19 @@ typedef enum e_token_type
 	PIPE,
 	DAND,
 	SEMI,
-	RETURN,
+	NLINE,
 	I_REDIR,
 	O_REDIR,
 	APPEND,
 	HEREDOC,
 	WILDCARD,
 }	t_token_type;
+
+// @doc t_token
+// @kind type
+// @desc Token type.
+// @field content: char *, Content of the token.
+// @field type: int32_t, Type of the token.
 
 typedef	struct s_token
 {
@@ -42,4 +47,5 @@ typedef	struct s_token
 }	t_token;
 
 t_token	*tokenizer(char *input);
+bool	ft_iscmd_chr(char c);
 #endif
