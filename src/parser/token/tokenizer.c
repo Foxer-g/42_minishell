@@ -12,8 +12,8 @@
 
 // @doc F0xer
 // @kind san
-// @desc Things have been do to squeeze tokenizer in 25 lines.
-// @level 37
+// @desc Things have been done to squeeze tokenizer in 25 lines.
+// @level 47
 
 #include "parser.h"
 
@@ -30,7 +30,7 @@ static int64_t	token_stack_len(char *input)
 	len = 0;
 	while (input[0])
 	{
-		if (ft_strnstr("()'\"\n", &input[0], 5))
+		if (ft_strnstr("()'\"\n;", &input[0], 5))
 			len++;
 		else if (ft_strnstr("$*", &input[0], 2) || !ft_iscmd_chr(input[0]))
 		{
@@ -39,7 +39,7 @@ static int64_t	token_stack_len(char *input)
 				input++;
 			len++;
 		}
-		else if (ft_strnstr("|<>&;", &input[0], 5))
+		else if (ft_strnstr("|<>&", &input[0], 5))
 		{
 			if (input[0] == input[1])
 				input++;
@@ -63,7 +63,7 @@ static int64_t	get_token_len(char *input, int64_t start)
 	int64_t	i;
 
 	i = start;
-	if (ft_strnstr("()'\"\n", &input[i], 5))
+	if (ft_strnstr("()'\"\n;", &input[i], 5))
 		i++;
 	else if (ft_strnstr("$*", &input[i], 2) || ft_iscmd_chr(input[i]))
 	{
@@ -71,7 +71,7 @@ static int64_t	get_token_len(char *input, int64_t start)
 		while (ft_iscmd_chr(input[i]))
 			i++;
 	}
-	else if (ft_strnstr("|<>&;", &input[i], 5))
+	else if (ft_strnstr("|<>&", &input[i], 5))
 	{
 		if (input[i] == input[i + 1])
 			i++;
@@ -80,9 +80,18 @@ static int64_t	get_token_len(char *input, int64_t start)
 	return (i - start);
 }
 
+// @doc get_token_type
+// @kind func
+// @desc Determine the type of the input token.
+// @param token: char *, Token to get the type from.
+// @return int32_t, The token type.
+
 static int32_t	get_token_type(char *token)
 {
-	(void)token;
+	if (ft_strlen(token) == 1)
+		return (short_type(token));
+	else if (ft_strnstr("$*|<>&", &token[0], 6) || ft_iscmd_chr(token[0]))
+		return (composed_type(token));
 	return (0);
 }
 

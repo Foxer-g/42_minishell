@@ -21,10 +21,11 @@ typedef enum e_token_type
 	SQUOTE,
 	DQUOTE,
 	COMMAND,
-	ENV_DEC,
+	ENV_DESC,
 	DPIPE,
 	PIPE,
 	DAND,
+	AMP_SAND,
 	SEMI,
 	NLINE,
 	I_REDIR,
@@ -40,7 +41,7 @@ typedef enum e_token_type
 // @field content: char *, Content of the token.
 // @field type: int32_t, Type of the token.
 
-typedef	struct s_token
+typedef struct s_token
 {
 	char	*content;
 	int32_t	type;
@@ -48,4 +49,6 @@ typedef	struct s_token
 
 t_token	*tokenizer(char *input);
 bool	ft_iscmd_chr(char c);
+int32_t	short_type(char *token);
+int32_t	composed_type(char *token);
 #endif
