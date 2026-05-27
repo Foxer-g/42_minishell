@@ -1,7 +1,7 @@
 def build(bld):
 	sources = [
 		"tokenizer.c",
-		"utils.c",
+		"token_utils.c",
 	]
 	ltoken = bld.objects(
 		source		= sources,
