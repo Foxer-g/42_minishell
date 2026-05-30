@@ -59,3 +59,18 @@ int32_t	composed_type(char *token)
 		return (COMMAND);
 	return (-1);
 }
+
+void	free_tokens(t_token *token_lst)
+{
+	int64_t	i;
+
+	i = 0;
+	while (token_lst[i].content)
+	{
+		free(token_lst[i].content);
+		token_lst[i].content = NULL;
+		token_lst[i].type = 0;
+		i++;
+	}
+	free(token_lst);
+}
