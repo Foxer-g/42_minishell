@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/05/04 04:59:46 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/05/22 01:36:20 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/05/26 21:53:00 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 // @param target_pipe: [[t_ffile]][2], The pipe to set up and use.
 // @param used_pipe: bool, true if the pipe is used, false if opening it failed.
 // @returns [[t_ffile]], The read end of the pipe.
-static int	setup_here_doc(int target_pipe[2], const char *delimiter, bool *used_pipe)
+static int	setup_here_doc(t_ffile target_pipe[2], const char *delimiter, bool *used_pipe)
 {
 	char	*line;
 
