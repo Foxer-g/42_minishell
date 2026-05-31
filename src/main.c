@@ -26,11 +26,13 @@ void	sig_init(void)
 }
 
 
-void	minishell_action(input, env)
+void	minishell_action(char *input, char **env)
 {
 	t_command	*parsed_input;
 
 	parsed_input = parser(input);
+	if (!parsed_input)
+		return (0);
 	entry_point(parsed_input, env);
 	test_print(parsed_input);
 	free(input);

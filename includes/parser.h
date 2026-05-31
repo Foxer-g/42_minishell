@@ -51,4 +51,7 @@ t_token	*tokenizer(char *input);
 bool	ft_iscmd_chr(char c);
 int32_t	short_type(char *token);
 int32_t	composed_type(char *token);
+void	free_token(t_token *token_lst);
+
+bool	check_invalid_paterns(t_token *token_lst);
 #endif
