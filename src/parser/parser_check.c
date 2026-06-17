@@ -17,32 +17,50 @@ static char	*invalid_char(t_token token)
 
 static bool	*parenthesis_order(t_token *token_lst)
 {
-	(void)token_lst;
+	int64_t	i;
+	int64_t	j;
+
+	i = 0;
+	j = 0;
+	while (token_lst[i].content)
+	{
+		if (token_lst[i].type == C_PAR)
+		{
+			j -= 1;
+			if (j <= 0)
+				return (1);
+		}
+		else if (token_lst[i].type == O_PAR)
+			j += 1;
+	}
+	if (j != 0)
+		return (2);
 	return (0);
 }
 
-static char	*invalid_parenthesis(t_token *tkns)
+static char	*invalid_parenthesis(t_token *tkn)
 {
 	int64_t	i;
 	int64_t	o;
 	int64_t	c;
-	int64_t	fp;
+	int64_t	p[2];
 
 	i = 0;
 	o = 0;
 	c = 0;
-	fp = -1;
-	while (tkns[i].content)
+	ft_memset(p, -1, 2);
+	while (tkn[i].content)
 	{
-		fp = i * (fp == -1) * (tkns[i].type == O_PAR || tkns[i].type == C_PAR);
-		o += 1 * (tkns[i].type == O_PAR);
-		c += 1 * (tkns[i].type == C_PAR);
+		p[0] = i * (p[0] < 0) * (tkn[i].type == O_PAR || tkn[i].type == C_PAR);
+		p[1] = i * (tkn[i].type == O_PAR || tkn[i].type == C_PAR);
+		o += 1 * (tkn[i].type == O_PAR);
+		c += 1 * (tkn[i].type == C_PAR);
 		i++;
 	}
-	if (o != c || tkns[fp].type == C_PAR)
-		return (tkns[fp].content);
-	else if (parenthesis_order(tkns))
-		return ("putain con");
+	if (o != c || tkn[fp].type == C_PAR)
+		return (tkn[p[0]].content);
+	else if (parenthesis_order(tkn))
+		return (tkn[p[1]].content);
 	return (0);
 }
 
