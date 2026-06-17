@@ -1,12 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   entrypoint.c                                        ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/26 01:31:07 by rboutelo          #+#    #+#             */
+/*   Updated: 2026/06/17 04:22:06 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
 /*   entrypoint.c                                        ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/05/04 04:59:46 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/05/26 21:53:00 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/06/13 03:16:41 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +104,7 @@ static bool setup_pipe(t_command **cmds) {
 	return (false);
 }
 
-%:define FILS_DE_PUTE(a, b, c) for(b;c;a)
+//%:define FILS_DE_PUTE(a, b, c) for(b;c;a)
 /*main(argc, char **av)
 <%
 	FILS_DE_PUTE(i++, int i = 0, i < 15);
@@ -126,6 +138,7 @@ bool	handle_var(char **arg, uintmax_t index, char **urmom)
 		ft_memmove(end_of_var - ft_strlen(env_var_name) + ft_strlen(myckc), end_of_var, ft_strlen(end_of_var));
 		ft_memcpy(&(*arg)[index], myckc, ft_strlen(myckc));
 	}
+	free(env_var_name);
 	return (false);
 }
 
@@ -141,6 +154,7 @@ bool	expand(t_command *cmd, char **env)
 	uintmax_t	i;
 	t_quotetype	in_quote;
 
+	in_quote = 0;
 	args = cmd->arguments;
 	while (*args)
 	{
@@ -153,8 +167,7 @@ bool	expand(t_command *cmd, char **env)
 				in_quote = (*args)[i];
 			if ((*args)[i] == '$' && (*args)[i + 1] && in_quote != SGL)
 			{
-				if (handle_var(args, i, env))
-					return (true);
+				handle_var(args, i, env);
 			}
 			i++;
 		}
