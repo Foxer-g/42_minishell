@@ -32,7 +32,9 @@ let
   commands: array[1, t_command] = [
     t_command(
       path: "/usr/bin/ls",
-      arguments: allocCStringArray(["ls", "-a"])
+      arguments: allocCStringArray(["ls", "-a"]),
+      infile: "stdin",
+      outfile: "stdout"
     )
   ]
 

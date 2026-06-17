@@ -9,7 +9,7 @@ discard """
   #   true: run the test with Valgrind
   #   false: run the without Valgrind
   #   "leaks": run the test with Valgrind, but do not check for memory leaks
-  valgrind: false
+  valgrind: true
 
   # Targets to run the test into (c, cpp, objc, js). Defaults to c.
   targets: "c"
@@ -32,18 +32,28 @@ type
     append: bool
     infile: cstring
     outfile: cstring
-  Pt_command = ref t_command
+  Pt_command = ptr t_command
 
-{.link:"build/exec/entrypoint.o", link:"build/exec/cmd_handler.o", passL:"-L libft -lft".}
+{.compile("src/exec/entrypoint.c", "-Iincludes"), compile("src/exec/cmd_handler.c", "-Iincludes"), passL:"-L libft -lft".}
 proc expand(cmd: Pt_command, env: cstringArray): bool {.importc.}
+proc free(tgt: cstring) {.importc:"free", header:"stdlib".}
 
 let
-  commands: seq[Pt_command] = @[
-    Pt_command(
-      arguments: allocCStringArray([$ ft_strdup("echo"), $ ft_strdup("hello $FOO")])
-    )
-  ]
   env: cstringArray = allocCStringArray([$(cstring "FOO=me")])
 
-discard expand(commands[0], env)
-echo t_command
+var
+  commands: seq[t_command] = @[]
+  args: seq[string] = @[]
+
+args.add("echo")
+args.add("hello $FOO")
+
+commands.add(t_command(
+  arguments: allocCStringArray(args.toOpenArray[:string](0, args.len - 1))
+))
+
+
+for command in commands:
+    discard expand(addr command, env)
+    deallocCStringArray(command.arguments)
+    deallocCStringArray(env)
