@@ -43,19 +43,19 @@ int32_t	short_type(char *token)
 
 int32_t	composed_type(char *token)
 {
-	if (token[0] == '$')
+	if (ft_strlen(token) == 1 && ft_strnstr(token, "$", 2))
 		return (ENV_DESC);
-	else if (token[0] == '*')
+	if (ft_strlen(token) == 1 && ft_strnstr(token, "*", 2))
 		return (WILDCARD);
-	else if (token[0] == '|')
+	if (ft_strlen(token) == 2 && ft_strnstr(token, "||", 3))
 		return (DPIPE);
-	else if (token[0] == '&')
+	if (ft_strlen(token) == 2 && ft_strnstr(token, "&&", 3))
 		return (DAND);
-	else if (token[0] == '>')
+	if (ft_strlen(token) == 2 && ft_strnstr(token, ">>", 3))
 		return (APPEND);
-	else if (token[0] == '<')
+	if (ft_strlen(token) == 2 && ft_strnstr(token, "<<", 3))
 		return (HEREDOC);
-	else if (ft_iscmd_chr(token[0]))
+	if (ft_iscmd_chr(token[0]))
 		return (COMMAND);
 	return (-1);
 }

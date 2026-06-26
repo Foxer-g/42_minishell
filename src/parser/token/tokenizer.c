@@ -13,7 +13,7 @@
 // @doc F0xer
 // @kind san
 // @desc Things have been done to squeeze tokenizer in 25 lines.
-// @level 47
+// @level 48
 
 #include "parser.h"
 
@@ -46,9 +46,8 @@ static int64_t	token_stack_len(char *input)
 			input++;
 			len++;
 		}
-		return (len);
 	}
-	return (0);
+	return (len);
 }
 
 // @doc get_token_len
@@ -77,6 +76,8 @@ static int64_t	get_token_len(char *input, int64_t start)
 			i++;
 		i++;
 	}
+	else
+		i++;
 	return (i - start);
 }
 
@@ -110,10 +111,10 @@ t_token	*tokenizer(char *input)
 	tmp = ft_split(input, ' ');
 	if (!tmp)
 		return (0);
-	tkn_lst = malloc(token_stack_len(input) * sizeof(t_token));
+	tkn_lst = ft_calloc(token_stack_len(input) + 1, sizeof(t_token));
 	if (!tkn_lst)
 		return (free_nt_tab(tmp, (int32_t) nt_tablen((void **) tmp)));
-	ft_memset(i, -1, 4);
+	ft_memset(i, -1, sizeof(i));
 	while (tmp[++i[0]])
 	{
 		i[2] = 0;
