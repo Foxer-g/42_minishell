@@ -19,10 +19,20 @@ t_command	*parser(char *input, char **env)
 	t_command	*filtered_commands;
 
 	token_lst = tokenizer(input);
+	if (!token_lst)
+		return (NULL);
 	if (check_invalid_paterns(token_lst, env))
 	{
 		free_tokens(token_lst);
-		return (0);
-	}	
+		return (NULL);
+	}
+	raw_commands = command_gen(token_lst);
+	free_token(token_lst);
+	if (!raw_commands)
+		return (NULL);
+	filtered_commands = scheduler(raw_commands);
+	free_command(raw_commands);
+	if (!filtered_commands)
+		return (NULL);
 	return (filtered_commands);
 }

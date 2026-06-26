@@ -8,7 +8,8 @@ static char	*invalid_char(t_token token)
 	i = 0;
 	while (token_lst[i].content)
 	{
-		if (token_lst.type == SEMI || token_lst.type == NLINE)
+		if (token_lst.type == SEMI || token_lst.type == NLINE
+			|| token.type == -1)
 			return (token.content);
 		i++;
 	}
