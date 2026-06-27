@@ -27,7 +27,7 @@ t_command	*parser(char *input, char **env)
 		return (NULL);
 	}
 	raw_commands = command_gen(token_lst);
-	free_token(token_lst);
+	free_tokens(token_lst);
 	if (!raw_commands)
 		return (NULL);
 	filtered_commands = scheduler(raw_commands);

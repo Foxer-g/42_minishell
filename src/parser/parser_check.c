@@ -6,17 +6,17 @@ static char	*invalid_char(t_token token)
 	int64_t	i;
 
 	i = 0;
-	while (token_lst[i].content)
+	while (token[i].content)
 	{
-		if (token_lst.type == SEMI || token_lst.type == NLINE
-			|| token.type == -1)
-			return (token.content);
+		if (token[i].type == SEMI || token[i].type == NLINE
+			|| token[i].type == -1)
+			return (token[i].content);
 		i++;
 	}
 	return (NULL);
 }
 
-static bool	*parenthesis_order(t_token *token_lst)
+static bool	parenthesis_order(t_token *token_lst)
 {
 	int64_t	i;
 	int64_t	j;
@@ -25,14 +25,15 @@ static bool	*parenthesis_order(t_token *token_lst)
 	j = 0;
 	while (token_lst[i].content)
 	{
-		if (token_lst[i].type == C_PAR)
+		if (token_lst[i].type == O_PAR)
+			j++;
+		else if (token_lst[i].type == C_PAR)
 		{
-			j -= 1;
+			j--;
 			if (j <= 0)
-				return (1);
+				return (true);
 		}
-		else if (token_lst[i].type == O_PAR)
-			j += 1;
+		i++;
 	}
 	if (j != 0)
 		return (2);
@@ -41,28 +42,29 @@ static bool	*parenthesis_order(t_token *token_lst)
 
 static char	*invalid_parenthesis(t_token *tkn)
 {
-	int64_t	i;
-	int64_t	o;
-	int64_t	c;
-	int64_t	p[2];
+    int64_t i;
+    int64_t j;
+    int64_t lp;
 
 	i = 0;
-	o = 0;
-	c = 0;
-	ft_memset(p, -1, 2);
-	while (tkn[i].content)
-	{
-		p[0] = i * (p[0] < 0) * (tkn[i].type == O_PAR || tkn[i].type == C_PAR);
-		p[1] = i * (tkn[i].type == O_PAR || tkn[i].type == C_PAR);
-		o += 1 * (tkn[i].type == O_PAR);
-		c += 1 * (tkn[i].type == C_PAR);
-		i++;
-	}
-	if (o != c || tkn[fp].type == C_PAR)
-		return (tkn[p[0]].content);
-	else if (parenthesis_order(tkn))
-		return (tkn[p[1]].content);
-	return (0);
+	j = 0;
+	lp = -1;
+    while (tkn[i].content)
+    {
+        if (tkn[i].type == O_PAR || tkn[i].type == C_PAR)
+            lp = i;
+        if (tkn[i].type == O_PAR)
+            j++;
+        else if (tkn[i].type == C_PAR)
+        {
+            if (--j < 0)
+                return tkn[i].content;
+        }
+        i++;
+    }
+    if (j != 0 && lp >= 0)
+        return tkn[lp].content;
+    return NULL;
 }
 
 static char	*invalid_quotes(t_token *tkn)
@@ -70,15 +72,12 @@ static char	*invalid_quotes(t_token *tkn)
 	int64_t	i;
 	int64_t	s;
 	int64_t	d;
-	int64_t	fp[2];
 
 	i = 0;
 	s = 0;
 	d = 0;
-	fp = -1;
 	while (tkn[i].content)
 	{
-		fp = i * (fp == -1) * (tkn[i].type == SQUOTE || tkn[i].type == DQUOTE);
 		s += 1 * (tkn[i].type == SQUOTE);
 		d += 1 * (tkn[i].type == DQUOTE);
 		i++;

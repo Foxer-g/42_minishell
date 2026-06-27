@@ -9,12 +9,12 @@
 // @param env: char **, Environment variables.
 // @return bool, Error status.
 
-bool	*parsing_error(char *message, char *token, char **env)
+bool	parsing_error(char *message, char *token, char **env)
 {
 	if (!token)
-		return (0);
+		return (false);
 	write(2, message, ft_strlen(message));
-	write(2, token, ft_strlen(message));
+	write(2, token, ft_strlen(token));
 	set_exit_code(1, env);
-	return (1);
+	return (true);
 }
