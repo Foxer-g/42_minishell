@@ -3,8 +3,7 @@
 
 static int32_t	tkn_cat(t_token tkn)
 {
-	if ((tkn.type >= S_QUOTE && tkn.type <= ENV_DESC) || tkn.type == AMP_SAND
-		|| tkn.type == WILDCARD)
+	if ((tkn.type >= S_QUOTE && tkn.type <= ENV_DESC) || tkn.type == HEREDOC)
 		return (3);
 	return (tkn.type);
 }
