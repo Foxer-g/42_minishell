@@ -1,24 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   entrypoint.c                                        ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/26 01:31:07 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/06/17 04:22:06 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
-/*                                                                            */
-/* ************************************************************************** */
-
-/* ************************************************************************** */
-/*                                                                            */
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
 /*   entrypoint.c                                        ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
-/*   Created: 2026/05/04 04:59:46 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/06/13 03:16:41 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
+/*   Updated: 2026/06/27 02:58:28 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +49,7 @@ static int	setup_here_doc(t_ffile target_pipe[2], const char *delimiter, bool *u
 // @param cmd: [[t_command]] *, The command to execute.
 // @param env: char **, The environment to use for the command.
 // @returns int8_t, The exit status.
-static int8_t	execution_pipeline(t_command *cmd, char **env)
+static int8_t	execution_pipeline(t_command *cmd, char ***env)
 {
 	t_ffile	here_doc_pipe[2];
 	bool	pipe_used;
@@ -75,7 +63,7 @@ static int8_t	execution_pipeline(t_command *cmd, char **env)
 		cmd->outfd = ft_ffopen(cmd->outfile, "w");
 	if (cmd->infd < 0 || cmd->outfd < 0)
 		return (1);
-	exec_single(cmd, env);
+	exec_single(cmd, *env);
 	close_pipe(here_doc_pipe);
 	return (0);
 }
@@ -83,32 +71,42 @@ static int8_t	execution_pipeline(t_command *cmd, char **env)
 // @doc setup_pipe
 // @kind func
 // @desc Sets up the pipe between the current and next command if required
-// @param [[t_command]] **, the commands list.
+// @param [[t_command]] ***, the commands list.
 // @returns int8_t, The exit status.
-static bool setup_pipe(t_command **cmds) {
-	t_ffile	wpipe[2];
+static bool setup_pipe(t_command ***cmds) {
+	uintmax_t	to_resolve;
+	t_ffile		wpipe[2];
+	t_command	**current;
+	int32_t		error;
 
-	(*cmds)->infd = STDIN_FILENO;
-	(*cmds)->outfd = STDOUT_FILENO;
-	if (!ft_strcmp((*cmds)->outfile, "|") && *(cmds + 1)
-		&& !ft_strcmp((*(cmds + 1))->infile, "|")) 
+	to_resolve = 0;
+	while (**cmds && !ft_strcmp((**cmds)->path, "|") && (*cmds)++)
+		to_resolve++;
+	current = *cmds;
+	error = 0;
+	while (to_resolve)
 	{
-		pipe(wpipe);
-		if (pipe < 0)
-			return (true);
-		(*cmds)->outfd = wpipe[WE];
-		(*(cmds + 1))->infd = wpipe[RE];
+		error = pipe(wpipe);
+		if (error < 0)
+		{
+			perror("pipe");
+			break ;
+		}
+		(*current)->outfd = wpipe[WE];
+		(*(current + 1))->infd = wpipe[RE];
+		to_resolve--;
 	}
-	else if (!ft_strcmp((*cmds)->outfile, "|"))
-		return (true);
-	return (false);
+	if (error)
+		return (false);
+	return (true);
 }
 
-//%:define FILS_DE_PUTE(a, b, c) for(b;c;a)
-/*main(argc, char **av)
+%:define FILS_DE_PUTE(a, b, c) for(b;c;a)
+void fun(int argc, char **av)
 <%
+	(void) argc, (void)av;
 	FILS_DE_PUTE(i++, int i = 0, i < 15);
-%>*/
+%>
 
 // @doc handle_var
 // @kind func
@@ -121,22 +119,22 @@ bool	handle_var(char **arg, uintmax_t index, char **urmom)
 {
 	char	*env_var_name;
 	char	*end_of_var;
-	char	*myckc;
+	char	*mycck;
 
 	env_var_name = ft_substr(*arg, index + 1, ft_strlen_until(&(*arg)[index + 1], ' '));
 	end_of_var = &(*arg)[index] + ft_strlen_until(&(*arg)[index], ' ');
-	myckc = get_env(env_var_name, urmom);
-	if (ft_strlen(env_var_name) + 1 >= ft_strlen(myckc))
+	mycck = get_env(env_var_name, urmom);
+	if (ft_strlen(env_var_name) + 1 >= ft_strlen(mycck))
 	{
-		ft_memcpy(&(*arg)[index], myckc, min(ft_strlen(env_var_name), ft_strlen(myckc)));
-		if (min(ft_strlen(env_var_name), ft_strlen(myckc)) == ft_strlen(myckc))
-			ft_memmove(&(*arg)[index + ft_strlen(myckc)], end_of_var, ft_strlen(end_of_var) + 1);
+		ft_memcpy(&(*arg)[index], mycck, min(ft_strlen(env_var_name), ft_strlen(mycck)));
+		if (min(ft_strlen(env_var_name), ft_strlen(mycck)) == ft_strlen(mycck))
+			ft_memmove(&(*arg)[index + ft_strlen(mycck)], end_of_var, ft_strlen(end_of_var) + 1);
 	}
 	else
 	{
-		*arg = ft_realloc(*arg, ft_strlen(*arg) - ft_strlen(env_var_name) + ft_strlen(myckc));
-		ft_memmove(end_of_var - ft_strlen(env_var_name) + ft_strlen(myckc), end_of_var, ft_strlen(end_of_var));
-		ft_memcpy(&(*arg)[index], myckc, ft_strlen(myckc));
+		*arg = ft_realloc(*arg, ft_strlen(*arg) - ft_strlen(env_var_name) + ft_strlen(mycck));
+		ft_memmove(end_of_var - ft_strlen(env_var_name) + ft_strlen(mycck), end_of_var, ft_strlen(end_of_var));
+		ft_memcpy(&(*arg)[index], mycck, ft_strlen(mycck));
 	}
 	free(env_var_name);
 	return (false);
@@ -180,19 +178,34 @@ bool	expand(t_command *cmd, char **env)
 // @kind func
 // @desc The main entrypoint of the execution pipeline.
 // @param cmds: [[t_command]] **, the list of commands to execute.
-// @param env: char **, the environment to work off of.
+// @param env: char ***, the environment to work off of.
+// @param early_stop: bool, if it should stop after the first command.
 // @returns int8_t, The exit status.
-int8_t	entrypoint(t_command **cmds, char **env)
+int8_t	entrypoint(t_command **cmds, char ***env, bool early_stop)
 {
+	bool	op;
+
 	while (*cmds)
 	{
-		if (setup_pipe(cmds)) {
+		if (setup_pipe(&cmds))
+		{
 			error("You confused the heck out of the parser.");
 			return (1);
 		}
-		expand(*cmds, env);
-		execution_pipeline(*cmds, env);
-		cmds++;
+		op = !ft_strcmp((*cmds)->path, "||");
+		if (op || !ft_strcmp((*cmds)->path, "&&"))
+		{
+			entrypoint((void *)(*cmds)->infile, env, true);
+			if (op && ft_strcmp(get_env("$?", *env), "0"))
+				entrypoint((void *)(*cmds)->outfile, env, true);
+			else if (!op && !ft_strcmp(get_env("$?", *env), "0"))
+				entrypoint((void *)(*cmds)->outfile, env, true);
+			continue ;
+		}
+		expand(*cmds, *env);
+		execution_pipeline(*cmds++, env);
+		if (early_stop)
+			return (0);
 	}
 	return (0);
 }
