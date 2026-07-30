@@ -96,37 +96,62 @@ static int32_t	get_token_type(char *token)
 	return (0);
 }
 
+// @doc tkn_from_split
+// @kind func
+// @desc Generate tokens form a splitted input.
+// @param tkn: [[t_token]] **, Token list to fill.
+// @param i: int64_t *, Token list index.
+// @param split: char *, Splitted input.
+// @param env: char***, Environment variable.
+// @return bool, Exit status.
+
+static bool	tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env)
+{
+	int64_t	len;
+	int64_t	j;
+
+	j = 0;
+	while (split[j])
+	{
+		len = get_token_len(split, j);
+		(*tkn[*i]).content = ft_substr(split, j, len);
+		if (!(*tkn[*i]).content)
+			return (!parsing_error(MALLOC, "", env));
+		(*tkn[*i]).content = get_token_type((*tkn[*i]).content);
+		j += len;
+		(*i)++;
+	}
+	return (true);
+}
+
 // @doc tokenizer
 // @kind func
 // @desc Create a token array out of the input.
 // @param input: char *, String given by the user.
 // @return [[t_token]], A token array to be parsed.
 
-t_token	*tokenizer(char *input)
+t_token	*tokenizer(char *input, char ***env)
 {
-	t_token	*tkn_lst;
-	char	**tmp;
-	int64_t	i[4];
+	t_token		*tkn_lst;
+	char		**tmp;
+	intmax_t	i;
+	intmax_t	j;
 
-	tmp = ft_split(input, ' ');
+	tmp = ft_preserving_split(input, ' ');
 	if (!tmp)
-		return (0);
+		return (!parsing_error(MALLOC, "", env));
 	tkn_lst = ft_calloc(token_stack_len(input) + 1, sizeof(t_token));
 	if (!tkn_lst)
-		return (free_nt_tab(tmp, (int32_t) nt_tablen((void **) tmp)));
-	ft_memset(i, -1, sizeof(i));
-	while (tmp[++i[0]])
 	{
-		i[2] = 0;
-		while (tmp[i[0]][i[2]])
-		{
-			i[3] = get_token_len(tmp[i[0]], i[2]);
-			tkn_lst[++i[1]].content = ft_substr(tmp[i[0]], i[2], i[3]);
-			tkn_lst[i[1]].type = get_token_type(tkn_lst[i[1]].content);
-			i[2] += i[3];
-		}
+		ft_free_nt_tab(tmp, (int32_t) ft_nt_tablen((void *) tmp));
+		return (!parsing_error(MALLOC, "", env));
 	}
-	free_nt_tab(tmp, (int32_t) nt_tablen((void **) tmp));
+	i = 0;
+	j = -1;
+	while (tmp[++j])
+		if (!tkn_from_split(&tkn_lst, &i, tmp[j], env))
+			return (NULL);
+	ft_free_nt_tab(tmp, ft_nt_tablen((void *) tmp));
 	free(input);
 	return (tkn_lst);
 }
