@@ -12,25 +12,25 @@
 
 #include "parser.h"
 
-t_command	*parser(char *input, char **env)
+t_command	*parser(char *input, char ***env)
 {
 	t_token		*token_lst;
 	t_command	*raw_commands;
 	t_command	*filtered_commands;
 
-	token_lst = tokenizer(input);
+	token_lst = tokenizer(input, env);
 	if (!token_lst)
 		return (NULL);
 	if (check_invalid_paterns(token_lst, env))
 	{
-		free_tokens(token_lst);
+		free_token(token_lst);
 		return (NULL);
 	}
 	raw_commands = command_gen(token_lst);
-	free_tokens(token_lst);
+	free_token(token_lst);
 	if (!raw_commands)
 		return (NULL);
-	filtered_commands = scheduler(raw_commands);
+	filtered_commands = scheduler(raw_commands, env);
 	free_command(raw_commands);
 	if (!filtered_commands)
 		return (NULL);

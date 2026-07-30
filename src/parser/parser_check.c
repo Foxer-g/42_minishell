@@ -1,7 +1,25 @@
 #include "minishell.h"
 #include "parser.h"
 
-static char	*invalid_char(t_token token)
+// @doc parsing_error
+// @kind func
+// @desc Parsing error management.
+// @param message: char *, Error message.
+// @param token: char *, Invalid token content.
+// @param env: char **, Environment variables.
+// @return bool, Error status.
+
+bool	parsing_error(char *message, char *token, char ***env)
+{
+	if (!token)
+		return (false);
+	write(2, message, ft_strlen(message));
+	write(2, token, ft_strlen(token));
+	ft_set_exit_code(1, env);
+	return (true);
+}
+
+static char	*invalid_char(t_token *token)
 {
 	int64_t	i;
 
@@ -48,9 +66,9 @@ static char	*invalid_quotes(t_token *tkn)
 // @param env: char **, Environment variables.
 // @return bool, Token list validity result.
 
-bool	check_invalid_paterns(t_token *token_lst, char **env)
+bool	check_invalid_paterns(t_token *token_lst, char ***env)
 {
-	if (parsing_error(CHAR, invalid_char(token_lst), env))
+	if (parsing_error(INV_CHAR, invalid_char(token_lst), env))
 		return (1);
 	else if (parsing_error(SYNTAX, invalid_quotes(token_lst), env))
 		return (1);
