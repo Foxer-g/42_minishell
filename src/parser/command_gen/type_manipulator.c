@@ -7,40 +7,49 @@ void	command_exec_set(t_command *command, char **cmd, uint64_t len)
 
 	if (cmd)
 	{
-		free(command->path);
-		command->path = ft_stdup(cmd[0]);
-		if (command->arguments)
+		free((*command).path);
+		(*command).path = ft_strdup(cmd[0]);
+		if ((*command).args)
 		{
 			i = 0;
-			while (command->arguments[i])
-				free(command->arguments[i++]);
-			free(command->arguments);
+			while ((*command).args[i])
+				free((*command).args[i++]);
+			free((*command).args);
 		}
-		command->arguments = ft_calloc((len + 1), sizeof(char *));
-		if (!command->arguments)
+		(*command).args = ft_calloc((len + 1), sizeof(char *));
+		if (!(*command).args)
 			return ;
 		i = 0;
-		while (i < len)
+		while (i < (int64_t) len)
 		{
-			command->arguments[i] = ft_strdup(cmd[i]);
+			(*command).args[i] = ft_strdup(cmd[i]);
 			i++;
 		}
 	}
 }
 
-void	command_file_set(t_command *command, char *in, char *out, bool app)
+bool	command_redir_set(t_command *command, t_redir redir)
 {
-	if (in)
+	if (redir.type == I_REDIR)
 	{
-		free(*command.infile);
-		*command.infile = ft_strdup(in);
+		free((*command).infile);
+		(*command).infile = ft_strdup((*command).args[redir.index + 1]);
+		if (!(*command).infile)
+			return (false);
+		return (true);
 	}
-	if (out)
+	else if (redir.type == O_REDIR || redir.type == APPEND)
 	{
-		free(*command.outfile);
-		*command.outfile = ft_strdup(out);
+		free((*command).outfile);
+		(*command).outfile = ft_strdup((*command).args[redir.index + 1]);
+		if (!(*command).outfile)
+			return (false);
+		if (redir.type == APPEND)
+			(*command).append = true;
+		return (true);
 	}
-	*command.append = app;
+	else
+		return (false);
 }
 
 t_command	init_command(void)
@@ -48,13 +57,32 @@ t_command	init_command(void)
 	t_command	res;
 
 	res.path = NULL;
-	res.arguments = NULL;
+	res.args = NULL;
 	res.pid = 0;
 	res.infd = 0;
 	res.outfd = 0;
 	res.append = false;
 	res.infile = ft_strdup("stdin");
 	res.outfile = ft_strdup("stdout");
+	return (res);
+}
+
+t_command	cmd_dup(t_command cmd)
+{
+	t_command	res;
+
+	res = init_command();
+	command_exec_set(&res, cmd.args, args_len(cmd));
+	free(res.infile);
+	free(res.outfile);
+	res.infile = ft_strdup(cmd.infile);
+	res.outfile = ft_strdup(cmd.outfile);
+	res.append = cmd.append;
+	if (!res.infile || !res.outfile)
+	{
+		free_command(&res);
+		return ((t_command){});
+	}
 	return (res);
 }
 
@@ -66,18 +94,18 @@ void	free_command(t_command *cmds)
 	if (!cmds)
 		return ;
 	i = 0;
-	while (cmds[i].path || cmds[i].arguments)
+	while (cmds[i].path || cmds[i].args)
 	{
 		free(cmds[i].path);
-		if (cmds[i].arguments)
+		if (cmds[i].args)
 		{
 			j = 0;
-			while (cmds[i].arguments[j])
+			while (cmds[i].args[j])
 			{
-				free(cmds[i].arguments[j]);
+				free(cmds[i].args[j]);
 				j++;
 			}
-			free(cmds[i].arguments);
+			free(cmds[i].args);
 		}
 		free(cmds[i].infile);
 		free(cmds[i].outfile);
