@@ -34,7 +34,7 @@
 typedef struct s_command
 {
 	char	*path;
-	char	**arguments;
+	char	**args;
 	pid_t	pid;
 	t_ffile	infd;
 	t_ffile	outfd;
