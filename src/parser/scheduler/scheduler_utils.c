@@ -68,27 +68,27 @@ bool	cmd_set_hd(t_command *cmd, intmax_t index, char ***env)
 	return (true);
 }
 
-intmax_t	*find_heredoc(t_command *cmd, char ***env)
+intmax_t	*find_heredoc(t_command *c, char ***env)
 {
 	intmax_t	*res;
 	intmax_t	i[2];
 
-	res = ft_calloc(cmd_len(cmd), sizeof(intmax_t));
+	res = ft_calloc(c_len(c), sizeof(intmax_t));
 	if (!res)
 		return (NULL);
 	i[0] = -1;
-	while (cmd[++i[0]].infile)
+	while (c[++i[0]].infile)
 	{
 		res[i[0]] = -1;
 		i[1] = -1;
-		while (cmd[i[0]].args[++i[1]])
+		while (c[i[0]].args[++i[1]])
 		{
-			if (cmd[i[0]].args[i[1]][0] == '<' && cmd[i[0]].args[i[1]][1] == '<')
+			if (c[i[0]].args[i[1]][0] == '<' && c[i[0]].args[i[1]][1] == '<')
 			{
 				if (res[i[0]] != -1)
 				{
 					free(res);
-					return (!parsing_error(PARSING, cmd[i[0]].args[i[1]], env));
+					return (!parsing_error(PARSING, c[i[0]].args[i[1]], env));
 				}
 				res[i[0]] = i[1];
 			}
