@@ -25,7 +25,7 @@ static uint64_t	command_len(t_token *tkns)
 	return (res);
 }
 
-static bool cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
+static bool	cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
 {
 	char			*tmp;
 	t_token_type	res_type;
@@ -52,7 +52,7 @@ static bool cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
 	return (true);
 }
 
-bool  quote_join(t_token **tkns, char ***env)
+bool	quote_join(t_token **tkns, char ***env)
 {
 	t_token		*res;
 	intmax_t	i[3];

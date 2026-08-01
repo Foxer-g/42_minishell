@@ -16,7 +16,7 @@ char	**tkn_to_tab(t_token *tkns, intmax_t i, intmax_t len, char ***env)
 	{
 		res[k] = ft_strdup(tkns[j++].content);
 		if (!res[k])
-			return (!parsing_error(MALLOC, "" , env));
+			return (!parsing_error(MALLOC, "", env));
 	}
 	return (res);
 }

@@ -9,9 +9,8 @@ static bool	command_expand(t_command **cmd, char ***env)
 	i = 0;
 	while ((*cmd[i]).path)
 	{
-		res = expand(&(*cmd[i]), *env);
-		if (!res)
-			return (!parsing_error(EXPAND, "", env));
+		if (expand(&(*cmd[i]), *env))
+			return (true);
 		res = strtrim_cmd_end(&(*cmd[i]), ' ');
 		if (!res)
 			return (parsing_error(MALLOC, "", env));
