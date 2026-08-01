@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   parser.h                                            ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 06:54:56 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/09 16:48:26 by f0xer            ###   ########.fr       */
+/*   Updated: 2026/07/31 01:23:46 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSER_H
-# define PARSER_H 
-
-# include "minishell.h"
+# define PARSER_H
+# include <stdint.h>
+# undef RETURN
 
 typedef enum e_token_type
 {
 	O_PAR,
 	C_PAR,
-	SQUOTE,
+	QUOTE,
 	DQUOTE,
 	COMMAND,
 	ENV_DEC,

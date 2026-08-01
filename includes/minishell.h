@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/19 17:36:16 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/07/28 19:24:55 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <readline/history.h>
 # include "libft.h"
 # include "file.h"
-//# include "parser.h"
+# include "parser.h"
 # ifndef EXEC_SOURCE
 #  include "exec.h"
 # else
@@ -50,9 +50,10 @@ typedef struct s_command
 
 extern sig_atomic_t	g_sig_handle;
 
-char	**command_to_args(char *command);
-char	*join_tab(char **tab);
-char	*prompt(char **aenv);
-void	sig_handle(int32_t signal, siginfo_t *info, void *context);
-void 	error(const char *err_message);
+char		**command_to_args(char *command);
+char		*join_tab(char **tab);
+char		*prompt(char **aenv);
+t_command	*parser(char *input, char ***env);
+void		sig_handle(int32_t signal, siginfo_t *info, void *context);
+void 		error(const char *err_message);
 #endif

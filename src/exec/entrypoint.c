@@ -3,10 +3,10 @@
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
 /*   entrypoint.c                                        ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
-/*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
+/*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/06/27 02:58:28 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/07/30 19:32:04 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@
 // @param target_pipe: [[t_ffile]][2], The pipe to set up and use.
 // @param used_pipe: bool, true if the pipe is used, false if opening it failed.
 // @returns [[t_ffile]], The read end of the pipe.
-static int	setup_here_doc(t_ffile target_pipe[2], const char *delimiter, bool *used_pipe)
+static int	setup_here_doc(t_ffile target_pipe[2], const char *delimiter,
+	bool *used_pipe)
 {
 	char	*line;
 
@@ -72,19 +73,20 @@ static int8_t	execution_pipeline(t_command *cmd, char ***env)
 // @kind func
 // @desc Sets up the pipe between the current and next command if required
 // @param [[t_command]] ***, the commands list.
-// @returns int8_t, The exit status.
-static bool setup_pipe(t_command ***cmds) {
+// @returns bool, The exit status.
+static bool	setup_pipe(t_command ***cmds)
+{
 	uintmax_t	to_resolve;
 	t_ffile		wpipe[2];
 	t_command	**current;
 	int32_t		error;
 
 	to_resolve = 0;
-	while (**cmds && !ft_strcmp((**cmds)->path, "|") && (*cmds)++)
+	while (**cmds && !ft_strcmp((**cmds)->path, "|") && *(*cmds)++)
 		to_resolve++;
 	current = *cmds;
 	error = 0;
-	while (to_resolve)
+	while (to_resolve--)
 	{
 		error = pipe(wpipe);
 		if (error < 0)
@@ -94,48 +96,45 @@ static bool setup_pipe(t_command ***cmds) {
 		}
 		(*current)->outfd = wpipe[WE];
 		(*(current + 1))->infd = wpipe[RE];
-		to_resolve--;
+		current++;
 	}
 	if (error)
 		return (false);
 	return (true);
 }
 
-%:define FILS_DE_PUTE(a, b, c) for(b;c;a)
-void fun(int argc, char **av)
-<%
-	(void) argc, (void)av;
-	FILS_DE_PUTE(i++, int i = 0, i < 15);
-%>
-
 // @doc handle_var
 // @kind func
 // @desc Handles the injection of a variable in an arg.
 // @param arg: char **, The argument to perform the expand on.
 // @param index: uintmax_t, The index at which the expand is located.
-// @param urmom: char **, The environment.
+// @param env: char **, The environment.
 // @returns bool, Exit status.
-bool	handle_var(char **arg, uintmax_t index, char **urmom)
+bool	handle_var(char **arg, uintmax_t index, char **env)
 {
 	char	*env_var_name;
 	char	*end_of_var;
-	char	*mycck;
+	char	*var;
 
-	env_var_name = ft_substr(*arg, index + 1, ft_strlen_until(&(*arg)[index + 1], ' '));
+	env_var_name = ft_substr(*arg, index + 1, ft_strlen_until(
+				&(*arg)[index + 1], ' '));
 	end_of_var = &(*arg)[index] + ft_strlen_until(&(*arg)[index], ' ');
-	mycck = get_env(env_var_name, urmom);
-	if (ft_strlen(env_var_name) + 1 >= ft_strlen(mycck))
+	var = get_env(env_var_name, env);
+	if (ft_strlen(env_var_name) + 1 >= ft_strlen(var))
 	{
-		ft_memcpy(&(*arg)[index], mycck, min(ft_strlen(env_var_name), ft_strlen(mycck)));
-		if (min(ft_strlen(env_var_name), ft_strlen(mycck)) == ft_strlen(mycck))
-			ft_memmove(&(*arg)[index + ft_strlen(mycck)], end_of_var, ft_strlen(end_of_var) + 1);
+		ft_memcpy(&(*arg)[index], var, min(ft_strlen(env_var_name), ft_strlen(
+					var)));
+		if (min(ft_strlen(env_var_name), ft_strlen(var)) == ft_strlen(var))
+			ft_memmove(&(*arg)[index + ft_strlen(var)], end_of_var, ft_strlen(
+					end_of_var) + 1);
+		free(env_var_name);
+		return (false);
 	}
-	else
-	{
-		*arg = ft_realloc(*arg, ft_strlen(*arg) - ft_strlen(env_var_name) + ft_strlen(mycck));
-		ft_memmove(end_of_var - ft_strlen(env_var_name) + ft_strlen(mycck), end_of_var, ft_strlen(end_of_var));
-		ft_memcpy(&(*arg)[index], mycck, ft_strlen(mycck));
-	}
+	*arg = ft_realloc(*arg, ft_strlen(*arg) - ft_strlen(env_var_name)
+			+ ft_strlen(var));
+	ft_memmove(end_of_var - ft_strlen(env_var_name) + ft_strlen(var),
+		end_of_var, ft_strlen(end_of_var));
+	ft_memcpy(&(*arg)[index], var, ft_strlen(var));
 	free(env_var_name);
 	return (false);
 }
@@ -152,7 +151,7 @@ bool	expand(t_command *cmd, char **env)
 	uintmax_t	i;
 	t_quotetype	in_quote;
 
-	in_quote = 0;
+	in_quote = NOT;
 	args = cmd->arguments;
 	while (*args)
 	{

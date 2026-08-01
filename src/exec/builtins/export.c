@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/06/11 04:54:12 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/06/18 01:13:41 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/07/30 19:26:28 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,10 @@ void	display_env_as_bash(char ***env)
 		var_name_len = ft_strlen_until(*aenv, '=');
 		var_name = ft_substr(*aenv, 0, var_name_len);
 		if (ft_strchr(*aenv, '='))
-			printf("declare -x %s=\"%s\"\n", var_name, *aenv + var_name_len + 1);
+		{
+			printf("declare -x %s=\"%s\"\n", var_name,
+				*aenv + var_name_len + 1);
+		}
 		else
 			printf("declare -x %s\n", var_name);
 		free(var_name);

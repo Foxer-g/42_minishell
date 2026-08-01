@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main.c                                              ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 03:09:23 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/10 05:43:32 by f0xer            ###   ########.fr       */
+/*   Updated: 2026/07/28 19:25:01 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,8 @@ int32_t	main(int32_t ac, char **av, char **aenv)
 	if (ac != 1)
 	{
 		input = join_tab(++av);
-//		parsed_input = parser(input);
-//		entry_point(parsed_input, &aenv);
-//		test_print(parsed_input);
+		parsed_input = parser(input, &aenv);
+		entrypoint(&parsed_input, &aenv);
 		ft_printf("input : %s\n", input);
 		free(input);
 	}
@@ -40,9 +39,8 @@ int32_t	main(int32_t ac, char **av, char **aenv)
 		while (input)
 		{
 			add_history(input);
-//			parsed_input = parser(input);
-//			entry_point(parsed_input, &aenv);
-			ft_printf("input : %s\n", input);
+			parsed_input = parser(input, &aenv);
+			entrypoint(&parsed_input, &aenv);
 			free(input);
 			input = prompt(aenv);
 		}

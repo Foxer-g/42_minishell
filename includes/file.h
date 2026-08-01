@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   file.h                                             :+:      :+:    :+:   */
+/*   file.h                                              ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 22:09:10 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/03/17 05:44:34 by rboutelo         ###   ########.fr       */
+/*   Updated: 2026/07/29 16:36:12 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # else //AUTHORIZED_READV
 #  include "syscalls.h"
 # endif //AUTHORIZED_READV
-# include "libft.h"
+# include "types.h"
 
 # ifdef TRUE_FILE
 // Values used in musl
@@ -52,15 +52,33 @@
 # define WE 1
 # define RE 0
 
-typedef int				t_ffile;
-typedef struct s_iovec	t_iovec;
-
-void		clear_filelist(void);
-void		ft_ffclose(t_ffile file);
-void		close_pipe(int32_t *fds);
+/* *************** */
+/*      OPEN       */
+/* *************** */
 t_ffile		ft_ffopen(char *filename, const char *mode);
+t_ffile		ft_to_ffile(t_ffile fd);
+
+/* *************** */
+/*      READ       */
+/* *************** */
 intmax_t	ft_ffread(t_ffile file, void *buf, intmax_t nbyte);
+char		*get_next_line(int fd);
 intmax_t	ft_ffreadall(t_ffile file, void **buf);
+
+/* *************** */
+/*      WRITE      */
+/* *************** */
 intmax_t	ft_ffwrite(t_ffile file, const void *buf, intmax_t nbyte);
-t_ffile		to_ffile(t_ffile fd);
+
+/* *************** */
+/*      CLOSE      */
+/* *************** */
+void		ft_ffclose(t_ffile file);
+void		ft_close_pipe(int32_t *fds);
+
+/* *************** */
+/*     CLEANUP     */
+/* *************** */
+void		ft_clear_filelist(void);
+
 #endif //FILE_H
