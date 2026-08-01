@@ -28,9 +28,9 @@ void	command_exec_set(t_command *command, char **cmd, uint64_t len)
 	}
 }
 
-bool	command_redir_set(t_command *command, t_redir redir)
+bool	command_redir_set(t_command *command, t_redir *redir)
 {
-	if (redir.type == I_REDIR)
+	if (redir[0].type)
 	{
 		free((*command).infile);
 		(*command).infile = ft_strdup((*command).args[redir.index + 1]);
@@ -38,7 +38,7 @@ bool	command_redir_set(t_command *command, t_redir redir)
 			return (false);
 		return (true);
 	}
-	else if (redir.type == O_REDIR || redir.type == APPEND)
+	else if (redir[1].type)
 	{
 		free((*command).outfile);
 		(*command).outfile = ft_strdup((*command).args[redir.index + 1]);
