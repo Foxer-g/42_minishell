@@ -6,13 +6,12 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/02 05:18:57 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/02 19:02:58 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define EXEC_SOURCE
 #include "minishell.h"
-#define BLTS {"cd", "echo", "env", "exit", "export", "pwd", "unset", NULL}
 
 // @doc safe_exec_setup
 // @kind func
@@ -75,7 +74,7 @@ int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 
 t_cmd_fun	get_func(enum e_builtin builtin)
 {
-	void	*funcs[119] = {
+	const void	*funcs[119] = {
 	[CD] = cd,
 	[PWD] = pwd,
 	[ECHO] = echo,
@@ -85,7 +84,7 @@ t_cmd_fun	get_func(enum e_builtin builtin)
 	[ENV] = env,
 	};
 
-	return (funcs[builtin]);
+	return ((t_cmd_fun)funcs[builtin]);
 }
 
 // @doc exec_single
@@ -96,19 +95,22 @@ t_cmd_fun	get_func(enum e_builtin builtin)
 // @returns int8_t, exit status.
 int8_t	exec_single(t_command *command, char ***env)
 {
-	int8_t	status;
-	uint8_t	i;
+	const char	*blts[] = {"cd", "echo", "env", "exit",
+		"export", "pwd", "unset", NULL};
+	int8_t		status;
+	uint8_t		i;
 
 	i = 0;
-	while (BLTS[i])
+	status = 0;
+	while (blts[i])
 	{
-		if (!ft_strcmp(BLTS[i], command->path))
+		if (!ft_strcmp(blts[i], command->path))
 		{
 			status = (get_func(command->path[2]))(*command, env);
 		}
 		i++;
 	}
-	else
-		status = execute(*command, command->outfd, command->infd, env);
+	if (!status)
+		status = execute(*command, command->outfd, command->infd, *env);
 	return (status);
 }

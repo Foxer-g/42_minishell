@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 01:04:01 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/02 05:04:28 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/02 19:03:19 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	env(t_command cmd, char ***ev)
 {
 	const uintmax_t	ac = ft_nt_tablen((void*)cmd.args);
-	uintmax_t	i;
+	uintmax_t		i;
 
 	if (ac != 1)
 	{
