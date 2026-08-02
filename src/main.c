@@ -14,35 +14,51 @@
 
 sig_atomic_t	g_sig_handle = 0;
 
-int32_t	main(int32_t ac, char **av, char **aenv)
+void	sig_init(void)
 {
 	struct sigaction	sig_action;
-	t_command			*parsed_input;
-	char				*input;
 
+	sig_action.sa_sigaction = sig_handle;
+	sig_action.sa_flags = SA_SIGINFO;
+	sigemptyset(&sig_action.sa_mask);
+	sigaction(SIGINT, &sig_action, NULL);
+	sigaction(SIGQUIT, &sig_action, NULL);
+}
+
+
+void	minishell_action(char *input, char **env)
+{
+	t_command	*parsed_input;
+
+	parsed_input = parser(input);
+	if (!parsed_input)
+		return (0);
+	entry_point(parsed_input, env);
+//	test_print(parsed_input);
+	free_token(parsed_input);
+	free(input);
+}
+
+int32_t	main(int32_t ac, char **av, char **aenv)
+{
+	char				*input;
+	char				**env;
+
+	env = envcpy(aenv);
 	if (ac != 1)
 	{
 		input = join_tab(++av);
-		parsed_input = parser(input, &aenv);
-		entrypoint(&parsed_input, &aenv);
-		ft_printf("input : %s\n", input);
 		free(input);
+		minishell_action(input, env);
 	}
 	else
 	{
-		sig_action.sa_sigaction = sig_handle;
-		sig_action.sa_flags = SA_SIGINFO;
-		sigemptyset(&sig_action.sa_mask);
-		sigaction(SIGINT, &sig_action, NULL);
-		sigaction(SIGQUIT, &sig_action, NULL);
-		input = prompt(aenv);
+		input = prompt(env);
 		while (input)
 		{
 			add_history(input);
-			parsed_input = parser(input, &aenv);
-			entrypoint(&parsed_input, &aenv);
-			free(input);
-			input = prompt(aenv);
+			minishell_action(input, env);
+			input = prompt(env);
 		}
 		rl_clear_history();
 		ft_printf("exit\n");

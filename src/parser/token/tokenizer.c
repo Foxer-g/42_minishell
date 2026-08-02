@@ -1,0 +1,157 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/08 04:23:12 by f0xer             #+#    #+#             */
+/*   Updated: 2026/05/09 16:52:13 by f0xer            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+// @doc F0xer
+// @kind san
+// @desc Things have been done to squeeze tokenizer in 25 lines.
+// @level 48
+
+#include "parser.h"
+
+// @doc token_stack_len
+// @kind func
+// @desc Calculate the amount of tokens in the input string.
+// @param input: char *, Input string to calculate from.
+// @return int64_t, Amount of tokens in the input string.
+
+static int64_t	token_stack_len(char *input)
+{
+	int64_t	len;
+
+	len = 0;
+	while (input[0])
+	{
+		if (ft_strnstr("()'\"\n;", &input[0], 5))
+			len++;
+		else if (ft_strnstr("$*", &input[0], 2) || !ft_iscmd_chr(input[0]))
+		{
+			input++;
+			while (ft_iscmd_chr(input[0]))
+				input++;
+			len++;
+		}
+		else if (ft_strnstr("|<>&", &input[0], 5))
+		{
+			if (input[0] == input[1])
+				input++;
+			input++;
+			len++;
+		}
+	}
+	return (len);
+}
+
+// @doc get_token_len
+// @kind func
+// @desc Calculate tokens lenght, starting at the start index.
+// @param input: char *, String to find the token and calculate it lenght.
+// @param start: int64_t, Index to start calculating token lenght.
+// @return int64_t, Next token lenght from start index.
+
+static int64_t	get_token_len(char *input, int64_t start)
+{
+	int64_t	i;
+
+	i = start;
+	if (ft_strnstr("()'\"\n;", &input[i], 5))
+		i++;
+	else if (ft_strnstr("$*", &input[i], 2) || ft_iscmd_chr(input[i]))
+	{
+		i++;
+		while (ft_iscmd_chr(input[i]))
+			i++;
+	}
+	else if (ft_strnstr("|<>&", &input[i], 5))
+	{
+		if (input[i] == input[i + 1])
+			i++;
+		i++;
+	}
+	else
+		i++;
+	return (i - start);
+}
+
+// @doc get_token_type
+// @kind func
+// @desc Determine the type of the input token.
+// @param token: char *, Token to get the type from.
+// @return int32_t, The token type.
+
+static int32_t	get_token_type(char *token)
+{
+	if (ft_strlen(token) == 1)
+		return (short_type(token));
+	else if (ft_strnstr("$*|<>&", &token[0], 6) || ft_iscmd_chr(token[0]))
+		return (composed_type(token));
+	return (0);
+}
+
+// @doc tkn_from_split
+// @kind func
+// @desc Generate tokens form a splitted input.
+// @param tkn: [[t_token]] **, Token list to fill.
+// @param i: int64_t *, Token list index.
+// @param split: char *, Splitted input.
+// @param env: char***, Environment variable.
+// @return bool, Exit status.
+
+static bool	tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env)
+{
+	int64_t	len;
+	int64_t	j;
+
+	j = 0;
+	while (split[j])
+	{
+		len = get_token_len(split, j);
+		(*tkn[*i]).content = ft_substr(split, j, len);
+		if (!(*tkn[*i]).content)
+			return (!parsing_error(MALLOC, "", env));
+		(*tkn[*i]).content = get_token_type((*tkn[*i]).content);
+		j += len;
+		(*i)++;
+	}
+	return (true);
+}
+
+// @doc tokenizer
+// @kind func
+// @desc Create a token array out of the input.
+// @param input: char *, String given by the user.
+// @return [[t_token]], A token array to be parsed.
+
+t_token	*tokenizer(char *input, char ***env)
+{
+	t_token		*tkn_lst;
+	char		**tmp;
+	intmax_t	i;
+	intmax_t	j;
+
+	tmp = ft_preserving_split(input, ' ');
+	if (!tmp)
+		return (!parsing_error(MALLOC, "", env));
+	tkn_lst = ft_calloc(token_stack_len(input) + 1, sizeof(t_token));
+	if (!tkn_lst)
+	{
+		ft_free_nt_tab(tmp, (int32_t) ft_nt_tablen((void *) tmp));
+		return (!parsing_error(MALLOC, "", env));
+	}
+	i = 0;
+	j = -1;
+	while (tmp[++j])
+		if (!tkn_from_split(&tkn_lst, &i, tmp[j], env))
+			return (NULL);
+	ft_free_nt_tab(tmp, ft_nt_tablen((void *) tmp));
+	free(input);
+	return (tkn_lst);
+}

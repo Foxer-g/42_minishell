@@ -1,0 +1,11 @@
+def build(bld):
+	sources = [
+		"tokenizer.c",
+		"token_utils.c",
+	]
+	ltoken = bld.objects(
+		source		= sources,
+		features	= "c",
+		target		= "tokenobjs",
+		includes	= bld.env.INCLUDES_ROOT
+	)

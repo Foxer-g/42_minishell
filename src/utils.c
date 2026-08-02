@@ -38,7 +38,7 @@ void	sig_handle(int32_t signal, siginfo_t *info, void *context)
 	g_sig_handle = signal;
 }
 
-char	*prompt(char **aenv)
+char	*prompt(char **env)
 {
 	char	*str_prompt;
 	char	*out;
@@ -46,11 +46,11 @@ char	*prompt(char **aenv)
 	char	*usr;
 
 	str_prompt = ft_strdup(PROMPT_A);
-	usr = get_env("USER=", aenv);
-	path = get_env("PWD=", aenv);
-	if (ft_strlen(path) > (ft_strlen(get_env("HOME=", aenv))))
+	usr = get_env("USER=", env);
+	path = get_env("PWD=", env);
+	if (ft_strlen(path) > (ft_strlen(get_env("HOME=", env))))
 	{
-		path += ft_strlen(get_env("HOME=", aenv)) - 1;
+		path += ft_strlen(get_env("HOME=", env)) - 1;
 		path[0] = '~';
 	}
 	str_prompt = extend(str_prompt, usr);
@@ -60,4 +60,28 @@ char	*prompt(char **aenv)
 	out = readline(str_prompt);
 	free(str_prompt);
 	return (out);
+}
+
+void	test_print(t_command input)
+{
+	intmax_t i;
+
+	while (input[i].infile)
+	{
+		ft_printf("Element : %d\n--------------\n", i);
+		ft_printf("Path : %s\nArguments :\n", input[i].path);
+		j = 0;
+		while (input[i].args[j])
+		{
+			ft_printf("    - %s\n", input[0].args[j]);
+			j++;
+		}
+		ft_printf("Pid : %i\n", input[i].pid);
+		ft_printf("Infd : %i\n", input[i].infd);
+		ft_printf("Outfd : %i\n", input[i].outfd);
+		ft_printf("Append : %i\n", input[i].append);
+		ft_printf("Infile : %s\n", input[i].infile);
+		ft_printf("Outfile : %s\n", input[i].outfile);
+		i++;
+	}
 }
