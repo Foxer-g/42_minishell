@@ -67,4 +67,6 @@ char		*prompt(char **aenv);
 t_command	*parser(char *input, char ***env);
 void		sig_handle(int32_t signal, siginfo_t *info, void *context);
 void		error(const char *err_message);
+
+void		test_print(t_command *input);
 #endif

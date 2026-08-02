@@ -26,30 +26,30 @@ void	sig_init(void)
 }
 
 
-void	minishell_action(char *input, char **env)
+bool	minishell_action(char *input, char ***env)
 {
 	t_command	*parsed_input;
 
-	parsed_input = parser(input);
+	parsed_input = parser(input, env);
 	if (!parsed_input)
-		return (0);
-	entry_point(parsed_input, env);
-//	test_print(parsed_input);
-	free_token(parsed_input);
+		return (false);
+//	entry_point(parsed_input, env);
+	test_print(parsed_input);
+	free_command(parsed_input);
 	free(input);
+	return (true);
 }
 
-int32_t	main(int32_t ac, char **av, char **aenv)
+int32_t	main(int32_t ac, char **av, const char **aenv)
 {
 	char				*input;
 	char				**env;
 
-	env = envcpy(aenv);
+	env = ft_copy_env(aenv);
 	if (ac != 1)
 	{
 		input = join_tab(++av);
-		free(input);
-		minishell_action(input, env);
+		minishell_action(input, &env);
 	}
 	else
 	{
@@ -57,7 +57,7 @@ int32_t	main(int32_t ac, char **av, char **aenv)
 		while (input)
 		{
 			add_history(input);
-			minishell_action(input, env);
+			minishell_action(input, &env);
 			input = prompt(env);
 		}
 		rl_clear_history();

@@ -46,26 +46,28 @@ char	*prompt(char **env)
 	char	*usr;
 
 	str_prompt = ft_strdup(PROMPT_A);
-	usr = get_env("USER=", env);
-	path = get_env("PWD=", env);
-	if (ft_strlen(path) > (ft_strlen(get_env("HOME=", env))))
+	usr = ft_get_env("USER=", env);
+	path = ft_get_env("PWD=", env);
+	if (ft_strlen(path) > (ft_strlen(ft_get_env("HOME=", env))))
 	{
-		path += ft_strlen(get_env("HOME=", env)) - 1;
+		path += ft_strlen(ft_get_env("HOME=", env)) - 1;
 		path[0] = '~';
 	}
-	str_prompt = extend(str_prompt, usr);
-	str_prompt = extend(str_prompt, PROMPT_B);
-	str_prompt = extend(str_prompt, path);
-	str_prompt = extend(str_prompt, PROMPT_C);
+	str_prompt = ft_extend(str_prompt, usr);
+	str_prompt = ft_extend(str_prompt, PROMPT_B);
+	str_prompt = ft_extend(str_prompt, path);
+	str_prompt = ft_extend(str_prompt, PROMPT_C);
 	out = readline(str_prompt);
 	free(str_prompt);
 	return (out);
 }
 
-void	test_print(t_command input)
+void	test_print(t_command *input)
 {
 	intmax_t i;
+	intmax_t j;
 
+	i = 0;
 	while (input[i].infile)
 	{
 		ft_printf("Element : %d\n--------------\n", i);
