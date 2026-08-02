@@ -1,32 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
+/*                                                        :::      ::::::::   */
 /*   env.c                                               ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
-/*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
-/*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
-/*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
-/*   Created: 2026/06/16 01:04:01 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/07/30 19:26:50 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/16 01:04:01 by neumann           #+#    #+#             */
+/*   Updated: 2026/08/02 05:04:28 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	env(int ac, char **ev)
+int	env(t_command cmd, char ***ev)
 {
+	const uintmax_t	ac = ft_nt_tablen((void*)cmd.args);
 	uintmax_t	i;
 
 	if (ac != 1)
 	{
 		printf("env: expected 0 arguments (args unsupported in minishell);"
-			" got %d\n", ac - 1);
+			" got %lu\n", ac - 1);
 		return (1);
 	}
 	i = 0;
-	while (ev[i])
+	while ((*ev)[i])
 	{
-		if (ft_strchr(ev[i], '='))
-			printf("%s\n", ev[i]);
+		if (ft_strchr((*ev)[i], '='))
+			printf("%s\n", (*ev)[i]);
 		i++;
 	}
 	return (0);

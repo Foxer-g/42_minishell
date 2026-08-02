@@ -6,7 +6,7 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/07/30 19:32:04 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/02 05:19:45 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ static int8_t	execution_pipeline(t_command *cmd, char ***env)
 		cmd->outfd = ft_ffopen(cmd->outfile, "w");
 	if (cmd->infd < 0 || cmd->outfd < 0)
 		return (1);
-	exec_single(cmd, *env);
-	close_pipe(here_doc_pipe);
+	exec_single(cmd, env);
+	ft_close_pipe(here_doc_pipe);
 	return (0);
 }
 
@@ -110,32 +110,31 @@ static bool	setup_pipe(t_command ***cmds)
 // @param index: uintmax_t, The index at which the expand is located.
 // @param env: char **, The environment.
 // @returns bool, Exit status.
-bool	handle_var(char **arg, uintmax_t index, char **env)
+bool	handle_var(char **arg, uintmax_t ind, char **env)
 {
-	char	*env_var_name;
-	char	*end_of_var;
+	char	*evn;
+	char	*eov;
 	char	*var;
 
-	env_var_name = ft_substr(*arg, index + 1, ft_strlen_until(
-				&(*arg)[index + 1], ' '));
-	end_of_var = &(*arg)[index] + ft_strlen_until(&(*arg)[index], ' ');
-	var = get_env(env_var_name, env);
-	if (ft_strlen(env_var_name) + 1 >= ft_strlen(var))
+	evn = ft_substr(*arg, ind + 1, ft_strlen_until(&(*arg)[ind + 1], ' '));
+	if (!evn)
+		return (true);
+	eov = &(*arg)[ind] + ft_strlen_until(&(*arg)[ind], ' ');
+	var = ft_get_env(evn, env);
+	if (ft_strlen(evn) + 1 >= ft_strlen(var))
 	{
-		ft_memcpy(&(*arg)[index], var, min(ft_strlen(env_var_name), ft_strlen(
-					var)));
-		if (min(ft_strlen(env_var_name), ft_strlen(var)) == ft_strlen(var))
-			ft_memmove(&(*arg)[index + ft_strlen(var)], end_of_var, ft_strlen(
-					end_of_var) + 1);
-		free(env_var_name);
+		ft_memcpy(&(*arg)[ind], var, ft_min(ft_strlen(evn), ft_strlen(var)));
+		if (ft_min(ft_strlen(evn), ft_strlen(var)) == ft_strlen(var))
+			ft_memmove(&(*arg)[ind + ft_strlen(var)], eov, ft_strlen(eov) + 1);
+		free(evn);
 		return (false);
 	}
-	*arg = ft_realloc(*arg, ft_strlen(*arg) - ft_strlen(env_var_name)
-			+ ft_strlen(var));
-	ft_memmove(end_of_var - ft_strlen(env_var_name) + ft_strlen(var),
-		end_of_var, ft_strlen(end_of_var));
-	ft_memcpy(&(*arg)[index], var, ft_strlen(var));
-	free(env_var_name);
+	*arg = ft_realloc(*arg, ft_strlen(*arg) - ft_strlen(evn) + ft_strlen(var));
+	if (*arg)
+		return (true);
+	ft_memmove(eov - ft_strlen(evn) + ft_strlen(var), eov, ft_strlen(eov));
+	ft_memcpy(&(*arg)[ind], var, ft_strlen(var));
+	free(evn);
 	return (false);
 }
 
@@ -152,7 +151,7 @@ bool	expand(t_command *cmd, char **env)
 	t_quotetype	in_quote;
 
 	in_quote = NOT;
-	args = cmd->arguments;
+	args = cmd->args;
 	while (*args)
 	{
 		i = 0;
@@ -164,13 +163,14 @@ bool	expand(t_command *cmd, char **env)
 				in_quote = (*args)[i];
 			if ((*args)[i] == '$' && (*args)[i + 1] && in_quote != SGL)
 			{
-				handle_var(args, i, env);
+				if (handle_var(args, i, env))
+					return (!parsing_error(MALLOC, "", env));
 			}
 			i++;
 		}
 		args++;
 	}
-	return (false);
+	return (true);
 }
 
 // @doc entrypoint
@@ -195,9 +195,9 @@ int8_t	entrypoint(t_command **cmds, char ***env, bool early_stop)
 		if (op || !ft_strcmp((*cmds)->path, "&&"))
 		{
 			entrypoint((void *)(*cmds)->infile, env, true);
-			if (op && ft_strcmp(get_env("$?", *env), "0"))
+			if (op && ft_strcmp(ft_get_env("$?", *env), "0"))
 				entrypoint((void *)(*cmds)->outfile, env, true);
-			else if (!op && !ft_strcmp(get_env("$?", *env), "0"))
+			else if (!op && !ft_strcmp(ft_get_env("$?", *env), "0"))
 				entrypoint((void *)(*cmds)->outfile, env, true);
 			continue ;
 		}

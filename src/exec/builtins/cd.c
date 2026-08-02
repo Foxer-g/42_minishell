@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/06/03 00:51:02 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/07/30 19:25:34 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/02 05:04:43 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,19 @@ static bool	update_pwd(char ***env)
 	return (false);
 }
 
-int	cd(char *path, char **env)
+int	cd(t_command cmd, char ***env)
 {
-	if (!path)
+	if (!cmd.args[1])
 	{
 		perror("Sorry, cd needs at least one argument");
 		return (1);
 	}
-	if (chdir(path))
+	if (chdir(cmd.args[1]))
 	{
 		perror("cd");
 		return (127);
 	}
-	if (!update_pwd(&env))
+	if (!update_pwd(env))
 		return (1);
 	return (0);
 }

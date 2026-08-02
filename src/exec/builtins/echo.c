@@ -6,29 +6,29 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/06/03 01:40:00 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/07/30 19:25:58 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/02 05:04:53 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	echo(int ac, char **av, t_ffile out)
+int	echo(t_command cmd, char ***env)
 {
 	bool	nl;
 
-	(void)ac;
-	av++;
-	nl = !!ft_strcmp(*av, "-n");
+	(void)env;
+	cmd.args++;
+	nl = !!ft_strcmp(*cmd.args, "-n");
 	if (!nl)
-		av++;
-	while (*av)
+		cmd.args++;
+	while (*cmd.args)
 	{
-		ft_putstr_fd(*av, out);
-		av++;
-		if (*av)
-			ft_putchar_fd(' ', out);
+		ft_putstr_fd(*cmd.args, cmd.outfd);
+		cmd.args++;
+		if (*cmd.args)
+			ft_putchar_fd(' ', cmd.outfd);
 	}
 	if (nl)
-		ft_putchar_fd('\n', out);
+		ft_putchar_fd('\n', cmd.outfd);
 	return (0);
 }

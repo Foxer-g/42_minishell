@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/05/19 17:30:32 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/06/24 04:05:53 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/02 05:19:30 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,20 @@ typedef enum e_quotetype
 	DBL = '"',
 	SGL = '\''
 }	t_quotetype;
+typedef int (*t_cmd_fun)(t_command, char ***);
 
 int8_t	entrypoint(t_command **cmds, char ***env, bool early_stop);
-int8_t	exec_single(t_command *command, char **env);
+int8_t	exec_single(t_command *command, char ***env);
 int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env);
 
+/* ************ */
+/*   BUILTINS   */
+/* ************ */
+int		cd(char *path, char **env);
+int		echo(int ac, char **av, t_ffile out);
+int		env(int ac, char **ev);
+int		minishell_exit(int ac, char **av);
+int		export(int ac, char **av, char ***env);
+int		pwd(int ac);
+int		unset(char **vars, char ***env);
 #endif // EXEC_INT_H

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
+/*                                                        :::      ::::::::   */
 /*   export.c                                            ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
-/*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
-/*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
-/*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
-/*   Created: 2026/06/11 04:54:12 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/07/30 19:26:28 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/11 04:54:12 by neumann           #+#    #+#             */
+/*   Updated: 2026/08/02 05:05:26 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,9 @@ void	display_env_as_bash(char ***env)
 	}
 }
 
-int	export(int ac, char **av, char ***env)
+int	export(t_command cmd, char ***env)
 {
+	const uintmax_t	ac = ft_nt_tablen((void*)cmd.args);
 	char	*var;
 
 	if (ac == 1)
@@ -43,10 +44,10 @@ int	export(int ac, char **av, char ***env)
 		display_env_as_bash(env);
 		return (0);
 	}
-	while (*++av)
+	while (*++cmd.args)
 	{
-		var = ft_strndup(*av, ft_strlen_until(*av, '='));
-		set_env(var, env, *av + ft_strlen_until(*av, '='));
+		var = ft_strndup(*cmd.args, ft_strlen_until(*cmd.args, '='));
+		ft_set_env(var, env, *cmd.args + ft_strlen_until(*cmd.args, '='));
 		free(var);
 	}
 	return (0);
