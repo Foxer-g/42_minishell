@@ -1,0 +1,13 @@
+def build(bld):
+	sources = [
+		"scheduler.c",
+		"scheduler_utils.c",
+		"redir_utils.c",
+		"piping_utils.c",
+	]
+	lschedule = bld.objects(
+		source		= sources,
+		features	= "c",
+		target		= "scheduleobjs",
+		includes	= bld.env.INCLUDES_ROOT
+	)
