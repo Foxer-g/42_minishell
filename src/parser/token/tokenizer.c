@@ -117,7 +117,7 @@ static bool	tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env)
 		(*tkn[*i]).content = ft_substr(split, j, len);
 		if (!(*tkn[*i]).content)
 			return (!parsing_error(MALLOC, "", env));
-		(*tkn[*i]).content = get_token_type((*tkn[*i]).content);
+		(*tkn[*i]).type = get_token_type((*tkn[*i]).content);
 		j += len;
 		(*i)++;
 	}
@@ -139,12 +139,12 @@ t_token	*tokenizer(char *input, char ***env)
 
 	tmp = ft_preserving_split(input, ' ');
 	if (!tmp)
-		return (!parsing_error(MALLOC, "", env));
+		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
 	tkn_lst = ft_calloc(token_stack_len(input) + 1, sizeof(t_token));
 	if (!tkn_lst)
 	{
 		ft_free_nt_tab(tmp, (int32_t) ft_nt_tablen((void *) tmp));
-		return (!parsing_error(MALLOC, "", env));
+		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
 	}
 	i = 0;
 	j = -1;

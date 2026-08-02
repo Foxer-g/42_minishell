@@ -21,7 +21,7 @@ int32_t	short_type(char *token)
 	else if (token[0] == ')')
 		return (C_PAR);
 	else if (token[0] == '\'')
-		return (SQUOTE);
+		return (QUOTE);
 	else if (token[0] == '"')
 		return (DQUOTE);
 	else if (token[0] == '|')

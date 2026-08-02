@@ -144,7 +144,7 @@ bool	handle_var(char **arg, uintmax_t ind, char **env)
 // @param cmd: [[t_command]] *, The targeted command.
 // @param env: char **, The environment.
 // @returns bool, Exit status.
-bool	expand(t_command *cmd, char **env)
+bool	expand(t_command *cmd, char ***env)
 {
 	char		**args;
 	uintmax_t	i;
@@ -163,7 +163,7 @@ bool	expand(t_command *cmd, char **env)
 				in_quote = (*args)[i];
 			if ((*args)[i] == '$' && (*args)[i + 1] && in_quote != SGL)
 			{
-				if (handle_var(args, i, env))
+				if (handle_var(args, i, *env))
 					return (!parsing_error(MALLOC, "", env));
 			}
 			i++;
@@ -201,7 +201,7 @@ int8_t	entrypoint(t_command **cmds, char ***env, bool early_stop)
 				entrypoint((void *)(*cmds)->outfile, env, true);
 			continue ;
 		}
-		expand(*cmds, *env);
+		expand(*cmds, env);
 		execution_pipeline(*cmds++, env);
 		if (early_stop)
 			return (0);

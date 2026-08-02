@@ -29,13 +29,13 @@ bool	strtrim_cmd_end(t_command *cmd, const char c)
 		tmp[i] = ft_substr((*cmd).args[i], 0, len + 1);
 		if (!tmp[i])
 		{
-			tmp = free_nt_tab(tmp, i);
+			tmp = ft_free_nt_tab(tmp, i);
 			return (false);
 		}
 		i++;
 	}
 	command_exec_set(cmd, tmp, args_len(*cmd));
-	tmp = free_nt_tab(tmp, args_len(*cmd));
+	tmp = ft_free_nt_tab(tmp, args_len(*cmd));
 	return (true);
 }
 
@@ -44,9 +44,9 @@ bool	cmd_set_hd(t_command *cmd, intmax_t index, char ***env)
 	char		**tmp;
 	intmax_t	i[2];
 
-	if (!((*cmd).args)[index + 1])
+	tmp = ft_calloc(args_len(*cmd) + 1, sizeof(char *));
+	if (!((*cmd).args)[index + 1] || !tmp)
 		return (false);
-	ft_calloc(args_len(*cmd) + 1, sizeof(char *));
 	tmp[0] = ft_strdup((*cmd).args[index + 1]);
 	ft_bzero(i, sizeof(i));
 	while ((*cmd).args[i[0]++])
@@ -55,12 +55,12 @@ bool	cmd_set_hd(t_command *cmd, intmax_t index, char ***env)
 			tmp[i[1]++] = ft_strdup((*cmd).args[i[0] - 1]);
 		if (!tmp[i[1] - 1])
 		{
-			free_nt_tab(tmp, args_len(*cmd) + 1);
-			return (!parsing_error(MALLOC, "", env));
+			ft_free_nt_tab(tmp, args_len(*cmd) + 1);
+			return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
 		}
 	}
 	command_exec_set(cmd, tmp, args_len(*cmd));
-	free_nt_tab(tmp, args_len(*cmd) + 1);
+	ft_free_nt_tab(tmp, args_len(*cmd) + 1);
 	free((*cmd).path);
 	(*cmd).path = ft_strdup((*cmd).args[1]);
 	free((*cmd).infile);
@@ -73,7 +73,7 @@ intmax_t	*find_heredoc(t_command *c, char ***env)
 	intmax_t	*res;
 	intmax_t	i[2];
 
-	res = ft_calloc(c_len(c), sizeof(intmax_t));
+	res = ft_calloc(cmd_len(c), sizeof(intmax_t));
 	if (!res)
 		return (NULL);
 	i[0] = -1;
@@ -88,7 +88,8 @@ intmax_t	*find_heredoc(t_command *c, char ***env)
 				if (res[i[0]] != -1)
 				{
 					free(res);
-					return (!parsing_error(PARSING, c[i[0]].args[i[1]], env));
+					parsing_error(PARSING, c[i[0]].args[i[1]], env);
+					return (false);
 				}
 				res[i[0]] = i[1];
 			}

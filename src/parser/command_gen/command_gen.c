@@ -33,15 +33,15 @@ static bool	cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
 	tmp = ft_strdup(o[i[0]].content);
 	if (!tmp)
 		return (!parsing_error(MALLOC, "", env));
-	if (o[i[0]].type == DQUOTE || o[i[0]].type == SQUOTE)
+	if (o[i[0]].type == DQUOTE || o[i[0]].type == QUOTE)
 	{
 		i[2] = o[i[0]].type;
 		i[0]++;
 		while (((intmax_t) o[i[0]].type) != i[2])
-			tmp = extend(tmp, o[i[0]++].content);
+			tmp = ft_extend(tmp, o[i[0]++].content);
 		if (!tmp)
 			return (!parsing_error(MALLOC, "", env));
-		tmp = extend(tmp, &o[i[0]].content[0]);
+		tmp = ft_extend(tmp, &o[i[0]].content[0]);
 		if (!tmp)
 			return (!parsing_error(MALLOC, "", env));
 		res_type = COMMAND;

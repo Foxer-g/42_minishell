@@ -48,7 +48,7 @@ static char	*invalid_quotes(t_token *tkn)
 	d = 0;
 	while (tkn[i].content)
 	{
-		s += 1 * (tkn[i].type == SQUOTE && d % 2 == 0);
+		s += 1 * (tkn[i].type == QUOTE && d % 2 == 0);
 		d += 1 * (tkn[i].type == DQUOTE && d % 2 == 0);
 		i++;
 	}

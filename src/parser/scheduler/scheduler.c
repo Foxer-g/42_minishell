@@ -9,7 +9,7 @@ static bool	command_expand(t_command **cmd, char ***env)
 	i = 0;
 	while ((*cmd[i]).path)
 	{
-		if (expand(&(*cmd[i]), *env))
+		if (expand(&(*cmd[i]), env))
 			return (true);
 		res = strtrim_cmd_end(&(*cmd[i]), ' ');
 		if (!res)
@@ -36,10 +36,10 @@ static bool	redir_apply(t_command **cmd, char ***env)
 		{
 			free(red);
 			if (tmp)
-				free_nt_tab(tmp, args_len((*cmd)[i]) - 2);
+				ft_free_nt_tab(tmp, args_len((*cmd)[i]) - 2);
 			return (!parsing_error(MALLOC, "", env));
 		}
-		command_exec_set(&(*cmd)[i], tmp, ft_get_nt_tab_len(tmp));
+		command_exec_set(&(*cmd)[i], tmp, ft_nt_tablen((void *)tmp));
 		free(red);
 		i++;
 	}

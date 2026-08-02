@@ -26,7 +26,7 @@ t_command	*parser(char *input, char ***env)
 		free_token(token_lst);
 		return (NULL);
 	}
-	raw_commands = command_gen(token_lst);
+	raw_commands = command_gen(token_lst, env);
 	free_token(token_lst);
 	if (!raw_commands)
 		return (NULL);

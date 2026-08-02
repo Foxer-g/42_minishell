@@ -24,14 +24,14 @@ intmax_t	*find_pipe(t_command *cmd, char ***env)
 	i = 0;
 	res = ft_calloc(nb + 2, sizeof(intmax_t));
 	if (!res)
-		return (!parsing_error(MALLOC, "", env));
+		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
 	while (cmd[i].infile)
 		if (cmd[i++].path[0] == '|')
 			res[res[0]++] = i - 1;
 	if (res[res[0]] == i - 1)
 	{
 		free(res);
-		return (!parsing_error(SYNTAX, "|", env));
+		return ((void *)((uintptr_t)!parsing_error(SYNTAX, "|", env)));
 	}
 	return (res);
 }
