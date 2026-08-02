@@ -3,7 +3,7 @@ NAME	=	minishell
 INCLUDES = ./includes
 BUILD_DIR = build/
 OBJECTS = $(SOURCES:src/%.c=$(BUILD_DIR)%.o)
-CFLAGS = -Wall -Wextra -ggdb
+CFLAGS = -Wall -Wextra  -Werror -ggdb
 LDFLAGS = -L libft -lft -lreadline
 CC = cc
 
