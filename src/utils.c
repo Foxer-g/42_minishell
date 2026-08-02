@@ -61,3 +61,27 @@ char	*prompt(char **env)
 	free(str_prompt);
 	return (out);
 }
+
+void	test_print(t_command input)
+{
+	intmax_t i;
+
+	while (input[i].infile)
+	{
+		ft_printf("Element : %d\n--------------\n", i);
+		ft_printf("Path : %s\nArguments :\n", input[i].path);
+		j = 0;
+		while (input[i].args[j])
+		{
+			ft_printf("    - %s\n", input[0].args[j]);
+			j++;
+		}
+		ft_printf("Pid : %i\n", input[i].pid);
+		ft_printf("Infd : %i\n", input[i].infd);
+		ft_printf("Outfd : %i\n", input[i].outfd);
+		ft_printf("Append : %i\n", input[i].append);
+		ft_printf("Infile : %s\n", input[i].infile);
+		ft_printf("Outfile : %s\n", input[i].outfile);
+		i++;
+	}
+}
