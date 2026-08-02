@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                                   ___        */
+/*   minishell.h                                         ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
-/*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/12 07:10:54 by neumann                                  */
+/*   Updated: 2026/08/02 04:58:34 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,11 @@
 # include "libft.h"
 # include "file.h"
 # include "parser.h"
+# ifndef EXEC_SOURCE
+#  include "exec.h"
+# else
+#  include "exec_int.h"
+# endif
 
 # define WE 1
 # define RE 0
@@ -43,13 +48,23 @@ typedef struct s_command
 	char	*outfile;
 }	t_command;
 
+enum e_builtin
+{
+	CD = '\0',
+	PWD = 'd',
+	ECHO = 'h',
+	EXIT = 'i',
+	EXPORT = 'p',
+	UNSET = 's',
+	ENV = 'v',
+};
+
 extern sig_atomic_t	g_sig_handle;
 
-int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env);
-char	**command_to_args(char *command);
-void	entrypoint(t_command **cmds, char **env);
-int8_t	exec_single(t_command *command, char **env);
-char	*join_tab(char **tab);
-char	*prompt(char **aenv);
-void	sig_handle(int32_t signal, siginfo_t *info, void *context);
+char		**command_to_args(char *command);
+char		*join_tab(char **tab);
+char		*prompt(char **aenv);
+t_command	*parser(char *input, char ***env);
+void		sig_handle(int32_t signal, siginfo_t *info, void *context);
+void		error(const char *err_message);
 #endif

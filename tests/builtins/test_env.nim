@@ -1,11 +1,6 @@
 discard """
-  action: "compile"
+  action: "run"
   exitcode: 0
-
-  outputsub: '''
-testresults
-tests
-'''
 
   # On Linux 64-bit machines, whether to use Valgrind to check for bad memory
   # accesses or memory leaks. On other architectures, the test will be run
@@ -26,25 +21,38 @@ tests
 
 import
     ../[libft, minishell],
-    std/envvars
+    std/[envvars, strutils]
+
 
 let
-  commands: array[1, t_command] = [
-    t_command(
-      path: "/usr/bin/ls",
-      arguments: allocCStringArray(["ls", "-a"]),
-      infile: "stdin",
-      outfile: "stdout"
-    )
+  tests: seq[(cint, bool)] = @[
+    (1, false),
+    (1, true)
   ]
+
 
 var
   tmp: seq[string] = newSeq[string]()
-  env: cstringArray
+  cenv: cstringArray
+  marked_as_export_env: cstringArray
+
 
 for k, v in envPairs():
   tmp.add(k & "=" & v)
-env = allocCStringArray(tmp)
+cenv = allocCStringArray(tmp)
 
-for c in commands:
-  assert(0 == int execute(c, STDOUT_FILENO, STDIN_FILENO, env))
+marked_as_export_env = allocCStringArray(readFile("tests/builtins/test_marked_as_export").split(":"))
+
+
+{.compile("src/exec/builtins/env.c", "-Iincludes -Og -g3").}
+proc builtin_env(ac: cint, ev: cstringArray) {.importc:"env".}
+
+
+for test in tests:
+    if not test[1]:
+        builtin_env(test[0], cenv)
+    else:
+        builtin_env(test[0], marked_as_export_env)
+
+deallocCStringArray(cenv)
+deallocCStringArray(marked_as_export_env)

@@ -15,7 +15,8 @@ def configure(conf):
 		"-Werror",
 		"-Wno-unused-variable",
 		"-fshort-enums",
-		"-O2",
+		# "-O2",
+		"-ggdb",
 		"-march=native"
 	]
 	conf.env.LIB = [

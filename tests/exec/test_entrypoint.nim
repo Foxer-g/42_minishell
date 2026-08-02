@@ -24,13 +24,17 @@ import
     std/envvars
 
 let
-  commands: seq[t_command] = @[
-    t_command(
-      path: "/usr/bin/ls",
-      arguments: allocCStringArray(["ls", "-a"])
-    )
+  commands: seq[seq[Pt_command]] = @[
+    @[
+      Pt_command(
+        path: "/usr/bin/ls",
+        arguments: allocCStringArray(["ls", "-a"]),
+        infile: "stdin",
+        outfile: "stdout"
+      ),
+      nil
+    ]
   ]
-  cmdaddrs: ptr t_command = addr commands[0]
 
 var
   tmp: seq[string] = newSeq[string]()
@@ -40,4 +44,6 @@ for k, v in envPairs():
   tmp.add(k & "=" & v)
 env = allocCStringArray(tmp)
 
-entrypoint(addr cmdaddrs, env)
+for cmd in commands:
+
+  entrypoint(cast[ptr UncheckedArray[Pt_command]](addr cmd), env)

@@ -18,6 +18,11 @@ tests/exec/*
 !tests/parsing
 tests/parsing/*
 !tests/parsing/*.nim
+!tests/builtins
+tests/builtins/*
+!tests/builtins/*.nim
 *.sav*
 compile_commands.json
 minishell
+
+

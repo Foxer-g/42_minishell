@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   int_file.h                                         :+:      :+:    :+:   */
+/*   int_file.h                                          ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 17:14:41 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/03/17 05:44:18 by rboutelo         ###   ########.fr       */
+/*   Updated: 2026/07/28 19:52:26 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # endif
 # include "libft.h"
 # include "syscalls.h"
+# include "types.h"
 // Values used in musl
 # define UNGET 8
 # define BUFSIZE 1024
@@ -33,9 +34,6 @@
 # define F_APP 128
 # define WE 1
 # define RE 0
-
-typedef int				t_ffile;
-typedef struct s_iovec	t_iovec;
 
 void		append_file(t_ffile file);
 void		remove_file(t_ffile file);

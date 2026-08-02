@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   dynamic_list.h                                     :+:      :+:    :+:   */
+/*   dynamic_list.h                                      ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 05:35:19 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/03/20 01:16:06 by rboutelo         ###   ########.fr       */
+/*   Updated: 2026/07/29 16:37:13 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,9 @@ typedef struct s_elem
 	union u_value	value;
 }	t_elem;
 
-void	*init_array(t_elem elem);
-void	*extend_array(void **arr);
-void	arr_push(void **arr, t_elem elem);
-void	arr_free(void **arr);
+void	*ft_init_array(t_elem elem);
+void	*ft_extend_array(void **arr);
+void	ft_arr_push(void **arr, t_elem elem);
+void	ft_arr_free(void **arr);
 
 #endif //DYNAMIC_LIST_H
