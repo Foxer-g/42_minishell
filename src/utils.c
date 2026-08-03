@@ -46,8 +46,8 @@ char	*prompt(char **env)
 	char	*usr;
 
 	str_prompt = ft_strdup(PROMPT_A);
-	usr = ft_get_env("USER=", env);
-	path = ft_get_env("PWD=", env);
+	usr = ft_get_env("USER", env);
+	path = ft_get_env("PWD", env);
 	if (ft_strlen(path) > (ft_strlen(ft_get_env("HOME=", env))))
 	{
 		path += ft_strlen(ft_get_env("HOME=", env)) - 1;
