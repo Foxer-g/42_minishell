@@ -9,8 +9,8 @@ SCHEDULER_SRCS_DIR = $(PARSING_SRCS_DIR)scheduler/
 EXEC_FILES = cmd_handler.c entrypoint.c
 BUILTINS_FILES = cd.c echo.c env.c exit.c export.c pwd.c unset.c
 
-PARSING_FILES = parser_check.c parser_utils.c
-TOKENIZER_FILES = tokenizer.c utils.c
+PARSING_FILES = parser_check.c parser.c
+TOKENIZER_FILES = tokenizer.c token_utils.c
 COMMAND_GEN_FILES = command_gen.c command_gen_utils.c type_manipulator.c
 SCHEDULER_FILES = scheduler.c scheduler_utils.c redir_utils.c piping_utils.c
 
