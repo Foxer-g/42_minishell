@@ -32,24 +32,20 @@ bool	command_redir_set(t_command *command, t_redir *redir)
 {
 	if (redir[0].type)
 	{
-		free((*command).infile);
-		(*command).infile = ft_strdup((*command).args[(*redir).index + 1]);
-		if (!(*command).infile)
+		free(command->infile);
+		command->infile = ft_strdup(command->args[redir[0].index + 1]);
+		if (!command->infile)
 			return (false);
-		return (true);
 	}
-	else if (redir[1].type)
+	if (redir[1].type)
 	{
-		free((*command).outfile);
-		(*command).outfile = ft_strdup((*command).args[(*redir).index + 1]);
-		if (!(*command).outfile)
+		free(command->outfile);
+		command->outfile = ft_strdup(command->args[redir[1].index + 1]);
+		if (!command->outfile)
 			return (false);
-		if ((*redir).type == APPEND)
-			(*command).append = true;
-		return (true);
+		command->append = (redir[1].type == APPEND);
 	}
-	else
-		return (false);
+	return (redir[0].type || redir[1].type);
 }
 
 t_command	init_command(void)
