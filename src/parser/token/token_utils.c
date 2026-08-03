@@ -60,7 +60,7 @@ int32_t	composed_type(char *token)
 	return (-1);
 }
 
-void	free_tokens(t_token *token_lst)
+void	free_token(t_token *token_lst)
 {
 	int64_t	i;
 

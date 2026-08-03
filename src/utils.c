@@ -35,7 +35,8 @@ void	sig_handle(int32_t signal, siginfo_t *info, void *context)
 {
 	(void)context;
 	(void)info;
-	g_sig_handle = signal;
+	if (signal == SIGINT || signal == SIGQUIT)
+		g_sig_handle = signal;
 }
 
 char	*prompt(char **env)
@@ -48,9 +49,9 @@ char	*prompt(char **env)
 	str_prompt = ft_strdup(PROMPT_A);
 	usr = ft_get_env("USER", env);
 	path = ft_get_env("PWD", env);
-	if (ft_strlen(path) > (ft_strlen(ft_get_env("HOME=", env))))
+	if (ft_strlen(path) > (ft_strlen(ft_get_env("HOME", env))))
 	{
-		path += ft_strlen(ft_get_env("HOME=", env)) - 1;
+		path += ft_strlen(ft_get_env("HOME", env)) - 1;
 		path[0] = '~';
 	}
 	str_prompt = ft_extend(str_prompt, usr);

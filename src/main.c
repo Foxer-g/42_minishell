@@ -45,6 +45,7 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 	char				*input;
 	char				**env;
 
+	sig_init();
 	env = ft_copy_env(aenv);
 	if (ac != 1)
 	{
@@ -56,8 +57,11 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 		input = prompt(env);
 		while (input)
 		{
-			add_history(input);
-			minishell_action(input, &env);
+			if (input[0])
+			{
+				add_history(input);
+				minishell_action(input, &env);
+			}
 			input = prompt(env);
 		}
 		rl_clear_history();

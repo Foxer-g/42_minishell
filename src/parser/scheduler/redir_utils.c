@@ -30,7 +30,7 @@ char	**cmddup_without_redir(t_command cmd, t_redir *redir, char ***env)
 			if (!res)
 			{
 				res = ft_free_nt_tab(res, args_len(cmd) - 2);
-				return ((void *) ((uintptr_t)!parsing_error(MALLOC, "", env)));
+				return ((void *) ((uintptr_t)!parsing_error(MALLOC, " : redir_utils.c : cmddup_without_redir : res", env)));
 			}
 			j++;
 		}
@@ -47,7 +47,7 @@ t_redir	*find_redir(t_command cmd, char ***env)
 
 	redir = ft_calloc(2, sizeof(t_redir));
 	if (!redir)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
+		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : redir_utils.c : find_redir : redir", env)));
 	i = 0;
 	while (cmd.args[i++])
 	{

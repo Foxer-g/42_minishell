@@ -28,27 +28,27 @@ void	command_exec_set(t_command *command, char **cmd, uint64_t len)
 	}
 }
 
-bool	command_redir_set(t_command *command, t_redir *redir)
+bool	command_redir_set(t_command *command, t_redir *redir, char ***env)
 {
 	if (redir[0].type)
 	{
 		free(command->infile);
 		command->infile = ft_strdup(command->args[redir[0].index + 1]);
 		if (!command->infile)
-			return (false);
+			return (!parsing_error(MALLOC, " : type_manipulator.c : command_redir_set : infile", env));
 	}
 	if (redir[1].type)
 	{
 		free(command->outfile);
 		command->outfile = ft_strdup(command->args[redir[1].index + 1]);
 		if (!command->outfile)
-			return (false);
+			return (!parsing_error(MALLOC, " : type_manipulator.c : command_redir_set : outfile", env));
 		command->append = (redir[1].type == APPEND);
 	}
-	return (redir[0].type || redir[1].type);
+	return (true);
 }
 
-t_command	init_command(void)
+t_command	init_command(char ***env)
 {
 	t_command	res;
 
@@ -59,25 +59,33 @@ t_command	init_command(void)
 	res.outfd = 0;
 	res.append = false;
 	res.infile = ft_strdup("stdin");
+	if (!res.infile)
+		return ((t_command){.append=!parsing_error(MALLOC, " : type_manipulator.c : init_command : res.infile", env)});
 	res.outfile = ft_strdup("stdout");
+	if (!res.infile)
+		return ((t_command){.append=!parsing_error(MALLOC, " : type_manipulator.c : init_command : res.outfile", env)});
 	return (res);
 }
 
-t_command	cmd_dup(t_command cmd)
+t_command	cmd_dup(t_command cmd, char ***env)
 {
 	t_command	res;
 
-	res = init_command();
+	res = init_command(env);
 	command_exec_set(&res, cmd.args, args_len(cmd));
 	free(res.infile);
 	free(res.outfile);
 	res.infile = ft_strdup(cmd.infile);
+	if (!res.infile)
+		return ((t_command){.append=!parsing_error(MALLOC, " : type_manipulator.c : cmd_dup : res.infile", env)});
 	res.outfile = ft_strdup(cmd.outfile);
+	if (!res.infile)
+		return ((t_command){.append=!parsing_error(MALLOC, " : type_manipulator.c : cmd_dup : res.outfile", env)});
 	res.append = cmd.append;
 	if (!res.infile || !res.outfile)
 	{
 		free_command(&res);
-		return ((t_command){});
+		return ((t_command) {.append=!parsing_error(MALLOC, " : type manipulator.c : cmd_dup : infile || outfile", env)});
 	}
 	return (res);
 }

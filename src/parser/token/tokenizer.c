@@ -28,24 +28,23 @@ static int64_t	token_stack_len(char *input)
 	int64_t	len;
 
 	len = 0;
-	while (input[0])
+	while (*input)
 	{
-		if (ft_strnstr("()'\"\n;", &input[0], 5))
-			len++;
-		else if (ft_strnstr("$*", &input[0], 2) || !ft_iscmd_chr(input[0]))
+		if (ft_strchr("$*", *input) || !ft_iscmd_chr(input[0]))
 		{
 			input++;
-			while (ft_iscmd_chr(input[0]))
+			while (*input && ft_iscmd_chr(*input))
 				input++;
-			len++;
 		}
-		else if (ft_strnstr("|<>&", &input[0], 5))
+		else if (ft_strchr("|<>&", *input))
 		{
 			if (input[0] == input[1])
 				input++;
 			input++;
-			len++;
 		}
+		else
+			input++;
+		len++;
 	}
 	return (len);
 }
@@ -114,10 +113,10 @@ static bool	tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env)
 	while (split[j])
 	{
 		len = get_token_len(split, j);
-		(*tkn[*i]).content = ft_substr(split, j, len);
-		if (!(*tkn[*i]).content)
+		(*tkn)[*i].content = ft_substr(split, j, len);
+		if (!(*tkn)[*i].content)
 			return (!parsing_error(MALLOC, "", env));
-		(*tkn[*i]).type = get_token_type((*tkn[*i]).content);
+		(*tkn)[*i].type = get_token_type((*tkn)[*i].content);
 		j += len;
 		(*i)++;
 	}
@@ -139,7 +138,7 @@ t_token	*tokenizer(char *input, char ***env)
 
 	tmp = ft_preserving_split(input, ' ');
 	if (!tmp)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
+		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : tokenizer.c : tokenizer : tmp", env)));
 	tkn_lst = ft_calloc(token_stack_len(input) + 1, sizeof(t_token));
 	if (!tkn_lst)
 	{

@@ -32,7 +32,7 @@ static bool	cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
 
 	tmp = ft_strdup(o[i[0]].content);
 	if (!tmp)
-		return (!parsing_error(MALLOC, "", env));
+		return (!parsing_error(MALLOC, " : command_gen.c : cmpnd_qt_cntnt : tmp", env));
 	if (o[i[0]].type == DQUOTE || o[i[0]].type == QUOTE)
 	{
 		i[2] = o[i[0]].type;
@@ -40,10 +40,10 @@ static bool	cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
 		while (((intmax_t) o[i[0]].type) != i[2])
 			tmp = ft_extend(tmp, o[i[0]++].content);
 		if (!tmp)
-			return (!parsing_error(MALLOC, "", env));
+			return (!parsing_error(MALLOC, " : command_gen.c : cmpnd_qt_cntnt : tmp 2", env));
 		tmp = ft_extend(tmp, &o[i[0]].content[0]);
 		if (!tmp)
-			return (!parsing_error(MALLOC, "", env));
+			return (!parsing_error(MALLOC, " : command_gen.c : cmpnd_qt_cntnt : tmp 3", env));
 		res_type = COMMAND;
 	}
 	else
@@ -60,14 +60,17 @@ bool	quote_join(t_token **tkns, char ***env)
 	ft_bzero(i, sizeof(i));
 	res = malloc(1 * sizeof(t_token));
 	if (!res)
-		return (!parsing_error(MALLOC, "", env));
+		return (!parsing_error(MALLOC, " : command_gen.c : quote_join : res", env));
 	while ((*tkns)[i[0]].content)
 	{
 		res = ft_realloc(res, (i[1] + 1) * sizeof(t_token));
 		if (!res)
-			return (!parsing_error(MALLOC, "", env));
+			return (!parsing_error(MALLOC, " : command_gen.c : quote_join : res 2", env));
 		if (!cmpnd_qt_cntnt(i, *tkns, res, env))
+		{
+			free_token(res);
 			return (false);
+		}
 		i[0]++;
 	}
 	free(*tkns);
@@ -81,30 +84,33 @@ bool	quote_join(t_token **tkns, char ***env)
 // @param input: [[t_token]], Tokenized user input.
 // @return [[t_commnad]], A command array to be organized.
 
-t_command	*command_gen(t_token *tkns, char ***env)
+t_command	*command_gen(t_token **tkns, char ***env)
 {
 	uintmax_t	i[3];
-	char		**tmp;
 	t_command	*res;
+	char		**tmp;
 
-	ft_bzero(&i, sizeof(i));
-	if (!quote_join(&tkns, env))
+	ft_bzero(i, sizeof(i));
+	if (!quote_join(tkns, env))
 		return (NULL);
-	res = ft_calloc((command_len(tkns) + 1), sizeof(t_command));
+	res = ft_calloc(command_len(*tkns) + 1, sizeof(t_command));
 	if (!res)
-		return (NULL);
-	while (tmp[i[0]])
+		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : command_gen.c : command_gen : res", env)));
+	while ((*tkns)[i[0]].content)
 	{
 		i[1] = i[0] + 1;
-		while (tkns[i[1]].content && tkn_cat(tkns[i[0]]) == tkn_cat(tkns[i[1]]))
+		while ((*tkns)[i[1]].content
+			&& tkn_cat((*tkns)[i[0]]) == tkn_cat((*tkns)[i[1]]))
 			i[1]++;
-		res[i[2]] = init_command();
-		tmp = tkn_to_tab(tkns, (intmax_t) i[0], (intmax_t) i[1] - i[0], env);
+		res[i[2]] = init_command(env);
+		tmp = tkn_to_tab(*tkns, i[0], i[1] - i[0], env);
 		if (!tmp)
-			return (NULL);
+		{
+			free_command(res);
+			return ((void *)((uintptr_t)!parsing_error(MALLOC, " : command_gen.c : command_gen : tmp", env)));
+		}
 		command_exec_set(&res[i[2]++], tmp, i[1] - i[0]);
 		i[0] = i[1];
 	}
-	ft_free_nt_tab(tmp, command_len(tkns));
 	return (res);
 }

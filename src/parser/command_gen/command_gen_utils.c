@@ -3,20 +3,19 @@
 
 char	**tkn_to_tab(t_token *tkns, intmax_t i, intmax_t len, char ***env)
 {
-	intmax_t	j;
 	intmax_t	k;
 	char		**res;
 
-	j = i;
 	k = 0;
 	res = ft_calloc(len + 1, sizeof(char *));
 	if (!res)
-		return (parsing_error(MALLOC, "", env));
-	while (j < len)
+		return ((void *)((uintptr_t)parsing_error(MALLOC, " : command_gen_utils.c : tkn_to_tab : res", env)));
+	while (i < len)
 	{
-		res[k] = ft_strdup(tkns[j++].content);
+		res[k] = ft_strdup(tkns[i++].content);
 		if (!res[k])
-			return (!parsing_error(MALLOC, "", env));
+			return ((void *)((uintptr_t)!parsing_error(MALLOC, " : command_gen_utils.c : tkn_to_tab : res[k]", env)));
+		k++;
 	}
 	return (res);
 }
