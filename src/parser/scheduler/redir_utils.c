@@ -14,27 +14,28 @@ static int32_t	is_redir(char c1, char c2)
 
 char	**cmddup_without_redir(t_command cmd, t_redir *redir, char ***env)
 {
+	char		**res;
 	intmax_t	i;
 	intmax_t	j;
-	char		**res;
 
-	i = 0;
+	i = -1;
 	j = 0;
 	res = ft_calloc(args_len(cmd) + 1, sizeof(char *));
-	while (cmd.args[i])
+	if (!res)
+		return((void *)((uintptr_t)!parsing_error(MALLOC, " : redir_utils.c : cmddup_without_redir : res\n", env)));
+	while (cmd.args[++i])
 	{
-		if (i != redir[0].index || i != redir[0].index + 1
-			|| i != redir[1].index || i != redir[1].index)
+		if (!((redir[0].index && (i == redir[0].index
+			|| i == redir[0].index + 1)) || ((redir[0].index
+			&& (i == redir[0].index || i == redir[0].index + 1)))))
 		{
 			res[j] = ft_strdup(cmd.args[i]);
-			if (!res)
+			if (!res[j++])
 			{
-				res = ft_free_nt_tab(res, args_len(cmd) - 2);
-				return ((void *) ((uintptr_t)!parsing_error(MALLOC, " : redir_utils.c : cmddup_without_redir : res", env)));
+				free(res);
+				return((void *)((uintptr_t)!parsing_error(MALLOC, " : redir_utils.c : cmddup_without_redir : res[j]\n", env)));
 			}
-			j++;
 		}
-		i++;
 	}
 	return (res);
 }
@@ -47,7 +48,7 @@ t_redir	*find_redir(t_command cmd, char ***env)
 
 	redir = ft_calloc(2, sizeof(t_redir));
 	if (!redir)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : redir_utils.c : find_redir : redir", env)));
+		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : redir_utils.c : find_redir : redir\n", env)));
 	i = 0;
 	while (cmd.args[i++])
 	{
