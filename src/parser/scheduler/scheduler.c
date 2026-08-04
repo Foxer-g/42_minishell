@@ -7,11 +7,11 @@ static bool	command_expand(t_command **cmd, char ***env)
 	bool		res;
 
 	i = 0;
-	while ((*cmd[i]).path)
+	while ((*cmd)[i].infile)
 	{
-		if (expand(&(*cmd[i]), env))
-			return (true);
-		res = strtrim_cmd_end(&(*cmd[i]), ' ', env);
+		if (!expand(&((*cmd)[i]), env))
+			return (false);
+		res = strtrim_cmd_end(&((*cmd)[i]), env);
 		if (!res)
 			return (parsing_error(MALLOC, " : scheduler.c : command_expand : res", env));
 		i++;

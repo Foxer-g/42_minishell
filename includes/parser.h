@@ -88,7 +88,7 @@ void		command_exec_set(t_command *command, char **cmd, uint64_t len);
 bool		command_redir_set(t_command *command, t_redir *redir, char ***env);
 
 t_command	*scheduler(t_command *raw_command, char ***env);
-bool		strtrim_cmd_end(t_command *cmd, const char c, char ***env);
+bool		strtrim_cmd_end(t_command *cmd, char ***env);
 intmax_t	args_len(t_command cmd);
 bool		cmd_set_hd(t_command *cmd, intmax_t index, char ***env);
 intmax_t	*find_heredoc(t_command *cmd, char ***env);
