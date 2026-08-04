@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 14:45:16 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/04 17:40:45 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/04 22:45:23 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@
 /* **************** */
 void		*ft_calloc(size_t nmemb, size_t size);
 void		*ft_realloc(void *ptr, size_t size);
-void		*ft_recalloc(void *ptr, uintmax_t nmemb, uintmax_t size);
+void		*ft_recalloc(void *ptr, uintmax_t old,
+	uintmax_t nmemb, uintmax_t size);
 void		*ft_free_nt_tab(char **str, int32_t alloc_count);
 
 /* **************** */

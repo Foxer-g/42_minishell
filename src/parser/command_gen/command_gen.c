@@ -59,12 +59,12 @@ bool	quote_join(t_token **tkns, char ***env)
 	intmax_t	i[3];
 
 	ft_bzero(i, sizeof(i));
-	res = malloc(1 * sizeof(t_token));
+	res = ft_calloc(1, sizeof(t_token));
 	if (!res)
 		return (!parsing_error(MALLOC, " : command_gen.c : quote_join : res", env));
 	while ((*tkns)[i[0]].content)
 	{
-		res = ft_recalloc(res, i[1] + 2, sizeof(t_token));
+		res = ft_recalloc(res, (i[1] + 1) * sizeof(t_token), i[1] + 2, sizeof(t_token));
 		if (!res)
 			return (!parsing_error(MALLOC, " : command_gen.c : quote_join : res 2", env));
 		if (!cmpnd_qt_cntnt(i, *tkns, res, env))
