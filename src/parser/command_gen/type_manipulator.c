@@ -55,8 +55,8 @@ t_command	init_command(char ***env)
 	res.path = NULL;
 	res.args = NULL;
 	res.pid = 0;
-	res.infd = 0;
-	res.outfd = 0;
+	res.infd = STDIN_FILENO;
+	res.outfd = STDOUT_FILENO;
 	res.append = false;
 	res.infile = ft_strdup("stdin");
 	if (!res.infile)
@@ -79,7 +79,7 @@ t_command	cmd_dup(t_command cmd, char ***env)
 	if (!res.infile)
 		return ((t_command){.append=!parsing_error(MALLOC, " : type_manipulator.c : cmd_dup : res.infile", env)});
 	res.outfile = ft_strdup(cmd.outfile);
-	if (!res.infile)
+	if (!res.outfile)
 		return ((t_command){.append=!parsing_error(MALLOC, " : type_manipulator.c : cmd_dup : res.outfile", env)});
 	res.append = cmd.append;
 	if (!res.infile || !res.outfile)
