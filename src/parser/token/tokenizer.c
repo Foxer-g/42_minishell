@@ -153,6 +153,5 @@ t_token	*tokenizer(char *input, char ***env)
 		if (!tkn_from_split(&tkn_lst, &i, tmp[j], env))
 			return (NULL);
 	ft_free_nt_tab(tmp, ft_nt_tablen((void *) tmp));
-	free(input);
 	return (tkn_lst);
 }
