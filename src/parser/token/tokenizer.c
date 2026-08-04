@@ -77,6 +77,8 @@ static int64_t	get_token_len(char *input, int64_t start)
 	}
 	else
 		i++;
+	while(input[i] == ' ')
+		i++;
 	return (i - start);
 }
 
@@ -88,7 +90,7 @@ static int64_t	get_token_len(char *input, int64_t start)
 
 static int32_t	get_token_type(char *token)
 {
-	if (ft_strlen(token) == 1)
+	if (ft_strlen(token) - count_space(token) == 1)
 		return (short_type(token));
 	else if (ft_strnstr("$*|<>&", &token[0], 6) || ft_iscmd_chr(token[0]))
 		return (composed_type(token));

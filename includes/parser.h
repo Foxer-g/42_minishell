@@ -71,6 +71,7 @@ bool		parsing_error(char *message, char *token, char ***env);
 t_token		*tokenizer(char *input, char ***env);
 
 bool		ft_iscmd_chr(char c);
+intmax_t	count_space(char *str);
 int32_t		short_type(char *token);
 int32_t		composed_type(char *token);
 void		free_token(t_token *token_lst);

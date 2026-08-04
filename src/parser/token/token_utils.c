@@ -1,6 +1,22 @@
 #include "minishell.h"
 #include "parser.h"
 
+intmax_t	count_space(char *str)
+{
+	intmax_t	i;
+	intmax_t	res;
+
+	i = 0;
+	res = 0;
+	while (str[i])
+	{
+		if (str[i] == ' ')
+			res++;
+		i++;
+	}
+	return (i);
+}
+
 // @doc ft_iscmd_chr
 // @kind func
 // @desc Check if the char is in the command type charset.
