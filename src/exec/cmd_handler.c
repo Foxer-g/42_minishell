@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/02 19:02:58 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/04 22:30:08 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,17 +74,17 @@ int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 
 t_cmd_fun	get_func(enum e_builtin builtin)
 {
-	const void	*funcs[119] = {
+	const t_cmd_fun funcs[119] = {
 	[CD] = cd,
 	[PWD] = pwd,
 	[ECHO] = echo,
 	[EXIT] = minishell_exit,
 	[EXPORT] = export,
 	[UNSET] = unset,
-	[ENV] = env,
+	[ENV] = minishell_env,
 	};
 
-	return ((t_cmd_fun)funcs[builtin]);
+	return (funcs[builtin]);
 }
 
 // @doc exec_single
@@ -97,6 +97,9 @@ int8_t	exec_single(t_command *command, char ***env)
 {
 	const char	*blts[] = {"cd", "echo", "env", "exit",
 		"export", "pwd", "unset", NULL};
+	const t_cmd_fun funcs[] = {
+		cd, echo, minishell_env, minishell_exit, export, pwd, unset, NULL,
+	};
 	int8_t		status;
 	uint8_t		i;
 
@@ -106,7 +109,8 @@ int8_t	exec_single(t_command *command, char ***env)
 	{
 		if (!ft_strcmp(blts[i], command->path))
 		{
-			status = (get_func(command->path[2]))(*command, env);
+			status = funcs[i](*command, env);
+			return (status);
 		}
 		i++;
 	}

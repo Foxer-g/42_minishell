@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/05/19 17:30:32 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/02 05:19:30 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/04 22:27:58 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env);
 /* ************ */
 /*   BUILTINS   */
 /* ************ */
-int		cd(char *path, char **env);
-int		echo(int ac, char **av, t_ffile out);
-int		env(int ac, char **ev);
-int		minishell_exit(int ac, char **av);
-int		export(int ac, char **av, char ***env);
-int		pwd(int ac);
-int		unset(char **vars, char ***env);
+int		cd(t_command cmd, char ***env);
+int		echo(t_command cmd, char ***env);
+int		minishell_env(t_command cmd, char ***env);
+int		minishell_exit(t_command cmd, char ***env);
+int		export(t_command cmd, char ***env);
+int		pwd(t_command cmd, char ***env);
+int		unset(t_command cmd, char ***env);
 #endif // EXEC_INT_H
