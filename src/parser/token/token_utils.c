@@ -14,7 +14,7 @@ intmax_t	count_space(char *str)
 			res++;
 		i++;
 	}
-	return (i);
+	return (res);
 }
 
 // @doc ft_iscmd_chr
