@@ -82,7 +82,7 @@ static bool	heredocs_handler(t_command **cmd, char ***env)
 	if (!heredocs)
 		return (false);
 	i = 0;
-	while ((*cmd[i]).args)
+	while ((*cmd)[i].args)
 	{
 		if (heredocs[i] != -1)
 		{
