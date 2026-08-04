@@ -32,7 +32,7 @@
 
 # define PROMPT_A "\x1b[22;36;45m"
 # define PROMPT_B "\x1b[0m@\x1b[32;45m"
-# define PROMPT_C "\x1b[0m $ "
+# define PROMPT_C "\x1b[0m$ "
 
 // @doc t_command
 // @kind type
