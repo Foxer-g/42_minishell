@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/05 02:16:15 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 21:23:06 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,12 @@ void	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 	exit(127 * (failed == ENOENT) | 1);
 }
 
+/*
+Relic of the old code, indexed using the third character to differentiate
+builtins.
 t_cmd_fun	get_func(enum e_builtin builtin)
 {
-	const t_cmd_fun funcs[119] = {
+	const t_cmd_fun funcs[] = {
 	[CD] = cd,
 	[PWD] = pwd,
 	[ECHO] = echo,
@@ -86,6 +89,24 @@ t_cmd_fun	get_func(enum e_builtin builtin)
 
 	return (funcs[builtin]);
 }
+*//*
+Relic of the old code, indexed using the third character to differentiate
+builtins.
+t_cmd_fun	get_func(enum e_builtin builtin)
+{
+	const t_cmd_fun funcs[] = {
+	[CD] = cd,
+	[PWD] = pwd,
+	[ECHO] = echo,
+	[EXIT] = minishell_exit,
+	[EXPORT] = export,
+	[UNSET] = unset,
+	[ENV] = minishell_env,
+	};
+
+	return (funcs[builtin]);
+}
+*/
 
 // @doc exec_single
 // @kind func
