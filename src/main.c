@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 03:09:23 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/04 18:58:51 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 02:19:48 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ bool	minishell_action(char *input, char ***env)
 	parsed_input = parser(input, env);
 	if (!parsed_input)
 		return (false);
-//	entry_point(parsed_input, env);
+	entrypoint(parsed_input, env);
 	test_print(parsed_input);
 	free_command(parsed_input);
 	free(input);
@@ -51,6 +51,7 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 	{
 		input = join_tab(++av);
 		minishell_action(input, &env);
+		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
 	}
 	else
 	{
