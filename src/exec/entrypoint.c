@@ -164,7 +164,7 @@ bool	expand(t_command *cmd, char ***env)
 				in_quote = (*args)[i];
 			if ((*args)[i] == '$' && (*args)[i + 1] && in_quote != SGL)
 			{
-				if (handle_var(args, i, *env))
+				if (!handle_var(args, i, *env))
 					return (!parsing_error(MALLOC, "", env));
 			}
 			i++;

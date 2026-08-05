@@ -61,7 +61,7 @@ int32_t	short_type(char *token)
 
 int32_t	composed_type(char *token)
 {
-	if (ft_strlen(token) == 1 && ft_strnstr(token, "$", 2))
+	if (ft_strchr(token, '$'))
 		return (ENV_DESC);
 	if (ft_strlen(token) == 1 && ft_strnstr(token, "*", 2))
 		return (WILDCARD);
