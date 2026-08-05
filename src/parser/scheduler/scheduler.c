@@ -58,6 +58,8 @@ static t_command	*piping(t_command *cmd, char ***env)
 
 	if (!pipes)
 		return (full_cmd_dup(cmd, env));
+	if (pipes == (void *)-1)
+		return ((void *)((uintptr_t)!parsing_error(INV_PIPES, "|", env)));
 	res = ft_calloc(cmd_len(cmd) / 2 + 2, sizeof(t_command));
 	if (!is_valid_pipes(pipes, env) || !res)
 	{
@@ -71,6 +73,7 @@ static t_command	*piping(t_command *cmd, char ***env)
 	while (cmd[i].path)
 		if (cmd[i++].path[0] != '|')
 			res[j++] = cmd_dup(cmd[i - 1], env);
+	free((void *)pipes);
 	return (is_error(res, j, env));
 }
 
