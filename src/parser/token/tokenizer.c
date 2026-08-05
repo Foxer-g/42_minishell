@@ -30,10 +30,10 @@ static int64_t	token_stack_len(char *input)
 	len = 0;
 	while (*input)
 	{
-		if (ft_strchr("$*", *input) || !ft_iscmd_chr(input[0]))
+		if (ft_strchr("$*", *input) || !iscmd_chr(input[0]))
 		{
 			input++;
-			while (*input && ft_iscmd_chr(*input))
+			while (*input && iscmd_chr(*input))
 				input++;
 		}
 		else if (ft_strchr("|<>&", *input))
@@ -63,10 +63,10 @@ static int64_t	get_token_len(char *input, int64_t start)
 	i = start;
 	if (ft_strnstr("()'\"\n;", &input[i], 5))
 		i++;
-	else if (ft_strnstr("$*", &input[i], 2) || ft_iscmd_chr(input[i]))
+	else if (ft_strnstr("$*", &input[i], 2) || iscmd_chr(input[i]))
 	{
 		i++;
-		while (ft_iscmd_chr(input[i]))
+		while (iscmd_chr(input[i]))
 			i++;
 	}
 	else if (ft_strnstr("|<>&", &input[i], 5))
@@ -92,7 +92,7 @@ static int32_t	get_token_type(char *token)
 {
 	if (ft_strlen(token) - count_space(token) == 1)
 		return (short_type(token));
-	else if (ft_strnstr("$*|<>&", &token[0], 6) || ft_iscmd_chr(token[0]))
+	else if (ft_strnstr("$*|<>&", &token[0], 6) || iscmd_chr(token[0]))
 		return (composed_type(token));
 	return (0);
 }
