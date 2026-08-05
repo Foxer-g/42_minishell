@@ -25,7 +25,7 @@ intmax_t	count_space(char *str)
 
 bool	iscmd_chr(char c)
 {
-	if (ft_strnstr("$*'\"()|&;\n<>", &c, 12))
+	if (ft_strchr("$*'\"()|&;\n<>", c))
 		return (false);
 	return (true);
 }
@@ -54,7 +54,7 @@ int32_t	short_type(char *token)
 		return (O_REDIR);
 	else if (token[0] == '*')
 		return (WILDCARD);
-	else if (!iscmd_chr(token[0]))
+	else if (iscmd_chr(token[0]))
 		return (COMMAND);
 	return (-1);
 }
