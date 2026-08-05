@@ -26,8 +26,8 @@ char	**cmddup_without_redir(t_command cmd, t_redir *redir, char ***env)
 	while (cmd.args[++i])
 	{
 		if (!((redir[0].index && (i == redir[0].index
-			|| i == redir[0].index + 1)) || ((redir[0].index
-			&& (i == redir[0].index || i == redir[0].index + 1)))))
+			|| i == redir[0].index + 1)) || ((redir[1].index
+			&& (i == redir[1].index || i == redir[1].index + 1)))))
 		{
 			res[j] = ft_strdup(cmd.args[i]);
 			if (!res[j++])
