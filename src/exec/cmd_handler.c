@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/05 23:10:36 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/06 00:17:32 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,7 @@ bool	exec_single(t_command *command, char ***env)
 		if (!ft_strcmp(blts[i], command->path))
 		{
 			command->pid = funcs[i](*command, env);
+			command->builtin = true;
 			return (true);
 		}
 		i++;
