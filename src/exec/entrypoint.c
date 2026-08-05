@@ -6,7 +6,7 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/05 21:28:53 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 23:16:23 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,20 +54,21 @@ static int8_t	execution_pipeline(t_command *cmd, char ***env)
 {
 	t_ffile	here_doc_pipe[2];
 	bool	pipe_used;
+	bool	status;
 
 	pipe_used = false;
 	if (!ft_strcmp(cmd->infile, "heredoc"))
 		cmd->infd = setup_here_doc(here_doc_pipe, "EOF", &pipe_used);
-	else if (ft_strcmp(cmd->infile, "stdin") && ft_strcmp(cmd->infile, "|"))
+	else if (ft_strcmp(cmd->infile, "stdin"))
 		cmd->infd = ft_ffopen(cmd->infile, "r");
-	if (ft_strcmp(cmd->outfile, "stdout") && ft_strcmp(cmd->outfile, "|"))
+	if (ft_strcmp(cmd->outfile, "stdout"))
 		cmd->outfd = ft_ffopen(cmd->outfile, "w");
 	if (cmd->infd < 0 || cmd->outfd < 0)
-		return (1);
-	exec_single(cmd, env);
+		return (false);
+	status = exec_single(cmd, env);
 	if (pipe_used)
 		ft_close_pipe(here_doc_pipe);
-	return (0);
+	return (status);
 }
 
 // @doc setup_pipe
@@ -75,32 +76,29 @@ static int8_t	execution_pipeline(t_command *cmd, char ***env)
 // @desc Sets up the pipe between the current and next command if required
 // @param [[t_command]] **, the commands list.
 // @returns bool, The exit status.
-static bool	setup_pipe(t_command **cmds)
+static bool	setup_pipe(t_command *cmds)
 {
 	uintmax_t	to_resolve;
 	t_ffile		wpipe[2];
-	t_command	**current;
-	int32_t		error;
+	t_command	*first;
 
+	first = cmds;
 	to_resolve = 0;
-	while (*cmds && !ft_strcmp((*cmds)->path, "|") && *cmds++)
+	while (cmds && cmds->path && cmds++)
 		to_resolve++;
-	current = cmds;
-	error = 0;
-	while (to_resolve--)
+	if (to_resolve < 2)
+		return (true);
+	while (--to_resolve)
 	{
-		error = pipe(wpipe);
-		if (error < 0)
+		if (pipe(wpipe) < 0)
 		{
 			perror("pipe");
-			break ;
+			return (false);
 		}
-		(*current)->outfd = wpipe[WE];
-		(*(current + 1))->infd = wpipe[RE];
-		current++;
+		first->outfd = wpipe[WE];
+		(first + 1)->infd = wpipe[RE];
+		first++;
 	}
-	if (error)
-		return (false);
 	return (true);
 }
 
@@ -130,7 +128,8 @@ bool	handle_var(char **arg, uintmax_t ind, char **env)
 		free(evn);
 		return (false);
 	}
-	*arg = ft_realloc(*arg, ft_strlen(*arg) - ft_strlen(evn) + ft_strlen(var));
+	*arg = ft_recalloc(*arg, ft_strlen(*arg), ft_strlen(*arg)
+		 - ft_strlen(evn) + ft_strlen(var), sizeof(char));
 	if (!*arg)
 		return (true);
 	eov = &(*arg)[ind] + ft_strlen_until(&(*arg)[ind], ' ');
@@ -180,9 +179,8 @@ bool	expand(t_command *cmd, char ***env)
 // @desc The main entrypoint of the execution pipeline.
 // @param cmds: [[t_command]] **, the list of commands to execute.
 // @param env: char ***, the environment to work off of.
-// @param early_stop: bool, if it should stop after the first command.
 // @returns int8_t, The exit status.
-int32_t	entrypoint(t_command *cmds, char ***env, bool early_stop)
+int32_t	entrypoint(t_command *cmds, char ***env)
 {
 	t_command	*cmdsc;
 	int32_t		status;
@@ -190,22 +188,21 @@ int32_t	entrypoint(t_command *cmds, char ***env, bool early_stop)
 	cmdsc = cmds;
 	while (cmds)
 	{
-		if (!setup_pipe(&cmds))
+		if (!setup_pipe(cmds))
 		{
 			error("You confused the heck out of the parser.");
 			return (1);
 		}
 		execution_pipeline(cmds++, env);
-		if (early_stop)
-		{
-			waitpid((cmds - 1)->pid, &status, 0);
-			return (status);
-		}
 	}
 	while (cmdsc)
 	{
-		waitpid(cmds[0].pid, &status, 0);
+		if (!cmds[0].builtin)
+			waitpid(cmds[0].pid, &status, 0);
+		else
+			status = cmds[0].pid;
 		cmdsc++;
 	}
+	ft_set_exit_code(status, env);
 	return (status);
 }

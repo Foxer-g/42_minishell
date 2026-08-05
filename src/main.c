@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main.c                                              ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/05 03:11:34 by rboutelo         ###   ########.fr       */
+/*   Updated: 2026/08/05 21:54:15 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	minishell_action(char *input, char ***env)
 	if (!parsed_input)
 		return ;
 	entrypoint(parsed_input, env);
-	//test_print(parsed_input);
+	test_print(parsed_input);
 	free_command(parsed_input);
 	free(input);
 }
@@ -78,6 +78,7 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 		}
 		rl_clear_history();
 		ft_printf("exit\n");
+		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
 		return (0);
 	}
 }

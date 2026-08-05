@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/05 21:32:25 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 23:10:36 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,8 @@ t_cmd_fun	get_func(enum e_builtin builtin)
 // @desc Execute a single command/handles builtins.
 // @param command: [[t_command]] *, the command to execute.
 // @param env: char **, the environment to work off of.
-// @returns int8_t, exit status.
-void	exec_single(t_command *command, char ***env)
+// @returns bool, Was it a built-in?
+bool	exec_single(t_command *command, char ***env)
 {
 	const char	*blts[] = {"cd", "echo", "env", "exit",
 		"export", "pwd", "unset", NULL};
@@ -131,7 +131,7 @@ void	exec_single(t_command *command, char ***env)
 		if (!ft_strcmp(blts[i], command->path))
 		{
 			command->pid = funcs[i](*command, env);
-			return ;
+			return (true);
 		}
 		i++;
 	}
@@ -140,4 +140,5 @@ void	exec_single(t_command *command, char ***env)
 		execute(*command, command->outfd, command->infd, *env);
 	else if (failed > 0)
 		command->pid = failed;
+	return (false);
 }

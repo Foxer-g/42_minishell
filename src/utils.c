@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 07:31:09 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/21 03:33:22 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 22:18:01 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ char	*prompt(char **env)
 
 	str_prompt = ft_strdup(PROMPT_A);
 	usr = ft_get_env("USER", env);
-	path = ft_get_env("PWD", env);
+	path = ft_strdup(ft_get_env("PWD", env));
 	if (ft_strlen(path) > (ft_strlen(ft_get_env("HOME", env))))
 	{
 		path += ft_strlen(ft_get_env("HOME", env)) - 1;
