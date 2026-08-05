@@ -17,7 +17,7 @@ def build(bld):
 		features	= "c",
 		target		= "minish",
 		includes	= bld.env.INCLUDES_ROOT,
-		use			= "execobjs parserobjs"
+		use			= "execobjs parserobjs tokenobjs"
 	)
 	bld.recurse("exec")
 	bld.recurse("parser")

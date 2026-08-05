@@ -1,9 +1,16 @@
 def build(bld):
 	sources = [
+		"parser.c",
+		"parser_check.c",
+		"parser_utils.c",
 	]
 	lparse = bld.objects(
 		source		= sources,
 		features	= "c",
 		target		= "parserobjs",
+		use			= "tokenobjs cmdgenobjs scheduleobjs",
 		includes	= bld.env.INCLUDES_ROOT
 	)
+	bld.recurse("token")
+	bld.recurse("command_gen")
+	bld.recurse("scheduler")

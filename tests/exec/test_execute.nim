@@ -32,7 +32,7 @@ let
   commands: array[1, t_command] = [
     t_command(
       path: "/usr/bin/ls",
-      arguments: allocCStringArray(["ls", "-a"]),
+      args: allocCStringArray(["ls", "-a"]),
       infile: "stdin",
       outfile: "stdout"
     )
@@ -47,4 +47,4 @@ for k, v in envPairs():
 env = allocCStringArray(tmp)
 
 for c in commands:
-  assert(0 == int execute(c, STDOUT_FILENO, STDIN_FILENO, env))
+  assert(0 == int execute(c, cint STDOUT_FILENO, cint STDIN_FILENO, env))

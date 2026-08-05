@@ -19,13 +19,14 @@ discard """
   disabled: "win"
 """
 
-import ../libft
+import
+  ../[libft, minishell]
 
 type
   Pid {.importc: "pid_t", header:"<sys/types.h>".} = object
   t_command = object
     path: cstring
-    arguments: cstringArray
+    args: cstringArray
     pid: Pid
     infd: cint
     outfd: cint
@@ -34,9 +35,8 @@ type
     outfile: cstring
   Pt_command = ptr t_command
 
-{.compile("src/exec/entrypoint.c", "-Iincludes"), compile("src/exec/cmd_handler.c", "-Iincludes"), passL:"-L libft -lft".}
 proc expand(cmd: Pt_command, env: cstringArray): bool {.importc.}
-proc free(tgt: cstring) {.importc:"free", header:"stdlib".}
+
 
 let
   env: cstringArray = allocCStringArray([$(cstring "FOO=me")])
@@ -49,11 +49,11 @@ args.add("echo")
 args.add("hello $FOO")
 
 commands.add(t_command(
-  arguments: allocCStringArray(args.toOpenArray[:string](0, args.len - 1))
+  args: allocCStringArray(args.toOpenArray[:string](0, args.len - 1))
 ))
 
 
 for command in commands:
     discard expand(addr command, env)
-    deallocCStringArray(command.arguments)
+    deallocCStringArray(command.args)
     deallocCStringArray(env)

@@ -3,7 +3,7 @@ wbuild
 .lock-waf*
 .idea
 .project.gf
-.waf-*
+.waf*
 **.a
 *.tape
 */*.o
@@ -24,5 +24,4 @@ tests/builtins/*
 *.sav*
 compile_commands.json
 minishell
-
-
+vgcore.*

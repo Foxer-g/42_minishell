@@ -11,7 +11,7 @@ const
     STDOUT_FILENO* = 1
     STDIN_FILENO* = 0
 
-{.passL: "./libft.a".}
+{.passL: "-Lwbuild/libft -Lwbuild/libft/src/file -Lwbuild/libft/src/list -Lwbuild/libft/src/list/dynamic_list -Lwbuild/libft/src/list/linked_list  -Lwbuild/libft/src/memory -Lwbuild/libft/src/print -Lwbuild/libft/src/string -Lwbuild/libft/src/string/alteration -Lwbuild/libft/src/string/checks -Lwbuild/libft/src/string/conversion -Lwbuild/libft/src/string/manipulation -Lwbuild/libft/src/string/new -Lwbuild/libft/src/utils -Lwbuild/libft/src/very_functional_syscalls -lft -lftfle -lftlst -lftlstdyn -lftlstlin -lftmem -lftstr -lftstralt -lftstrchk -lftstrcvn -lftstrmnp -lftstrnew -lftutl -lftprt -lftvfs".}
 proc ft_isalpha*(c: int32_t): bool {.importc.}
 proc ft_isdigit*(c: int32_t): bool {.importc.}
 proc ft_isalnum*(c: int32_t): bool {.importc.}

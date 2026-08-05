@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/06/03 00:51:02 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/02 05:04:43 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/02 20:40:47 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static bool	update_pwd(char ***env)
 
 	if (getcwd(pathbuf, PATH_MAX))
 	{
-		set_env("PWD", &env, pathbuf);
+		ft_set_env("PWD", env, pathbuf);
 		return (true);
 	}
 	perror("cd");

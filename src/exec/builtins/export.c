@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 04:54:12 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/02 05:05:26 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/02 19:03:31 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	display_env_as_bash(char ***env)
 int	export(t_command cmd, char ***env)
 {
 	const uintmax_t	ac = ft_nt_tablen((void*)cmd.args);
-	char	*var;
+	char			*var;
 
 	if (ac == 1)
 	{
