@@ -77,7 +77,7 @@ t_command	*is_error(t_command *cmd, intmax_t len, char ***env)
 			free_command(cmd);
 			parsing_error(MALLOC, " : piping_utils.c : is_error :", env);
 // ligne du dessous à retirer
-			ft_printf("element : %i", i);
+			ft_printf("element : %i\n", i);
 			return (NULL);
 		}
 		i++;
