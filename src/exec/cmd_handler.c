@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_handler.c                                      :+:      :+:    :+:   */
+/*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/05 03:05:14 by rboutelo         ###   ########.fr       */
+/*   Updated: 2026/08/05 21:32:25 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/02 05:18:57 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 21:23:06 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,25 @@ void	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 	ft_clear_filelist();
 	exit(127 * (failed == ENOENT) | 1);
 }
+
+/*
+Relic of the old code, indexed using the third character to differentiate
+builtins.
+t_cmd_fun	get_func(enum e_builtin builtin)
+{
+	const t_cmd_fun funcs[] = {
+	[CD] = cd,
+	[PWD] = pwd,
+	[ECHO] = echo,
+	[EXIT] = minishell_exit,
+	[EXPORT] = export,
+	[UNSET] = unset,
+	[ENV] = minishell_env,
+	};
+
+	return (funcs[builtin]);
+}
+*/
 
 // @doc exec_single
 // @kind func

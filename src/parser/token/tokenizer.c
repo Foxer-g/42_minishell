@@ -36,7 +36,7 @@ static int64_t	token_stack_len(char *input)
 				input++;
 			input++;
 		}
-		else if (ft_strchr("$*", *input) || !iscmd_chr(input[0]))
+		else if (ft_strchr("$*", *input) || iscmd_chr(input[0]))
 		{
 			input++;
 			while (*input && iscmd_chr(*input))

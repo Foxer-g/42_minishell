@@ -6,7 +6,7 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/05 01:53:53 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 21:28:53 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,8 +131,9 @@ bool	handle_var(char **arg, uintmax_t ind, char **env)
 		return (false);
 	}
 	*arg = ft_realloc(*arg, ft_strlen(*arg) - ft_strlen(evn) + ft_strlen(var));
-	if (*arg)
+	if (!*arg)
 		return (true);
+	eov = &(*arg)[ind] + ft_strlen_until(&(*arg)[ind], ' ');
 	ft_memmove(eov - ft_strlen(evn) + ft_strlen(var), eov, ft_strlen(eov));
 	ft_memcpy(&(*arg)[ind], var, ft_strlen(var));
 	free(evn);
