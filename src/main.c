@@ -38,18 +38,17 @@ void	sig_init(void)
 }
 
 
-bool	minishell_action(char *input, char ***env)
+void	minishell_action(char *input, char ***env)
 {
 	t_command	*parsed_input;
 
 	parsed_input = parser(input, env);
 	if (!parsed_input)
-		return (false);
+		return ;
 	entrypoint(parsed_input, env);
 	//test_print(parsed_input);
 	free_command(parsed_input);
 	free(input);
-	return (true);
 }
 
 int32_t	main(int32_t ac, char **av, const char **aenv)

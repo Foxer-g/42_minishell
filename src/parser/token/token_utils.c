@@ -17,15 +17,15 @@ intmax_t	count_space(char *str)
 	return (res);
 }
 
-// @doc ft_iscmd_chr
+// @doc iscmd_chr
 // @kind func
 // @desc Check if the char is in the command type charset.
 // @param c: char, Char to check.
 // @return bool, Result of the check.
 
-bool	ft_iscmd_chr(char c)
+bool	iscmd_chr(char c)
 {
-	if (ft_strnstr("$*'\"()|&;\n<>", &c, 12))
+	if (ft_strchr("$*'\"()|&;\n<>", c))
 		return (false);
 	return (true);
 }
@@ -54,6 +54,8 @@ int32_t	short_type(char *token)
 		return (O_REDIR);
 	else if (token[0] == '*')
 		return (WILDCARD);
+	else if (iscmd_chr(token[0]))
+		return (COMMAND);
 	return (-1);
 }
 
@@ -71,7 +73,7 @@ int32_t	composed_type(char *token)
 		return (APPEND);
 	if (ft_strlen(token) == 2 && ft_strnstr(token, "<<", 3))
 		return (HEREDOC);
-	if (ft_iscmd_chr(token[0]))
+	if (iscmd_chr(token[0]))
 		return (COMMAND);
 	return (-1);
 }

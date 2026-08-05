@@ -30,17 +30,17 @@ static int64_t	token_stack_len(char *input)
 	len = 0;
 	while (*input)
 	{
-		if (ft_strchr("$*", *input) || !ft_iscmd_chr(input[0]))
-		{
-			input++;
-			while (*input && ft_iscmd_chr(*input))
-				input++;
-		}
-		else if (ft_strchr("|<>&", *input))
+		if (ft_strchr("|<>&", *input))
 		{
 			if (input[0] == input[1])
 				input++;
 			input++;
+		}
+		else if (ft_strchr("$*", *input) || !iscmd_chr(input[0]))
+		{
+			input++;
+			while (*input && iscmd_chr(*input))
+				input++;
 		}
 		else
 			input++;
@@ -61,19 +61,19 @@ static int64_t	get_token_len(char *input, int64_t start)
 	int64_t	i;
 
 	i = start;
-	if (ft_strnstr("()'\"\n;", &input[i], 5))
+	if (ft_strchr("()'\"\n;", input[i]))
 		i++;
-	else if (ft_strnstr("$*", &input[i], 2) || ft_iscmd_chr(input[i]))
-	{
-		i++;
-		while (ft_iscmd_chr(input[i]))
-			i++;
-	}
-	else if (ft_strnstr("|<>&", &input[i], 5))
+	else if (ft_strchr("|<>&", input[i]))
 	{
 		if (input[i] == input[i + 1])
 			i++;
 		i++;
+	}
+	else if (ft_strchr("$*", input[i]) || iscmd_chr(input[i]))
+	{
+		i++;
+		while (iscmd_chr(input[i]))
+			i++;
 	}
 	else
 		i++;
@@ -92,7 +92,7 @@ static int32_t	get_token_type(char *token)
 {
 	if (ft_strlen(token) - count_space(token) == 1)
 		return (short_type(token));
-	else if (ft_strnstr("$*|<>&", &token[0], 6) || ft_iscmd_chr(token[0]))
+	else if (ft_strchr("$*|<>&", token[0]) || iscmd_chr(token[0]))
 		return (composed_type(token));
 	return (0);
 }
