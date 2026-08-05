@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 03:09:23 by f0xer             #+#    #+#             */
-/*   Updated: 2026/07/28 19:25:01 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 02:31:06 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,35 +14,56 @@
 
 sig_atomic_t	g_sig_handle = 0;
 
-int32_t	main(int32_t ac, char **av, char **aenv)
+void	sig_init(void)
 {
 	struct sigaction	sig_action;
-	t_command			*parsed_input;
-	char				*input;
 
+	sig_action.sa_sigaction = sig_handle;
+	sig_action.sa_flags = SA_SIGINFO;
+	sigemptyset(&sig_action.sa_mask);
+	sigaction(SIGINT, &sig_action, NULL);
+	sigaction(SIGQUIT, &sig_action, NULL);
+}
+
+
+bool	minishell_action(char *input, char ***env)
+{
+	t_command	*parsed_input;
+
+	parsed_input = parser(input, env);
+	if (!parsed_input)
+		return (false);
+	entrypoint(parsed_input, env);
+	test_print(parsed_input);
+	free_command(parsed_input);
+	free(input);
+	return (true);
+}
+
+int32_t	main(int32_t ac, char **av, const char **aenv)
+{
+	char				*input;
+	char				**env;
+
+	sig_init();
+	env = ft_copy_env(aenv);
 	if (ac != 1)
 	{
 		input = join_tab(++av);
-		parsed_input = parser(input, &aenv);
-		entrypoint(&parsed_input, &aenv);
-		ft_printf("input : %s\n", input);
-		free(input);
+		minishell_action(input, &env);
+		ft_free_nt_tab(env, ft_nt_tablen((void *)env) - 1);
 	}
 	else
 	{
-		sig_action.sa_sigaction = sig_handle;
-		sig_action.sa_flags = SA_SIGINFO;
-		sigemptyset(&sig_action.sa_mask);
-		sigaction(SIGINT, &sig_action, NULL);
-		sigaction(SIGQUIT, &sig_action, NULL);
-		input = prompt(aenv);
+		input = prompt(env);
 		while (input)
 		{
-			add_history(input);
-			parsed_input = parser(input, &aenv);
-			entrypoint(&parsed_input, &aenv);
-			free(input);
-			input = prompt(aenv);
+			if (input[0])
+			{
+				add_history(input);
+				minishell_action(input, &env);
+			}
+			input = prompt(env);
 		}
 		rl_clear_history();
 		ft_printf("exit\n");

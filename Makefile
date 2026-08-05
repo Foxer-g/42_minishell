@@ -45,7 +45,8 @@ eva: kernel
 
 frama-c: eva
 
-test: all
+test:
+	./waf configure build
 	testament all
 
 .PHONY: clean all re fclean frama-c-available frama-c kernel eva libft.a

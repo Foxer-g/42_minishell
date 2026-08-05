@@ -6,13 +6,12 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/02 05:18:57 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 02:16:15 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define EXEC_SOURCE
 #include "minishell.h"
-#define BLTS {"cd", "echo", "env", "exit", "export", "pwd", "unset", NULL}
 
 // @doc safe_exec_setup
 // @kind func
@@ -56,33 +55,38 @@ int32_t	safe_exec_setup(t_ffile out, t_ffile in)
 // @param in: t_ffile, the file that serves as stdin.
 // @param env: char **, the environment that will be passed to execve.
 // @returns int8_t, exit status.
-int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
+void	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 {
 	int32_t	failed;
+	char	*path;
+	char	**envpath;
 
 	failed = safe_exec_setup(out, in);
 	if (failed == 0)
 	{
-		execve(cmd.path, cmd.args, env);
+		envpath = ft_split(ft_get_env("PATH", env), ':');
+		path = ft_find_exec(cmd.path, (void *)envpath);
+		ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
+		execve(path, cmd.args, env);
 		failed = errno;
 		perror(cmd.args[0]);
 	}
 	free(cmd.path);
-	ft_free_nt_tab(cmd.args, ft_nt_tablen((void **)cmd.args));
+	ft_free_nt_tab(cmd.args, ft_nt_tablen((void *)cmd.args));
 	ft_clear_filelist();
 	exit(127 * (failed == ENOENT) | 1);
 }
 
 t_cmd_fun	get_func(enum e_builtin builtin)
 {
-	void	*funcs[119] = {
+	const t_cmd_fun funcs[119] = {
 	[CD] = cd,
 	[PWD] = pwd,
 	[ECHO] = echo,
 	[EXIT] = minishell_exit,
 	[EXPORT] = export,
 	[UNSET] = unset,
-	[ENV] = env,
+	[ENV] = minishell_env,
 	};
 
 	return (funcs[builtin]);
@@ -94,21 +98,29 @@ t_cmd_fun	get_func(enum e_builtin builtin)
 // @param command: [[t_command]] *, the command to execute.
 // @param env: char **, the environment to work off of.
 // @returns int8_t, exit status.
-int8_t	exec_single(t_command *command, char ***env)
+void	exec_single(t_command *command, char ***env)
 {
-	int8_t	status;
-	uint8_t	i;
+	const char	*blts[] = {"cd", "echo", "env", "exit",
+		"export", "pwd", "unset", NULL};
+	const t_cmd_fun funcs[] = {
+		cd, echo, minishell_env, minishell_exit, export, pwd, unset, NULL,
+	};
+	uint8_t		i;
+	int32_t		failed;
 
 	i = 0;
-	while (BLTS[i])
+	while (blts[i])
 	{
-		if (!ft_strcmp(BLTS[i], command->path))
+		if (!ft_strcmp(blts[i], command->path))
 		{
-			status = (get_func(command->path[2]))(*command, env);
+			command->pid = funcs[i](*command, env);
+			return ;
 		}
 		i++;
 	}
-	else
-		status = execute(*command, command->outfd, command->infd, env);
-	return (status);
+	failed = fork();
+	if (!failed)
+		execute(*command, command->outfd, command->infd, *env);
+	else if (failed > 0)
+		command->pid = failed;
 }
