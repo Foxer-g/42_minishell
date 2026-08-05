@@ -2,11 +2,16 @@
 #include "minishell.h"
 #include "parser.h"
 
-static int32_t	tkn_cat(t_token tkn)
+static int32_t	tkn_len_since(t_token *tkn, intmax_t start)
 {
-	if (tkn.type == PIPE)
-		return (1);
-	return (2);
+	intmax_t	i;
+
+	i = start;
+	while (tkn[i].type && tkn[i].type != PIPE)
+		i++;
+	if (!(i - start))
+		i++;
+	return (i - start);
 }
 
 static uint64_t	command_len(t_token *tkns)
@@ -19,9 +24,10 @@ static uint64_t	command_len(t_token *tkns)
 	while (tkns[i].content)
 	{
 		res++;
-		while (tkns[i + 1].content && tkn_cat(tkns[i]) == tkn_cat(tkns[i + 1]))
+		while (tkns[i++].type == PIPE)
+			res++;
+		while (tkns[i].content && tkns[i].type != PIPE)
 			i++;
-		i++;
 	}
 	return (res);
 }
@@ -87,31 +93,35 @@ bool	quote_join(t_token **tkns, char ***env)
 
 t_command	*command_gen(t_token **tkns, char ***env)
 {
-	uintmax_t	i[3];
+	intmax_t	i[2];
 	t_command	*res;
 	char		**tmp;
 
-	ft_bzero(i, sizeof(i));
 	if (!quote_join(tkns, env))
 		return (NULL);
 	res = ft_calloc(command_len(*tkns) + 1, sizeof(t_command));
 	if (!res)
 		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : command_gen.c : command_gen : res", env)));
+	ft_bzero(i, sizeof(i));
 	while ((*tkns)[i[0]].content)
 	{
-		i[1] = i[0] + 1;
-		while ((*tkns)[i[1]].content
-			&& tkn_cat((*tkns)[i[0]]) == tkn_cat((*tkns)[i[1]]))
-			i[1]++;
-		res[i[2]] = init_command(env);
-		tmp = tkn_to_tab(*tkns, i[0], i[1] - i[0], env);
-		if (!tmp)
+		res[i[1]] = init_command(env);
+		tmp = tkn_to_tab(*tkns, i[0], tkn_len_since(*tkns, i[0]), env);
+		if (!tmp || !res[i[1]].infile)
 		{
 			free_command(res);
-			return ((void *)((uintptr_t)!parsing_error(MALLOC, " : command_gen.c : command_gen : tmp", env)));
+			if (tmp)
+				ft_free_nt_tab(tmp, tkn_len_since(*tkns, i[0]));
+			return ((void *)((uintptr_t)!parsing_error(MALLOC, " : command_gen.c : command_gen : tmp || res[j]", env)));
 		}
-		command_exec_set(&res[i[2]++], tmp, i[1] - i[0]);
-		i[0] = i[1];
+		command_exec_set(&res[i[1]], tmp, tkn_len_since(*tkns, i[0]));
+		ft_free_nt_tab(tmp, tkn_len_since(*tkns, i[0]));
+		if (!res[i[1]++].infile)
+		{
+			free_command(res);
+			return ((void *)((uintptr_t)!parsing_error(MALLOC, " : command_gen.c : command_gen : res[j] by command_exec_set", env)));
+		}
+		i[0] += tkn_len_since(*tkns, i[0]);
 	}
 	return (res);
 }

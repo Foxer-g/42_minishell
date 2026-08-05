@@ -64,6 +64,7 @@ t_command	init_command(char ***env)
 	res.outfile = ft_strdup("stdout");
 	if (!res.infile)
 		return ((t_command){.append=!parsing_error(MALLOC, " : type_manipulator.c : init_command : res.outfile", env)});
+	res.builtin = false;
 	return (res);
 }
 

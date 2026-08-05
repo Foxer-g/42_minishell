@@ -56,11 +56,11 @@ intmax_t	*find_pipe(t_command *cmd, char ***env)
 		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : piping_utils.c :find_pipes : res", env)));
 	while (cmd[i].infile)
 		if (cmd[i++].path[0] == '|')
-			res[res[0]++] = i - 1;
+			res[++res[0]] = i - 1;
 	if (res[res[0]] == i - 1)
 	{
 		free(res);
-		return ((void *)((uintptr_t)!parsing_error(SYNTAX, "| bip boup", env)));
+		return ((void *)-1);
 	}
 	return (res);
 }
