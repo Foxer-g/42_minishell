@@ -14,12 +14,12 @@
 # define PARSER_H 
 # include "libft.h" 
 
-#define MALLOC "\e[31merror : Malloc error\e[0m"
-#define SYNTAX "\e[31merror : Syntax error near : \e[0m"
-#define PARSING "\e[31merror : Parsing error near : \e[0m"
-#define INV_CHAR "\e[31merror : Invalid character : \e[0m"
-#define INV_PIPES "\e[31merror : Invalid pipe near : \e[0m"
-#define INV_HEREDOC "\e[31merror : Invalid heredoc near : \e[0m"
+#define MALLOC "\e[31;36merror \e[0m\e[31m: Malloc error\e[0m\0"
+#define SYNTAX "\e[31;36merror \e[0m\e[31m: Syntax error near : \e[0m\0"
+#define PARSING "\e[31;36merror \e[0m\e[31m: Parsing error near : \e[0m\0"
+#define INV_CHAR "\e[31;36merror \e[0m\e[31m: Invalid character : \e[0m\0"
+#define INV_PIPES "\e[31;36merror \e[0m\e[31m: Invalid pipe near : \e[0m\0"
+#define INV_HEREDOC "\e[31;36merror \e[0m\e[31m: Invalid heredoc near : \e[0m\0"
 
 typedef enum e_token_type
 {
@@ -70,24 +70,25 @@ bool		parsing_error(char *message, char *token, char ***env);
 
 t_token		*tokenizer(char *input, char ***env);
 
-bool		ft_iscmd_chr(char c);
+bool		iscmd_chr(char c);
+intmax_t	count_space(char *str);
 int32_t		short_type(char *token);
 int32_t		composed_type(char *token);
 void		free_token(t_token *token_lst);
 
-t_command	*command_gen(t_token *tkns, char ***env);
+t_command	*command_gen(t_token **tkns, char ***env);
 
 char		**tkn_to_tab(t_token *tkns, intmax_t i, intmax_t len, char ***env);
 bool		quote_join(t_token **tkns, char ***env);
 
 void		free_command(t_command *cmds);
-t_command	init_command(void);
-t_command	cmd_dup(t_command cmd);
+t_command	init_command(char ***env);
+t_command	cmd_dup(t_command cmd, char ***env);
 void		command_exec_set(t_command *command, char **cmd, uint64_t len);
-bool		command_redir_set(t_command *command, t_redir *redir);
+bool		command_redir_set(t_command *command, t_redir *redir, char ***env);
 
 t_command	*scheduler(t_command *raw_command, char ***env);
-bool		strtrim_cmd_end(t_command *cmd, const char c);
+bool		strtrim_cmd_end(t_command *cmd, char ***env);
 intmax_t	args_len(t_command cmd);
 bool		cmd_set_hd(t_command *cmd, intmax_t index, char ***env);
 intmax_t	*find_heredoc(t_command *cmd, char ***env);
@@ -99,4 +100,5 @@ char		**cmddup_without_redir(t_command cmd, t_redir *redir, char ***env);
 intmax_t	*find_pipe(t_command *cmd, char ***env);
 bool		is_valid_pipes(const intmax_t *pipes, char ***env);
 intmax_t	cmd_len(t_command *cmd);
+t_command	*full_cmd_dup(t_command *src, char ***env);
 #endif

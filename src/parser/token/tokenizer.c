@@ -28,24 +28,23 @@ static int64_t	token_stack_len(char *input)
 	int64_t	len;
 
 	len = 0;
-	while (input[0])
+	while (*input)
 	{
-		if (ft_strnstr("()'\"\n;", &input[0], 5))
-			len++;
-		else if (ft_strnstr("$*", &input[0], 2) || !ft_iscmd_chr(input[0]))
-		{
-			input++;
-			while (ft_iscmd_chr(input[0]))
-				input++;
-			len++;
-		}
-		else if (ft_strnstr("|<>&", &input[0], 5))
+		if (ft_strchr("|<>&", *input))
 		{
 			if (input[0] == input[1])
 				input++;
 			input++;
-			len++;
 		}
+		else if (ft_strchr("$*", *input) || iscmd_chr(input[0]))
+		{
+			input++;
+			while (*input && iscmd_chr(*input))
+				input++;
+		}
+		else
+			input++;
+		len++;
 	}
 	return (len);
 }
@@ -62,21 +61,23 @@ static int64_t	get_token_len(char *input, int64_t start)
 	int64_t	i;
 
 	i = start;
-	if (ft_strnstr("()'\"\n;", &input[i], 5))
+	if (ft_strchr("()'\"\n;", input[i]))
 		i++;
-	else if (ft_strnstr("$*", &input[i], 2) || ft_iscmd_chr(input[i]))
-	{
-		i++;
-		while (ft_iscmd_chr(input[i]))
-			i++;
-	}
-	else if (ft_strnstr("|<>&", &input[i], 5))
+	else if (ft_strchr("|<>&", input[i]))
 	{
 		if (input[i] == input[i + 1])
 			i++;
 		i++;
 	}
+	else if (ft_strchr("$*", input[i]) || iscmd_chr(input[i]))
+	{
+		i++;
+		while (iscmd_chr(input[i]))
+			i++;
+	}
 	else
+		i++;
+	while(input[i] == ' ')
 		i++;
 	return (i - start);
 }
@@ -89,9 +90,9 @@ static int64_t	get_token_len(char *input, int64_t start)
 
 static int32_t	get_token_type(char *token)
 {
-	if (ft_strlen(token) == 1)
+	if (ft_strlen(token) - count_space(token) == 1)
 		return (short_type(token));
-	else if (ft_strnstr("$*|<>&", &token[0], 6) || ft_iscmd_chr(token[0]))
+	else if (ft_strchr("$*|<>&", token[0]) || iscmd_chr(token[0]))
 		return (composed_type(token));
 	return (0);
 }
@@ -114,10 +115,10 @@ static bool	tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env)
 	while (split[j])
 	{
 		len = get_token_len(split, j);
-		(*tkn[*i]).content = ft_substr(split, j, len);
-		if (!(*tkn[*i]).content)
+		(*tkn)[*i].content = ft_substr(split, j, len);
+		if (!(*tkn)[*i].content)
 			return (!parsing_error(MALLOC, "", env));
-		(*tkn[*i]).type = get_token_type((*tkn[*i]).content);
+		(*tkn)[*i].type = get_token_type((*tkn)[*i].content);
 		j += len;
 		(*i)++;
 	}
@@ -139,7 +140,7 @@ t_token	*tokenizer(char *input, char ***env)
 
 	tmp = ft_preserving_split(input, ' ');
 	if (!tmp)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
+		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : tokenizer.c : tokenizer : tmp", env)));
 	tkn_lst = ft_calloc(token_stack_len(input) + 1, sizeof(t_token));
 	if (!tkn_lst)
 	{
@@ -152,6 +153,5 @@ t_token	*tokenizer(char *input, char ***env)
 		if (!tkn_from_split(&tkn_lst, &i, tmp[j], env))
 			return (NULL);
 	ft_free_nt_tab(tmp, ft_nt_tablen((void *) tmp));
-	free(input);
 	return (tkn_lst);
 }

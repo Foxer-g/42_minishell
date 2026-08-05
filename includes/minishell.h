@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/02 19:47:03 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 23:15:00 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <linux/limits.h>
+# include <sys/wait.h>
 # include "libft.h"
 # include "file.h"
 # include "parser.h"
@@ -29,9 +31,9 @@
 # define WE 1
 # define RE 0
 
-# define PROMPT_A "\x1b[22;36;45m"
-# define PROMPT_B "\x1b[0m @ \x1b[32;45m"
-# define PROMPT_C "\x1b[0m $ "
+# define PROMPT_A "\x1b[22;36m"
+# define PROMPT_B "\x1b[0m@\x1b[32m"
+# define PROMPT_C "\x1b[0m$ "
 
 // @doc t_command
 // @kind type
@@ -46,6 +48,7 @@ typedef struct s_command
 	bool	append;
 	char	*infile;
 	char	*outfile;
+	bool	builtin;
 }	t_command;
 
 enum e_builtin

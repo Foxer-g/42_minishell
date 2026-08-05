@@ -38,14 +38,15 @@ frama-c-available:
 	@frama-c -v
 
 kernel: frama-c-available $(SOURCES) compile_commands.json
-	@frama-c $(SOURCES) -compilation-db compile_commands.json -save kernel.sav
+	@frama-c -cpp-extra-args="-I/usr/include/" $(SOURCES) -compilation-db compile_commands.json -save kernel.sav
 
 eva: kernel
 	@frama-c -load kernel.sav -eva -eva-precision 3 -save eva.sav
 
 frama-c: eva
 
-test: all
+test:
+	./waf configure build
 	testament all
 
 .PHONY: clean all re fclean frama-c-available frama-c kernel eva libft.a

@@ -15,6 +15,7 @@ bool	parsing_error(char *message, char *token, char ***env)
 		return (false);
 	write(2, message, ft_strlen(message));
 	write(2, token, ft_strlen(token));
+	write(2, "\n", 1);
 	ft_set_exit_code(1, env);
 	return (true);
 }
@@ -49,7 +50,7 @@ static char	*invalid_quotes(t_token *tkn)
 	while (tkn[i].content)
 	{
 		s += 1 * (tkn[i].type == QUOTE && d % 2 == 0);
-		d += 1 * (tkn[i].type == DQUOTE && d % 2 == 0);
+		d += 1 * (tkn[i].type == DQUOTE && s % 2 == 0);
 		i++;
 	}
 	if (s % 2 != 0)

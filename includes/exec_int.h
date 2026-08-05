@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/05/19 17:30:32 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/02 05:19:30 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 23:12:57 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,18 @@ typedef enum e_quotetype
 }	t_quotetype;
 typedef int (*t_cmd_fun)(t_command, char ***);
 
-int8_t	entrypoint(t_command **cmds, char ***env, bool early_stop);
-int8_t	exec_single(t_command *command, char ***env);
-int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env);
+int32_t	entrypoint(t_command *cmds, char ***env);
+bool	exec_single(t_command *command, char ***env);
+void	execute(t_command cmd, t_ffile out, t_ffile in, char **env);
 
 /* ************ */
 /*   BUILTINS   */
 /* ************ */
-int		cd(char *path, char **env);
-int		echo(int ac, char **av, t_ffile out);
-int		env(int ac, char **ev);
-int		minishell_exit(int ac, char **av);
-int		export(int ac, char **av, char ***env);
-int		pwd(int ac);
-int		unset(char **vars, char ***env);
+int		cd(t_command cmd, char ***env);
+int		echo(t_command cmd, char ***env);
+int		minishell_env(t_command cmd, char ***env);
+int		minishell_exit(t_command cmd, char ***env);
+int		export(t_command cmd, char ***env);
+int		pwd(t_command cmd, char ***env);
+int		unset(t_command cmd, char ***env);
 #endif // EXEC_INT_H

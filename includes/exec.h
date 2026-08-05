@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/18 23:07:35 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/02 04:53:21 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 23:13:07 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,5 +16,5 @@
 
 typedef struct s_command	t_command;
 
-int8_t	entrypoint(t_command **cmds, char ***env);
+int32_t	entrypoint(t_command *cmds, char ***env);
 #endif // EXEC_H

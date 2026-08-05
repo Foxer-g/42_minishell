@@ -3,6 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                              ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
+/*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
+/*   Updated: 2026/08/05 21:54:15 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                              ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
+/*                                                    +:+ +:+         +:+     */
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 03:09:23 by f0xer             #+#    #+#             */
@@ -26,18 +38,17 @@ void	sig_init(void)
 }
 
 
-bool	minishell_action(char *input, char ***env)
+void	minishell_action(char *input, char ***env)
 {
 	t_command	*parsed_input;
 
 	parsed_input = parser(input, env);
 	if (!parsed_input)
-		return (false);
-//	entry_point(parsed_input, env);
+		return ;
+	entrypoint(parsed_input, env);
 	test_print(parsed_input);
 	free_command(parsed_input);
 	free(input);
-	return (true);
 }
 
 int32_t	main(int32_t ac, char **av, const char **aenv)
@@ -45,23 +56,29 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 	char				*input;
 	char				**env;
 
+	sig_init();
 	env = ft_copy_env(aenv);
 	if (ac != 1)
 	{
 		input = join_tab(++av);
 		minishell_action(input, &env);
+		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
 	}
 	else
 	{
 		input = prompt(env);
 		while (input)
 		{
-			add_history(input);
-			minishell_action(input, &env);
+			if (input[0])
+			{
+				add_history(input);
+				minishell_action(input, &env);
+			}
 			input = prompt(env);
 		}
 		rl_clear_history();
 		ft_printf("exit\n");
+		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
 		return (0);
 	}
 }

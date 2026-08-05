@@ -1,17 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
+/*   Updated: 2026/08/05 23:10:36 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
 /*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/02 19:02:58 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 21:23:06 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define EXEC_SOURCE
 #include "minishell.h"
+#define BLTS {"cd", "echo", "env", "exit", "export", "pwd", "unset", NULL}
 
 // @doc safe_exec_setup
 // @kind func
@@ -55,62 +68,77 @@ int32_t	safe_exec_setup(t_ffile out, t_ffile in)
 // @param in: t_ffile, the file that serves as stdin.
 // @param env: char **, the environment that will be passed to execve.
 // @returns int8_t, exit status.
-int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
+void	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 {
 	int32_t	failed;
+	char	*path;
+	char	**envpath;
 
 	failed = safe_exec_setup(out, in);
 	if (failed == 0)
 	{
-		execve(cmd.path, cmd.args, env);
+		envpath = ft_split(ft_get_env("PATH", env), ':');
+		path = ft_find_exec(cmd.path, (void *)envpath);
+		ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
+		execve(path, cmd.args, env);
 		failed = errno;
 		perror(cmd.args[0]);
 	}
 	free(cmd.path);
-	ft_free_nt_tab(cmd.args, ft_nt_tablen((void **)cmd.args));
+	ft_free_nt_tab(cmd.args, ft_nt_tablen((void *)cmd.args));
 	ft_clear_filelist();
 	exit(127 * (failed == ENOENT) | 1);
 }
 
+/*
+Relic of the old code, indexed using the third character to differentiate
+builtins.
 t_cmd_fun	get_func(enum e_builtin builtin)
 {
-	const void	*funcs[119] = {
+	const t_cmd_fun funcs[] = {
 	[CD] = cd,
 	[PWD] = pwd,
 	[ECHO] = echo,
 	[EXIT] = minishell_exit,
 	[EXPORT] = export,
 	[UNSET] = unset,
-	[ENV] = env,
+	[ENV] = minishell_env,
 	};
 
-	return ((t_cmd_fun)funcs[builtin]);
+	return (funcs[builtin]);
 }
+*/
 
 // @doc exec_single
 // @kind func
 // @desc Execute a single command/handles builtins.
 // @param command: [[t_command]] *, the command to execute.
 // @param env: char **, the environment to work off of.
-// @returns int8_t, exit status.
-int8_t	exec_single(t_command *command, char ***env)
+// @returns bool, Was it a built-in?
+bool	exec_single(t_command *command, char ***env)
 {
 	const char	*blts[] = {"cd", "echo", "env", "exit",
 		"export", "pwd", "unset", NULL};
-	int8_t		status;
+	const t_cmd_fun funcs[] = {
+		cd, echo, minishell_env, minishell_exit, export, pwd, unset, NULL,
+	};
 	uint8_t		i;
+	int32_t		failed;
 
 	i = 0;
-	status = 0;
 	while (blts[i])
 	{
 		if (!ft_strcmp(blts[i], command->path))
 		{
-			status = (get_func(command->path[2]))(*command, env);
+			command->pid = funcs[i](*command, env);
+			return (true);
 		}
 		i++;
 	}
-	if (!status)
-		status = execute(*command, command->outfd, command->infd, *env);
-	return (status);
+	failed = fork();
+	if (!failed)
+		execute(*command, command->outfd, command->infd, *env);
+	else if (failed > 0)
+		command->pid = failed;
+	return (false);
 }

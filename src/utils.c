@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 07:31:09 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/21 03:33:22 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 22:18:01 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ void	sig_handle(int32_t signal, siginfo_t *info, void *context)
 {
 	(void)context;
 	(void)info;
-	g_sig_handle = signal;
+	if (signal == SIGINT || signal == SIGQUIT)
+		g_sig_handle = signal;
 }
 
 char	*prompt(char **env)
@@ -46,11 +47,11 @@ char	*prompt(char **env)
 	char	*usr;
 
 	str_prompt = ft_strdup(PROMPT_A);
-	usr = ft_get_env("USER=", env);
-	path = ft_get_env("PWD=", env);
-	if (ft_strlen(path) > (ft_strlen(ft_get_env("HOME=", env))))
+	usr = ft_get_env("USER", env);
+	path = ft_strdup(ft_get_env("PWD", env));
+	if (ft_strlen(path) > (ft_strlen(ft_get_env("HOME", env))))
 	{
-		path += ft_strlen(ft_get_env("HOME=", env)) - 1;
+		path += ft_strlen(ft_get_env("HOME", env)) - 1;
 		path[0] = '~';
 	}
 	str_prompt = ft_extend(str_prompt, usr);
@@ -75,7 +76,7 @@ void	test_print(t_command *input)
 		j = 0;
 		while (input[i].args[j])
 		{
-			ft_printf("    - %s\n", input[0].args[j]);
+			ft_printf("    - \"%s\"\n", input[0].args[j]);
 			j++;
 		}
 		ft_printf("Pid : %i\n", input[i].pid);
