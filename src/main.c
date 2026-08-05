@@ -1,6 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
+/*   Updated: 2026/08/05 03:11:34 by rboutelo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
 /*   main.c                                              ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
@@ -34,7 +46,7 @@ bool	minishell_action(char *input, char ***env)
 	if (!parsed_input)
 		return (false);
 	entrypoint(parsed_input, env);
-	test_print(parsed_input);
+	//test_print(parsed_input);
 	free_command(parsed_input);
 	free(input);
 	return (true);
@@ -51,7 +63,7 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 	{
 		input = join_tab(++av);
 		minishell_action(input, &env);
-		ft_free_nt_tab(env, ft_nt_tablen((void *)env) - 1);
+		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
 	}
 	else
 	{

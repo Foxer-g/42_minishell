@@ -1,5 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cmd_handler.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
+/*   Updated: 2026/08/05 03:05:14 by rboutelo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
 /*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
@@ -76,21 +88,6 @@ void	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 	ft_free_nt_tab(cmd.args, ft_nt_tablen((void *)cmd.args));
 	ft_clear_filelist();
 	exit(127 * (failed == ENOENT) | 1);
-}
-
-t_cmd_fun	get_func(enum e_builtin builtin)
-{
-	const t_cmd_fun funcs[119] = {
-	[CD] = cd,
-	[PWD] = pwd,
-	[ECHO] = echo,
-	[EXIT] = minishell_exit,
-	[EXPORT] = export,
-	[UNSET] = unset,
-	[ENV] = minishell_env,
-	};
-
-	return (funcs[builtin]);
 }
 
 // @doc exec_single
