@@ -71,7 +71,7 @@ static t_command	*piping(t_command *cmd, char ***env)
 	while (cmd[i].path)
 		if (cmd[i++].path[0] != '|')
 			res[j++] = cmd_dup(cmd[i - 1], env);
-	return (is_error(res, i, env));
+	return (is_error(res, j, env));
 }
 
 static bool	heredocs_handler(t_command **cmd, char ***env)
