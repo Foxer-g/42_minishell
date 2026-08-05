@@ -14,12 +14,12 @@
 # define PARSER_H 
 # include "libft.h" 
 
-#define MALLOC "\e[31merror : Malloc error\e[0m\0"
-#define SYNTAX "\e[31merror : Syntax error near : \e[0m\0"
-#define PARSING "\e[31merror : Parsing error near : \e[0m\0"
-#define INV_CHAR "\e[31merror : Invalid character : \e[0m\0"
-#define INV_PIPES "\e[31merror : Invalid pipe near : \e[0m\0"
-#define INV_HEREDOC "\e[31merror : Invalid heredoc near : \e[0m\0"
+#define MALLOC "\e[31;36merror \e[0m\e[31m: Malloc error\e[0m\0"
+#define SYNTAX "\e[31;36merror \e[0m\e[31m: Syntax error near : \e[0m\0"
+#define PARSING "\e[31;36merror \e[0m\e[31m: Parsing error near : \e[0m\0"
+#define INV_CHAR "\e[31;36merror \e[0m\e[31m: Invalid character : \e[0m\0"
+#define INV_PIPES "\e[31;36merror \e[0m\e[31m: Invalid pipe near : \e[0m\0"
+#define INV_HEREDOC "\e[31;36merror \e[0m\e[31m: Invalid heredoc near : \e[0m\0"
 
 typedef enum e_token_type
 {
