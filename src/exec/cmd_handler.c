@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/04 22:30:08 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 02:16:15 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int32_t	safe_exec_setup(t_ffile out, t_ffile in)
 // @param in: t_ffile, the file that serves as stdin.
 // @param env: char **, the environment that will be passed to execve.
 // @returns int8_t, exit status.
-int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
+void	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 {
 	int32_t	failed;
 
@@ -67,7 +67,7 @@ int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 		perror(cmd.args[0]);
 	}
 	free(cmd.path);
-	ft_free_nt_tab(cmd.args, ft_nt_tablen((void **)cmd.args));
+	ft_free_nt_tab(cmd.args, ft_nt_tablen((void *)cmd.args));
 	ft_clear_filelist();
 	exit(127 * (failed == ENOENT) | 1);
 }
@@ -93,28 +93,33 @@ t_cmd_fun	get_func(enum e_builtin builtin)
 // @param command: [[t_command]] *, the command to execute.
 // @param env: char **, the environment to work off of.
 // @returns int8_t, exit status.
-int8_t	exec_single(t_command *command, char ***env)
+void	exec_single(t_command *command, char ***env)
 {
 	const char	*blts[] = {"cd", "echo", "env", "exit",
 		"export", "pwd", "unset", NULL};
 	const t_cmd_fun funcs[] = {
 		cd, echo, minishell_env, minishell_exit, export, pwd, unset, NULL,
 	};
-	int8_t		status;
 	uint8_t		i;
+	int32_t		failed;
 
 	i = 0;
-	status = 0;
 	while (blts[i])
 	{
 		if (!ft_strcmp(blts[i], command->path))
 		{
-			status = funcs[i](*command, env);
-			return (status);
+			command->pid = funcs[i](*command, env);
+			return ;
 		}
 		i++;
 	}
-	if (!status)
-		status = execute(*command, command->outfd, command->infd, *env);
-	return (status);
+	failed = fork();
+	if (!failed)
+	{
+		free(command->path);
+		ft_free_nt_tab(command->args, ft_nt_tablen((void *)command->args));
+		execute(*command, command->outfd, command->infd, *env);
+	}
+	else if (failed > 0)
+		command->pid = failed;
 }

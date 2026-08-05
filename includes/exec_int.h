@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/05/19 17:30:32 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/04 22:27:58 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/05 02:09:32 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ typedef enum e_quotetype
 }	t_quotetype;
 typedef int (*t_cmd_fun)(t_command, char ***);
 
-int8_t	entrypoint(t_command **cmds, char ***env, bool early_stop);
-int8_t	exec_single(t_command *command, char ***env);
-int8_t	execute(t_command cmd, t_ffile out, t_ffile in, char **env);
+int8_t	entrypoint(t_command *cmds, char ***env, bool early_stop);
+void	exec_single(t_command *command, char ***env);
+void	execute(t_command cmd, t_ffile out, t_ffile in, char **env);
 
 /* ************ */
 /*   BUILTINS   */
