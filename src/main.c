@@ -45,8 +45,8 @@ void	minishell_action(char *input, char ***env)
 	parsed_input = parser(input, env);
 	if (!parsed_input)
 		return ;
-	entrypoint(parsed_input, env);
 	test_print(parsed_input);
+	entrypoint(parsed_input, env);
 	free_command(parsed_input);
 	free(input);
 }

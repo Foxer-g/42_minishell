@@ -76,7 +76,7 @@ void	test_print(t_command *input)
 		j = 0;
 		while (input[i].args[j])
 		{
-			ft_printf("    - \"%s\"\n", input[0].args[j]);
+			ft_printf("    - \"%s\"\n", input[i].args[j]);
 			j++;
 		}
 		ft_printf("Pid : %i\n", input[i].pid);
