@@ -1,6 +1,30 @@
 #include "minishell.h"
 #include "parser.h"
 
+bool	strtrim_cmd_end(t_command *cmd, char ***env)
+{
+	char		**tmp;
+	intmax_t	i;
+
+	tmp = ft_calloc(args_len(*cmd) + 1, sizeof(char *));
+	if (!tmp)
+		return (!parsing_error(MALLOC, "", env));
+	i = 0;
+	while ((*cmd).args[i])
+	{
+		tmp[i] = ft_strtrim((*cmd).args[i], " ");
+		if (!tmp[i])
+		{
+			ft_free_nt_tab(tmp, i);
+			return (!parsing_error(MALLOC, "", env));
+		}
+		i++;
+	}
+	command_exec_set(cmd, tmp, args_len(*cmd));
+	ft_free_nt_tab(tmp, args_len(*cmd));
+	return (true);
+}
+
 t_command	*full_cmd_dup(t_command *src, char ***env)
 {
 	intmax_t	i;

@@ -1,28 +1,10 @@
 #include "minishell.h"
 #include "parser.h"
 
-bool	strtrim_cmd_end(t_command *cmd, char ***env)
+static bool	free_hd_tab(char **res, intmax_t len, char ***env)
 {
-	char		**tmp;
-	intmax_t	i;
-
-	tmp = ft_calloc(args_len(*cmd) + 1, sizeof(char *));
-	if (!tmp)
-		return (!parsing_error(MALLOC, "", env));
-	i = 0;
-	while ((*cmd).args[i])
-	{
-		tmp[i] = ft_strtrim((*cmd).args[i], " ");
-		if (!tmp[i])
-		{
-			ft_free_nt_tab(tmp, i);
-			return (!parsing_error(MALLOC, "", env));
-		}
-		i++;
-	}
-	command_exec_set(cmd, tmp, args_len(*cmd));
-	ft_free_nt_tab(tmp, args_len(*cmd));
-	return (true);
+	ft_free_nt_tab(res, len);
+	return (!parsing_error(MALLOC, "", env));
 }
 
 static char	**args_to_tab_without_hd(t_command cmd, intmax_t index, char ***env)
@@ -31,21 +13,22 @@ static char	**args_to_tab_without_hd(t_command cmd, intmax_t index, char ***env)
 	intmax_t	j;
 	char		**res;
 
-	res = ft_calloc(args_len(cmd) - 1, sizeof(char *));
+	res = ft_calloc(args_len(cmd), sizeof(char *));
 	if (!res)
-		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
+	res[0] = ft_strdup(cmd.args[index + 1]);
+	if (!res[0])
+		return ((void *)((uintptr_t)free_hd_tab(res, args_len(cmd), env)));
 	i = 0;
 	j = 1;
 	while (cmd.args[i])
 	{
-		if (!(i == index || i == index + 1))
+		if (i != index && i != index + 1)
 		{
 			res[j] = ft_strdup(cmd.args[i]);
 			if (!res[j])
-			{
-				ft_free_nt_tab(res, args_len(cmd) - 1);
-				return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
-			}
+				return ((void *)((uintptr_t)free_hd_tab(res,
+							args_len(cmd), env)));
 			j++;
 		}
 		i++;
@@ -55,23 +38,17 @@ static char	**args_to_tab_without_hd(t_command cmd, intmax_t index, char ***env)
 
 bool	cmd_set_hd(t_command *cmd, intmax_t index, char ***env)
 {
-	char		**tmp;
+	char	**tmp;
 
 	tmp = args_to_tab_without_hd(*cmd, index, env);
 	if (!tmp)
 		return (false);
-	tmp[0] = ft_strdup((*cmd).args[index + 1]);
-	if (!tmp[0])
-	{
-		ft_free_nt_tab(tmp, args_len(*cmd) - 1);
-		return (!parsing_error(MALLOC, "", env));
-	}
 	if (!command_exec_set(cmd, tmp, args_len(*cmd) - 1))
 	{
-		ft_free_nt_tab(tmp, args_len(*cmd) - 1);
+		ft_free_nt_tab(tmp, args_len(*cmd));
 		return (false);
 	}
-	ft_free_nt_tab(tmp, args_len(*cmd) - 1);
+	ft_free_nt_tab(tmp, args_len(*cmd));
 	free((*cmd).path);
 	free((*cmd).infile);
 	(*cmd).path = ft_strdup((*cmd).args[1]);
