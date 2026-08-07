@@ -6,7 +6,7 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/06 09:01:08 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/07 02:48:04 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,13 +189,13 @@ int32_t	entrypoint(t_command *cmds, char ***env)
 	int32_t		status;
 
 	cmdsc = cmds;
+	if (!setup_pipe(cmds))
+	{
+		error("You confused the heck out of the parser.");
+		return (69);
+	}
 	while (cmds->infile)
 	{
-		if (!setup_pipe(cmds))
-		{
-			error("You confused the heck out of the parser.");
-			return (1);
-		}
 		remove_quotes(cmds);
 		execution_pipeline(cmds++, env);
 	}

@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/05 21:54:15 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/07 03:42:15 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ void	minishell_action(char *input, char ***env)
 	parsed_input = parser(input, env);
 	if (!parsed_input)
 		return ;
-	test_print(parsed_input);
 	entrypoint(parsed_input, env);
+	test_print(parsed_input);
 	free_command(parsed_input);
 	free(input);
 }

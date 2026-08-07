@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/06 00:17:32 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/07 02:36:33 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,15 @@ t_cmd_fun	get_func(enum e_builtin builtin)
 }
 */
 
+static void	cleanup(t_command *command, pid_t pid)
+{
+	command->pid = pid;
+	if (command->infd != STDIN_FILENO)
+		ft_ffclose(command->infd);
+	if (command->outfd != STDOUT_FILENO)
+		ft_ffclose(command->outfd);
+}
+
 // @doc exec_single
 // @kind func
 // @desc Execute a single command/handles builtins.
@@ -119,27 +128,27 @@ bool	exec_single(t_command *command, char ***env)
 {
 	const char	*blts[] = {"cd", "echo", "env", "exit",
 		"export", "pwd", "unset", NULL};
-	const t_cmd_fun funcs[] = {
-		cd, echo, minishell_env, minishell_exit, export, pwd, unset, NULL,
-	};
+	const t_cmd_fun funcs[] = {cd, echo, minishell_env,
+		minishell_exit, export, pwd, unset, NULL};
 	uint8_t		i;
-	int32_t		failed;
+	int32_t		pid;
 
-	i = 0;
-	while (blts[i])
+	i = -1;
+	while (blts[++i])
 	{
 		if (!ft_strcmp(blts[i], command->path))
 		{
-			command->pid = funcs[i](*command, env);
+			pid = funcs[i](*command, env);
 			command->builtin = true;
+			cleanup(command, pid);
 			return (true);
 		}
-		i++;
 	}
-	failed = fork();
-	if (!failed)
+	pid = fork();
+	if (!pid)
 		execute(*command, command->outfd, command->infd, *env);
-	else if (failed > 0)
-		command->pid = failed;
+	else if (pid < 0)
+		return (false);
+	cleanup(command, pid);
 	return (false);
 }
