@@ -1,20 +1,22 @@
 #include "minishell.h"
 #include "parser.h"
 
-intmax_t	count_space(char *str)
+bool	tokenizer_fill(t_token *tkn_lst, char **tmp, char ***env)
 {
-	intmax_t	i;
-	intmax_t	res;
+	intmax_t	i[2];
 
-	i = 0;
-	res = 0;
-	while (str[i])
+	ft_bzero(i, sizeof(i));
+	i[1] = -1;
+	while (tmp[++i[1]])
 	{
-		if (str[i] == ' ')
-			res++;
-		i++;
+		if (!tkn_from_split(&tkn_lst, &i[0], tmp[i[1]], env))
+		{
+			ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
+			free_token(tkn_lst);
+			return (false);
+		}
 	}
-	return (res);
+	return (true);
 }
 
 // @doc iscmd_chr

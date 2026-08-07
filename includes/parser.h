@@ -75,6 +75,8 @@ intmax_t	count_space(char *str);
 int32_t		short_type(char *token);
 int32_t		composed_type(char *token);
 void		free_token(t_token *token_lst);
+bool		tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env);
+bool		tokenizer_fill(t_token *tkn_lst, char **tmp, char ***env);
 
 t_command	*command_gen(t_token **tkns, char ***env);
 

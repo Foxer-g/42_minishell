@@ -5,28 +5,24 @@ bool	command_exec_set(t_command *command, char **cmd, uint64_t len)
 {
 	uint64_t	i;
 
-	if (cmd)
+	if (!cmd)
+		return (true);
+	free((*command).path);
+	(*command).path = ft_strdup(cmd[0]);
+	if (!(*command).path)
+		return (false);
+	if ((*command).args)
+		ft_free_nt_tab((*command).args, ft_nt_tablen((void *)(*command).args));
+	(*command).args = ft_calloc(len + 1, sizeof(char *));
+	if (!(*command).args)
+		return (false);
+	i = 0;
+	while (i < len && cmd[i])
 	{
-		free((*command).path);
-		(*command).path = ft_strdup(cmd[0]);
-		if ((*command).args)
-		{
-			i = 0;
-			while ((*command).args[i])
-				free((*command).args[i++]);
-			free((*command).args);
-		}
-		(*command).args = ft_calloc((len + 1), sizeof(char *));
-		if (!(*command).args)
-			return (false);
-		i = 0;
-		while (i < len && cmd[i])
-		{
-			(*command).args[i] = ft_strdup(cmd[i]);
-			if (!(*command).args[i])
-				return (false);
-			i++;
-		}
+		(*command).args[i] = ft_strdup(cmd[i]);
+		if (!(*command).args[i])
+			return (ft_free_nt_tab((*command).args, i), false);
+		i++;
 	}
 	return (true);
 }
@@ -38,14 +34,14 @@ bool	command_redir_set(t_command *command, t_redir *redir, char ***env)
 		free(command->infile);
 		command->infile = ft_strdup(command->args[redir[0].index + 1]);
 		if (!command->infile)
-			return (!parsing_error(MALLOC, " : type_manipulator.c : command_redir_set : infile", env));
+			return (!parsing_error(MALLOC, "", env));
 	}
 	if (redir[1].type)
 	{
 		free(command->outfile);
 		command->outfile = ft_strdup(command->args[redir[1].index + 1]);
 		if (!command->outfile)
-			return (!parsing_error(MALLOC, " : type_manipulator.c : command_redir_set : outfile", env));
+			return (!parsing_error(MALLOC, "", env));
 		command->append = (redir[1].type == APPEND);
 	}
 	return (true);
@@ -63,10 +59,10 @@ t_command	init_command(char ***env)
 	res.append = false;
 	res.infile = ft_strdup("stdin");
 	if (!res.infile)
-		return ((t_command){.append=!parsing_error(MALLOC, " : type_manipulator.c : init_command : res.infile", env)});
+		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
 	res.outfile = ft_strdup("stdout");
 	if (!res.infile)
-		return ((t_command){.append=!parsing_error(MALLOC, " : type_manipulator.c : init_command : res.outfile", env)});
+		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
 	res.builtin = false;
 	return (res);
 }
@@ -81,15 +77,15 @@ t_command	cmd_dup(t_command cmd, char ***env)
 	free(res.outfile);
 	res.infile = ft_strdup(cmd.infile);
 	if (!res.infile)
-		return ((t_command){.append=!parsing_error(MALLOC, " : type_manipulator.c : cmd_dup : res.infile", env)});
+		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
 	res.outfile = ft_strdup(cmd.outfile);
 	if (!res.outfile)
-		return ((t_command){.append=!parsing_error(MALLOC, " : type_manipulator.c : cmd_dup : res.outfile", env)});
+		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
 	res.append = cmd.append;
 	if (!res.infile || !res.outfile)
 	{
 		free_command(&res);
-		return ((t_command) {.append=!parsing_error(MALLOC, " : type manipulator.c : cmd_dup : infile || outfile", env)});
+		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
 	}
 	return (res);
 }

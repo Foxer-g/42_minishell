@@ -9,7 +9,7 @@ t_command	*full_cmd_dup(t_command *src, char ***env)
 	res = ft_calloc(cmd_len(src) + 1, sizeof(t_command));
 	if (!res)
 	{
-		parsing_error(MALLOC, " : piping_utils.c : full_cmd_dup : res\n", env);
+		parsing_error(MALLOC, "", env);
 		return (NULL);
 	}
 	i = 0;
@@ -19,7 +19,7 @@ t_command	*full_cmd_dup(t_command *src, char ***env)
 		if (!res[i].infile)
 		{
 			free_command(res);
-			parsing_error(MALLOC, " : piping_utils.c : full_cmd_dup : res[i]\n", env);
+			parsing_error(MALLOC, "", env);
 			return (NULL);
 		}
 		i++;
@@ -53,7 +53,7 @@ intmax_t	*find_pipe(t_command *cmd, char ***env)
 	i = 0;
 	res = ft_calloc(nb + 2, sizeof(intmax_t));
 	if (!res)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : piping_utils.c :find_pipes : res", env)));
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 	while (cmd[i].infile)
 		if (cmd[i++].path[0] == '|')
 			res[++res[0]] = i - 1;
@@ -75,9 +75,7 @@ t_command	*is_error(t_command *cmd, intmax_t len, char ***env)
 		if (!cmd[i].infile)
 		{
 			free_command(cmd);
-			parsing_error(MALLOC, " : piping_utils.c : is_error :", env);
-// ligne du dessous à retirer
-			ft_printf("element : %i\n", i);
+			parsing_error(MALLOC, "", env);
 			return (NULL);
 		}
 		i++;

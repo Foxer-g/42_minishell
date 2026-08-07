@@ -13,7 +13,7 @@ static bool	command_expand(t_command **cmd, char ***env)
 			return (false);
 		res = strtrim_cmd_end(&((*cmd)[i]), env);
 		if (!res)
-			return (parsing_error(MALLOC, " : scheduler.c : command_expand : res", env));
+			return (parsing_error(MALLOC, "", env));
 		i++;
 	}
 	return (true);
@@ -35,14 +35,11 @@ static bool	redir_apply(t_command **cmd, char ***env)
 		if (!tmp || !command_redir_set(&(*cmd)[i], red, env))
 		{
 			free(red);
-			if (tmp)
-			{
-				ft_printf("not tmp\n");
-				ft_free_nt_tab(tmp, args_len((*cmd)[i]) - 2);
-			}
-			return (!parsing_error(MALLOC, " : scheduler.c : redir_apply : tmp || redir set", env));
+			ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
+			return (!parsing_error(MALLOC, "", env));
 		}
 		command_exec_set(&(*cmd)[i], tmp, ft_nt_tablen((void *)tmp));
+		ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
 		free(red);
 		i++;
 	}
@@ -59,7 +56,7 @@ static t_command	*piping(t_command *cmd, char ***env)
 	if (!pipes)
 		return (full_cmd_dup(cmd, env));
 	if (pipes == (void *)-1)
-		return ((void *)((uintptr_t)!parsing_error(INV_PIPES, "|", env)));
+		return ((void *)((uintptr_t) !parsing_error(INV_PIPES, "|", env)));
 	res = ft_calloc(cmd_len(cmd) / 2 + 2, sizeof(t_command));
 	if (!is_valid_pipes(pipes, env) || !res)
 	{
