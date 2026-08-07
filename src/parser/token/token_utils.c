@@ -59,21 +59,21 @@ int32_t	short_type(char *token)
 	return (-1);
 }
 
-int32_t	composed_type(char *token)
+int32_t	composed_type(char *tkn)
 {
-	if (ft_strchr(token, '$'))
+	if (ft_strchr(tkn, '$'))
 		return (ENV_DESC);
-	if (ft_strlen(token) == 1 && ft_strnstr(token, "*", 2))
+	if ((ft_strlen(tkn) - count_space(tkn)) == 1 && ft_strnstr(tkn, "*", 2))
 		return (WILDCARD);
-	if (ft_strlen(token) == 2 && ft_strnstr(token, "||", 3))
+	if ((ft_strlen(tkn) - count_space(tkn)) == 2 && ft_strnstr(tkn, "||", 3))
 		return (DPIPE);
-	if (ft_strlen(token) == 2 && ft_strnstr(token, "&&", 3))
+	if ((ft_strlen(tkn) - count_space(tkn)) == 2 && ft_strnstr(tkn, "&&", 3))
 		return (DAND);
-	if (ft_strlen(token) == 2 && ft_strnstr(token, ">>", 3))
+	if ((ft_strlen(tkn) - count_space(tkn)) == 2 && ft_strnstr(tkn, ">>", 3))
 		return (APPEND);
-	if (ft_strlen(token) == 2 && ft_strnstr(token, "<<", 3))
+	if ((ft_strlen(tkn) - count_space(tkn)) == 2 && ft_strnstr(tkn, "<<", 3))
 		return (HEREDOC);
-	if (iscmd_chr(token[0]))
+	if (iscmd_chr(tkn[0]))
 		return (COMMAND);
 	return (-1);
 }

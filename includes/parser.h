@@ -84,7 +84,7 @@ bool		quote_join(t_token **tkns, char ***env);
 void		free_command(t_command *cmds);
 t_command	init_command(char ***env);
 t_command	cmd_dup(t_command cmd, char ***env);
-void		command_exec_set(t_command *command, char **cmd, uint64_t len);
+bool		command_exec_set(t_command *command, char **cmd, uint64_t len);
 bool		command_redir_set(t_command *command, t_redir *redir, char ***env);
 
 t_command	*scheduler(t_command *raw_command, char ***env);

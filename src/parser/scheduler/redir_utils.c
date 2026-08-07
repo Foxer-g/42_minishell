@@ -3,12 +3,16 @@
 
 static int32_t	is_redir(char c1, char c2)
 {
-	if (c1 == '>' && c2 == '>')
+	if (!c1)
+		return (0);
+	if (!c2)
+		return (((c1 == '<') * I_REDIR) + ((c1 == '>') * O_REDIR));
+	if (c1 != c2 && (c1 == '<' || c1 == '>'))
+		return (((c1 == '<') * I_REDIR) + ((c1 == '>') * O_REDIR));
+	else if (c1 != c2)
+		return (0);
+	if (c1 == c2 && c1 == '>')
 		return (APPEND);
-	if (c1 == '<')
-		return (I_REDIR);
-	if (c1 == '>')
-		return (O_REDIR);
 	return (0);
 }
 
@@ -59,7 +63,7 @@ t_redir	*find_redir(t_command cmd, char ***env)
 			{
 				free(redir);
 				parsing_error(PARSING, cmd.args[i - 1], env);
-				return (false);
+				return (NULL);
 			}
 			redir[type != I_REDIR].type = type;
 			redir[type != I_REDIR].index = (++i) - 2;

@@ -1,9 +1,9 @@
 #include "parser.h"
 #include "minishell.h"
 
-void	command_exec_set(t_command *command, char **cmd, uint64_t len)
+bool	command_exec_set(t_command *command, char **cmd, uint64_t len)
 {
-	int64_t	i;
+	uint64_t	i;
 
 	if (cmd)
 	{
@@ -18,14 +18,17 @@ void	command_exec_set(t_command *command, char **cmd, uint64_t len)
 		}
 		(*command).args = ft_calloc((len + 1), sizeof(char *));
 		if (!(*command).args)
-			return ;
+			return (false);
 		i = 0;
-		while (i < (int64_t) len)
+		while (i < len && cmd[i])
 		{
 			(*command).args[i] = ft_strdup(cmd[i]);
+			if (!(*command).args[i])
+				return (false);
 			i++;
 		}
 	}
+	return (true);
 }
 
 bool	command_redir_set(t_command *command, t_redir *redir, char ***env)
