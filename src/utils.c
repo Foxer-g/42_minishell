@@ -67,8 +67,8 @@ char	*prompt(char **env)
 
 void	test_print(t_command *input)
 {
-	intmax_t i;
-	intmax_t j;
+	intmax_t	i;
+	intmax_t	j;
 
 	i = 0;
 	while (input[i].infile)

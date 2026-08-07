@@ -1,16 +1,6 @@
 #include "minishell.h"
 #include "parser.h"
 
-intmax_t	args_len(t_command cmd)
-{
-	intmax_t	i;
-
-	i = 0;
-	while (cmd.args[i])
-		i++;
-	return (i);
-}
-
 bool	strtrim_cmd_end(t_command *cmd, char ***env)
 {
 	char		**tmp;
@@ -18,7 +8,7 @@ bool	strtrim_cmd_end(t_command *cmd, char ***env)
 
 	tmp = ft_calloc(args_len(*cmd) + 1, sizeof(char *));
 	if (!tmp)
-		return (!parsing_error(MALLOC, " : scheduler_utils.c : strtrim_cmd_end : tmp\n", env));
+		return (!parsing_error(MALLOC, "", env));
 	i = 0;
 	while ((*cmd).args[i])
 	{
@@ -26,7 +16,7 @@ bool	strtrim_cmd_end(t_command *cmd, char ***env)
 		if (!tmp[i])
 		{
 			ft_free_nt_tab(tmp, i);
-			return (!parsing_error(MALLOC, " : scheduler_utils.c : strtrim_cmd_end : tmp[i]\n", env));
+			return (!parsing_error(MALLOC, "", env));
 		}
 		i++;
 	}
@@ -34,6 +24,7 @@ bool	strtrim_cmd_end(t_command *cmd, char ***env)
 	ft_free_nt_tab(tmp, args_len(*cmd));
 	return (true);
 }
+
 static char	**args_to_tab_without_hd(t_command cmd, intmax_t index, char ***env)
 {
 	intmax_t	i;
@@ -42,7 +33,7 @@ static char	**args_to_tab_without_hd(t_command cmd, intmax_t index, char ***env)
 
 	res = ft_calloc(args_len(cmd) - 1, sizeof(char *));
 	if (!res)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : scheduler_utils.c : cmd_set_hd : tmp || no file\n", env)));
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 	i = 0;
 	j = 1;
 	while (cmd.args[i])
@@ -53,7 +44,7 @@ static char	**args_to_tab_without_hd(t_command cmd, intmax_t index, char ***env)
 			if (!res[j])
 			{
 				ft_free_nt_tab(res, args_len(cmd) - 1);
-				return ((void *)((uintptr_t)!parsing_error(MALLOC, " : scheduler_utils.c : args_to_tab_without_hd : res[j]", env)));
+				return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 			}
 			j++;
 		}
@@ -73,7 +64,7 @@ bool	cmd_set_hd(t_command *cmd, intmax_t index, char ***env)
 	if (!tmp[0])
 	{
 		ft_free_nt_tab(tmp, args_len(*cmd) - 1);
-		return (!parsing_error(MALLOC, " : scheduler_utils.c : cmd_set_hd : tmp[0]", env));
+		return (!parsing_error(MALLOC, "", env));
 	}
 	if (!command_exec_set(cmd, tmp, args_len(*cmd) - 1))
 	{
@@ -90,6 +81,13 @@ bool	cmd_set_hd(t_command *cmd, intmax_t index, char ***env)
 	return (true);
 }
 
+static intmax_t	*heredoc_error(intmax_t *res, char *arg, char ***env)
+{
+	free(res);
+	parsing_error(PARSING, arg, env);
+	return (NULL);
+}
+
 intmax_t	*find_heredoc(t_command *c, char ***env)
 {
 	intmax_t	*res;
@@ -97,7 +95,7 @@ intmax_t	*find_heredoc(t_command *c, char ***env)
 
 	res = ft_calloc(cmd_len(c) + 1, sizeof(intmax_t));
 	if (!res)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : scheduler_utils.c : find_heredoc : res\n", env)));
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 	i[0] = -1;
 	while (c[++i[0]].infile)
 	{
@@ -105,14 +103,11 @@ intmax_t	*find_heredoc(t_command *c, char ***env)
 		i[1] = -1;
 		while (c[i[0]].args[++i[1]])
 		{
-			if (c[i[0]].args[i[1]][0] == '<' && c[i[0]].args[i[1]][1] == '<')
+			if (c[i[0]].args[i[1]][0] == '<'
+				&& c[i[0]].args[i[1]][1] == '<')
 			{
 				if (res[i[0]] != -1)
-				{
-					free(res);
-					parsing_error(PARSING, c[i[0]].args[i[1]], env);
-					return (false);
-				}
+					return (heredoc_error(res, c[i[0]].args[i[1]], env));
 				res[i[0]] = i[1];
 			}
 		}

@@ -106,7 +106,7 @@ static int32_t	get_token_type(char *token)
 // @param env: char***, Environment variable.
 // @return bool, Exit status.
 
-static bool	tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env)
+bool	tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env)
 {
 	int64_t	len;
 	int64_t	j;
@@ -117,7 +117,10 @@ static bool	tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env)
 		len = get_token_len(split, j);
 		(*tkn)[*i].content = ft_substr(split, j, len);
 		if (!(*tkn)[*i].content)
+		{
+			free_token((*tkn));
 			return (!parsing_error(MALLOC, "", env));
+		}
 		(*tkn)[*i].type = get_token_type((*tkn)[*i].content);
 		j += len;
 		(*i)++;
@@ -135,23 +138,18 @@ t_token	*tokenizer(char *input, char ***env)
 {
 	t_token		*tkn_lst;
 	char		**tmp;
-	intmax_t	i;
-	intmax_t	j;
 
 	tmp = ft_preserving_split(input, ' ');
 	if (!tmp)
-		return ((void *)((uintptr_t) !parsing_error(MALLOC, " : tokenizer.c : tokenizer : tmp", env)));
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 	tkn_lst = ft_calloc(token_stack_len(tmp) + 1, sizeof(t_token));
 	if (!tkn_lst)
 	{
-		ft_free_nt_tab(tmp, (int32_t) ft_nt_tablen((void *) tmp));
-		return ((void *)((uintptr_t) !parsing_error(MALLOC, " : tokenizer.c : tokenizer : tkn_lst", env)));
+		ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 	}
-	i = 0;
-	j = -1;
-	while (tmp[++j])
-		if (!tkn_from_split(&tkn_lst, &i, tmp[j], env))
-			return (NULL);
-	ft_free_nt_tab(tmp, ft_nt_tablen((void *) tmp));
+	if (!tokenizer_fill(tkn_lst, tmp, env))
+		return (NULL);
+	ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
 	return (tkn_lst);
 }

@@ -37,51 +37,59 @@ void	sig_init(void)
 	sigaction(SIGQUIT, &sig_action, NULL);
 }
 
-
-void	minishell_action(char *input, char ***env)
+int32_t	minishell_action(char *input, char ***env)
 {
 	t_command	*parsed_input;
+	int32_t		res;
 
 	parsed_input = parser(input, env);
 	if (!parsed_input)
-		return ;
+	{
+		free(input);
+		return (-1);
+	}
 	test_print(parsed_input);
 	ft_printf("\n\e[32m========================================================\e[0m\n\n");
-	entrypoint(parsed_input, env);
+	res = entrypoint(parsed_input, env);
 	ft_printf("\n\e[35m========================================================\e[0m\n\n");
 	test_print(parsed_input);
 	free_command(parsed_input);
 	free(input);
+	return (res);
+}
+
+static int32_t	main_exit(char **env, int32_t res)
+{
+	rl_clear_history();
+	ft_printf("exit\n");
+	free_main_env(env);
+	return (res);
 }
 
 int32_t	main(int32_t ac, char **av, const char **aenv)
 {
-	char				*input;
-	char				**env;
+	char	*input;
+	char	**env;
+	int32_t	res;
 
 	sig_init();
 	env = ft_copy_env(aenv);
+	res = 0;
 	if (ac != 1)
 	{
-		input = join_tab(++av);
-		minishell_action(input, &env);
-		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
-	}
-	else
-	{
-		input = prompt(env);
-		while (input)
-		{
-			if (input[0])
-			{
-				add_history(input);
-				minishell_action(input, &env);
-			}
-			input = prompt(env);
-		}
-		rl_clear_history();
-		ft_printf("exit\n");
-		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
+		minishell_action(join_tab(++av), &env);
+		free_main_env(env);
 		return (0);
 	}
+	input = prompt(env);
+	while (input)
+	{
+		if (input[0] && !(res < 0))
+		{
+			add_history(input);
+			res = -(minishell_action(input, &env) + 1);
+		}
+		input = prompt(env);
+	}
+	return (main_exit(env, res));
 }
