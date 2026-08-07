@@ -62,7 +62,7 @@ static int32_t	main_exit(char **env, int32_t res)
 {
 	rl_clear_history();
 	ft_printf("exit\n");
-	free_main_env(env);
+	ft_free_nt_tab(env, ft_nt_tablen((void *)env));
 	return (res);
 }
 
@@ -78,7 +78,7 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 	if (ac != 1)
 	{
 		minishell_action(join_tab(++av), &env);
-		free_main_env(env);
+		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
 		return (0);
 	}
 	input = prompt(env);
