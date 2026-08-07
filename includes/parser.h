@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 06:54:56 by f0xer             #+#    #+#             */
-/*   Updated: 2026/07/31 01:23:46 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/07 21:39:34 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 # define PARSER_H 
 # include "libft.h" 
 
-#define MALLOC "\e[31;36merror \e[0m\e[31m: Malloc error\e[0m\0"
-#define SYNTAX "\e[31;36merror \e[0m\e[31m: Syntax error near : \e[0m\0"
-#define PARSING "\e[31;36merror \e[0m\e[31m: Parsing error near : \e[0m\0"
-#define INV_CHAR "\e[31;36merror \e[0m\e[31m: Invalid character : \e[0m\0"
-#define INV_PIPES "\e[31;36merror \e[0m\e[31m: Invalid pipe near : \e[0m\0"
-#define INV_HEREDOC "\e[31;36merror \e[0m\e[31m: Invalid heredoc near : \e[0m\0"
+# define MALLOC "\e[31;36merror \e[0m\e[31m: Malloc error\e[0m"
+# define SYNTAX "\e[31;36merror \e[0m\e[31m: Syntax error near : \e[0m"
+# define PARSING "\e[31;36merror \e[0m\e[31m: Parsing error near : \e[0m"
+# define INV_CHAR "\e[31;36merror \e[0m\e[31m: Invalid character : \e[0m"
+# define INV_PIPES "\e[31;36merror \e[0m\e[31m: Invalid pipe near : \e[0m"
+# define INV_HEREDOC "\e[31;36merror \e[0m\e[31m: Invalid heredoc near : \e[0m"
 
 typedef enum e_token_type
 {
@@ -56,12 +56,12 @@ typedef struct s_token
 
 typedef struct s_redir
 {
-	int32_t 	type;
+	int32_t		type;
 	intmax_t	index;
 	char		*file;
 }	t_redir;
 
-typedef struct s_command t_command;
+typedef struct s_command	t_command;
 
 t_command	*parser(char *input, char ***env);
 
