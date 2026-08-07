@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/07 02:36:33 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/07 04:30:59 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,10 @@ void	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 		envpath = ft_split(ft_get_env("PATH", env), ':');
 		path = ft_find_exec(cmd.path, (void *)envpath);
 		ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
-		execve(path, cmd.args, env);
+		if (!ft_strcmp(cmd.infile, "<<"))
+			execve(path, cmd.args + 1, env);
+		else
+			execve(path, cmd.args, env);
 		failed = errno;
 		perror(cmd.args[0]);
 	}
