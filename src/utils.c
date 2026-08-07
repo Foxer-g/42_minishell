@@ -33,10 +33,18 @@ char	*join_tab(char **tab)
 
 void	sig_handle(int32_t signal, siginfo_t *info, void *context)
 {
-	(void)context;
 	(void)info;
-	if (signal == SIGINT || signal == SIGQUIT)
-		g_sig_handle = signal;
+	(void)context;
+	if (signal == SIGINT)
+	{
+		g_sig_handle = SIGINT;
+		write(1, "^C\n", 3);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
+	else if (signal == SIGQUIT)
+		g_sig_handle = SIGQUIT;
 }
 
 char	*prompt(char **env)
@@ -60,6 +68,11 @@ char	*prompt(char **env)
 	str_prompt = ft_extend(str_prompt, path[0]);
 	str_prompt = ft_extend(str_prompt, PROMPT_C);
 	out = readline(str_prompt);
+	if (g_sig_handle == SIGINT)
+	{
+		ft_printf("\n");
+		g_sig_handle = 0;
+	}
 	free(str_prompt);
 	free(path[1]);
 	return (out);

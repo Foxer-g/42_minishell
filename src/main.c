@@ -35,6 +35,7 @@ void	sig_init(void)
 	sigemptyset(&sig_action.sa_mask);
 	sigaction(SIGINT, &sig_action, NULL);
 	sigaction(SIGQUIT, &sig_action, NULL);
+	rl_catch_signals = 0;
 }
 
 int32_t	minishell_action(char *input, char ***env)
@@ -84,10 +85,13 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 	input = prompt(env);
 	while (input)
 	{
+		if (g_sig_handle == SIGINT)
+			res = 130;
 		if (input[0] && !(res < 0))
 		{
 			add_history(input);
 			res = -(minishell_action(input, &env) + 1);
+			g_sig_handle = 0;
 		}
 		input = prompt(env);
 	}
