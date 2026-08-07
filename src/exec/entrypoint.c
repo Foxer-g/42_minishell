@@ -6,7 +6,7 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/07 23:34:25 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 01:13:51 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,30 +20,14 @@
 // @param used_pipe: bool, true if the pipe is used, false if opening it failed.
 // @param env: char **, The environment.
 // @returns [[t_ffile]], The read end of the pipe.
-static int	setup_here_doc(t_ffile target_pipe[2], const char *delimiter,
-	bool *used_pipe, char **env)
+static int	setup_here_doc(t_command *cmd,
+	t_ffile target_pipe[2], bool *used_pipe)
 {
-	char	*line;
-
 	if (pipe(target_pipe) < 0)
 		return (-1);
 	*used_pipe = true;
-	line = get_next_line(STDIN_FILENO);
-	while (line)
-	{
-		if (line[ft_strlen(line) - 1] == '\n')
-			line[ft_strlen(line) - 1] = '\0';
-		if (!ft_strcmp(line, delimiter) || *line == EOF)
-			break ;
-		expand_here_doc(&line, &env);
-		write(target_pipe[1], line, ft_strlen(line));
-		write(target_pipe[1], "\n", 1);
-		free(line);
-		line = get_next_line(STDIN_FILENO);
-	}
-	free(line);
-	close(target_pipe[1]);
-	get_next_line(-1);
+	cmd->infd = target_pipe[RE];
+	cmd->append = target_pipe[WE];
 	return (target_pipe[0]);
 }
 
@@ -61,7 +45,7 @@ static int8_t	execution_pipeline(t_command *cmd, char ***env)
 
 	pipe_used = false;
 	if (!ft_strcmp(cmd->infile, "<<"))
-		cmd->infd = setup_here_doc(here_doc_pipe, *cmd->args, &pipe_used, *env);
+		setup_here_doc(cmd, here_doc_pipe, &pipe_used);
 	else if (ft_strcmp(cmd->infile, "stdin"))
 		cmd->infd = ft_ffopen(cmd->infile, "r");
 	if (ft_strcmp(cmd->outfile, "stdout"))
@@ -69,8 +53,6 @@ static int8_t	execution_pipeline(t_command *cmd, char ***env)
 	if (cmd->infd < 0 || cmd->outfd < 0)
 		return (false);
 	status = exec_single(cmd, env);
-	if (pipe_used)
-		ft_close_pipe(here_doc_pipe);
 	return (status);
 }
 
@@ -118,16 +100,13 @@ int32_t	entrypoint(t_command *cmds, char ***env)
 
 	cmdsc = cmds;
 	if (!setup_pipe(cmds))
-	{
-		parsing_error("ERROR: ",
-			"You confused the heck out of the parser.", env);
-		return (69);
-	}
+		return (-256);
 	while (cmds->infile)
 	{
 		remove_quotes(cmds);
 		execution_pipeline(cmds++, env);
 	}
+	status = 0;
 	while (cmdsc->infile)
 	{
 		if (!cmdsc[0].builtin)

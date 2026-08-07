@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/07 21:46:14 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 01:11:08 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,36 @@ int32_t	safe_exec_setup(t_ffile out, t_ffile in)
 	return (0);
 }
 
+// @doc setup_here_doc
+// @kind func
+// @desc Sets up a here doc for a single command
+// @param target_pipe: [[t_ffile]][2], The pipe to set up and use.
+// @param used_pipe: bool, true if the pipe is used, false if opening it failed.
+// @param env: char **, The environment.
+// @returns [[t_ffile]], The read end of the pipe.
+static void	exec_here_doc(t_command cmd,
+	const char *delimiter, char **env)
+{
+	char	*line;
+
+	line = get_next_line(STDIN_FILENO);
+	while (line)
+	{
+		if (line[ft_strlen(line) - 1] == '\n')
+			line[ft_strlen(line) - 1] = '\0';
+		if (!ft_strcmp(line, delimiter))
+			break ;
+		expand_here_doc(&line, &env);
+		write(cmd.append, line, ft_strlen(line));
+		write(cmd.append, "\n", 1);
+		free(line);
+		line = get_next_line(STDIN_FILENO);
+	}
+	free(line);
+	close(cmd.append);
+	get_next_line(-1);
+}
+
 // @doc execute
 // @kind func
 // @desc Ececute a prepared command with a specific stdin and stdout file.
@@ -73,6 +103,8 @@ void	execute(t_command cmd, t_ffile out, t_ffile in, char **env)
 	char	*path;
 	char	**envpath;
 
+	if (!ft_strcmp(cmd.infile, "<<"))
+		exec_here_doc(cmd, *cmd.args, env);
 	failed = safe_exec_setup(out, in);
 	if (failed == 0)
 	{
@@ -114,6 +146,8 @@ t_cmd_fun	get_func(enum e_builtin builtin)
 static void	cleanup(t_command *command, pid_t pid)
 {
 	command->pid = pid;
+	if (command->append != 0)
+		ft_ffclose(command->append);
 	if (command->infd != STDIN_FILENO)
 		ft_ffclose(command->infd);
 	if (command->outfd != STDOUT_FILENO)
