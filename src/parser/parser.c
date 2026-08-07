@@ -12,6 +12,13 @@
 
 #include "minishell.h"
 
+// @doc parser
+// @kind func
+// @desc Execute the whole parsing process.
+// @param input: char *, User input to parse.
+// @param env: char ***, Environement variables.
+// @return [[t_command]], The parsed command array.
+
 t_command	*parser(char *input, char ***env)
 {
 	t_token		*token_lst;

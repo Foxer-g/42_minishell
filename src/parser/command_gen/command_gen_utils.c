@@ -1,6 +1,31 @@
 #include "minishell.h"
 #include "parser.h"
 
+intmax_t	count_space(char *str)
+{
+	intmax_t	i;
+	intmax_t	res;
+
+	i = 0;
+	res = 0;
+	while (str[i])
+	{
+		if (str[i] == ' ')
+			res++;
+		i++;
+	}
+	return (res);
+}
+
+// @doc tkn_to_tab
+// @kind func
+// @desc Duplicate token array content as a string array.
+// @param tkns: [[t_token]] *, Token array to get content from.
+// @param i: intmax_t, index to start from.
+// @param len: intmax_t, Len to apply the dup.
+// @param env: char ***, Environement variables.
+// @return char **, String array copied from token array.
+
 char	**tkn_to_tab(t_token *tkns, intmax_t i, intmax_t len, char ***env)
 {
 	intmax_t	k;
@@ -18,22 +43,6 @@ char	**tkn_to_tab(t_token *tkns, intmax_t i, intmax_t len, char ***env)
 		if (!res[k])
 			return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 		k++;
-	}
-	return (res);
-}
-
-intmax_t	count_space(char *str)
-{
-	intmax_t	i;
-	intmax_t	res;
-
-	i = 0;
-	res = 0;
-	while (str[i])
-	{
-		if (str[i] == ' ')
-			res++;
-		i++;
 	}
 	return (res);
 }
@@ -64,6 +73,13 @@ static bool	cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
 	res[i[1]++] = (t_token){tmp, res_type};
 	return (true);
 }
+
+// @doc quote_join
+// @kind func
+// @desc Join quotes in a token array.
+// @param tkns: [[t_token]] **, Token array to apply quote join.
+// @param env: char ***, Environement variables.
+// @return bool, Return status.
 
 bool	quote_join(t_token **tkns, char ***env)
 {

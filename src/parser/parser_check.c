@@ -20,6 +20,12 @@ bool	parsing_error(char *message, char *token, char ***env)
 	return (true);
 }
 
+// @doc invalid_char
+// @kind func
+// @desc Check char validity in a [[t_token]] array.
+// @param token: [[t_token]] *, Token to check.
+// @return char *, Invalid token to return or NULL if it's good.
+
 static char	*invalid_char(t_token *token)
 {
 	int64_t	i;
@@ -37,6 +43,12 @@ static char	*invalid_char(t_token *token)
 	}
 	return (NULL);
 }
+
+// @doc invalid_quotes
+// @kind func
+// @desc Check quotes validity in a [[t_token]] array.
+// @param tkn: [[t_token]] *, Token to check.
+// @return char *, Invalid token to return or NULL if it's good.
 
 static char	*invalid_quotes(t_token *tkn)
 {
@@ -64,7 +76,7 @@ static char	*invalid_quotes(t_token *tkn)
 // @kind func
 // @desc Check invalid patern or chars.
 // @param token_lst: [[t_token]], Token list to check.
-// @param env: char **, Environment variables.
+// @param env: char ***, Environment variables.
 // @return bool, Token list validity result.
 
 bool	check_invalid_paterns(t_token *token_lst, char ***env)

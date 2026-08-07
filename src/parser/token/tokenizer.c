@@ -56,7 +56,7 @@ static int64_t	token_stack_len(char **input)
 // @param start: int64_t, Index to start calculating token lenght.
 // @return int64_t, Next token lenght from start index.
 
-static int64_t	get_token_len(char *input, int64_t start)
+int64_t	get_token_len(char *input, int64_t start)
 {
 	int64_t	i;
 
@@ -88,7 +88,7 @@ static int64_t	get_token_len(char *input, int64_t start)
 // @param token: char *, Token to get the type from.
 // @return int32_t, The token type.
 
-static int32_t	get_token_type(char *token)
+int32_t	get_token_type(char *token)
 {
 	if (ft_strlen(token) - count_space(token) == 1)
 		return (short_type(token));
@@ -97,33 +97,28 @@ static int32_t	get_token_type(char *token)
 	return (0);
 }
 
-// @doc tkn_from_split
+// @doc tokenizer_fill
 // @kind func
-// @desc Generate tokens form a splitted input.
-// @param tkn: [[t_token]] **, Token list to fill.
-// @param i: int64_t *, Token list index.
-// @param split: char *, Splitted input.
-// @param env: char***, Environment variable.
-// @return bool, Exit status.
+// @desc Fill a [[t_token]] array with the tmp.
+// @param tkn_lst: [[t_token]] *, Token array to fill up.
+// @param tmp: char **, Array of string to fill token.
+// @param env: char ***, Environement variables.
+// @return bool, Completion status.
 
-bool	tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env)
+static bool	tokenizer_fill(t_token *tkn_lst, char **tmp, char ***env)
 {
-	int64_t	len;
-	int64_t	j;
+	intmax_t	i[2];
 
-	j = 0;
-	while (split[j])
+	ft_bzero(i, sizeof(i));
+	i[1] = -1;
+	while (tmp[++i[1]])
 	{
-		len = get_token_len(split, j);
-		(*tkn)[*i].content = ft_substr(split, j, len);
-		if (!(*tkn)[*i].content)
+		if (!tkn_from_split(&tkn_lst, &i[0], tmp[i[1]], env))
 		{
-			free_token((*tkn));
+			ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
+			free_token(tkn_lst);
 			return (!parsing_error(MALLOC, "", env));
 		}
-		(*tkn)[*i].type = get_token_type((*tkn)[*i].content);
-		j += len;
-		(*i)++;
 	}
 	return (true);
 }
@@ -132,7 +127,8 @@ bool	tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env)
 // @kind func
 // @desc Create a token array out of the input.
 // @param input: char *, String given by the user.
-// @return [[t_token]], A token array to be parsed.
+// @param env: char ***, Environement variables.
+// @return [[t_token]] *, A token array to be parsed.
 
 t_token	*tokenizer(char *input, char ***env)
 {

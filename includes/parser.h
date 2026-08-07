@@ -63,23 +63,36 @@ typedef struct s_redir
 
 typedef struct s_command	t_command;
 
+/*----------------------*/
+/*    parser includes   */
+/*----------------------*/
+
 t_command	*parser(char *input, char ***env);
 
 bool		check_invalid_paterns(t_token *token_lst, char ***env);
 bool		parsing_error(char *message, char *token, char ***env);
 
+/*----------------------*/
+/*  tokenizer includes  */
+/*----------------------*/
+
 t_token		*tokenizer(char *input, char ***env);
 
 bool		iscmd_chr(char c);
-intmax_t	count_space(char *str);
+bool		tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env);
 int32_t		short_type(char *token);
 int32_t		composed_type(char *token);
 void		free_token(t_token *token_lst);
-bool		tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env);
-bool		tokenizer_fill(t_token *tkn_lst, char **tmp, char ***env);
+int64_t		get_token_len(char *input, int64_t start);
+int32_t		get_token_type(char *token);
+
+/*----------------------*/
+/* command gen includes */
+/*----------------------*/
 
 t_command	*command_gen(t_token **tkns, char ***env);
 
+intmax_t	count_space(char *str);
 char		**tkn_to_tab(t_token *tkns, intmax_t i, intmax_t len, char ***env);
 bool		quote_join(t_token **tkns, char ***env);
 
@@ -88,6 +101,10 @@ t_command	init_command(char ***env);
 t_command	cmd_dup(t_command cmd, char ***env);
 bool		command_exec_set(t_command *command, char **cmd, uint64_t len);
 bool		command_redir_set(t_command *command, t_redir *redir, char ***env);
+
+/*----------------------*/
+/*  scheduler includes  */
+/*----------------------*/
 
 t_command	*scheduler(t_command *raw_command, char ***env);
 bool		strtrim_cmd_end(t_command *cmd, char ***env);

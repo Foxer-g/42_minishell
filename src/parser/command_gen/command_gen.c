@@ -1,6 +1,13 @@
 #include "minishell.h"
 #include "parser.h"
 
+// @doc tkn_len_since
+// @kind func
+// @desc Get the array len until the next pipe since start.
+// @param tkn: [[t_token]] *, Token array to get the size from.
+// @param start: intmax_t, Starting index.
+// @return int32_t, Len until the next pipe.
+
 static int32_t	tkn_len_since(t_token *tkn, intmax_t start)
 {
 	intmax_t	i;
@@ -12,6 +19,12 @@ static int32_t	tkn_len_since(t_token *tkn, intmax_t start)
 		i++;
 	return (i - start);
 }
+
+// @doc command_len
+// @kind func
+// @desc Get the len of a command array from a token array.
+// @param tkns: [[t_token]] *, The token array to calculate from.
+// @return uint64_t, Command array len from token array.
 
 static uint64_t	command_len(t_token *tkns)
 {
@@ -31,6 +44,15 @@ static uint64_t	command_len(t_token *tkns)
 	return (res);
 }
 
+// @doc command_gen_error
+// @kind func
+// @desc Command_gen func helper to handle the errors.
+// @param res: [[t_command]] *, Command array.
+// @param tmp: char **, Tokens content copy.
+// @param len: intmax_t, tmp len.
+// @param env: char ***, Environement variables.
+// @return [[t_command]] *, A NULL pointer.
+
 static t_command	*command_gen_error(t_command *res, char **tmp,
 		intmax_t len, char ***env)
 {
@@ -44,6 +66,7 @@ static t_command	*command_gen_error(t_command *res, char **tmp,
 // @kind func
 // @desc Generate a [[t_command]] array from the token array.
 // @param input: [[t_token]], Tokenized user input.
+// @param env: char ***, Evironement variables.
 // @return [[t_commnad]], A command array to be organized.
 
 t_command	*command_gen(t_token **tkns, char ***env)

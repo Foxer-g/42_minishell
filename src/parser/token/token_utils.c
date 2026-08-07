@@ -1,24 +1,6 @@
 #include "minishell.h"
 #include "parser.h"
 
-bool	tokenizer_fill(t_token *tkn_lst, char **tmp, char ***env)
-{
-	intmax_t	i[2];
-
-	ft_bzero(i, sizeof(i));
-	i[1] = -1;
-	while (tmp[++i[1]])
-	{
-		if (!tkn_from_split(&tkn_lst, &i[0], tmp[i[1]], env))
-		{
-			ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
-			free_token(tkn_lst);
-			return (false);
-		}
-	}
-	return (true);
-}
-
 // @doc iscmd_chr
 // @kind func
 // @desc Check if the char is in the command type charset.
@@ -31,6 +13,43 @@ bool	iscmd_chr(char c)
 		return (false);
 	return (true);
 }
+
+// @doc tkn_from_split
+// @kind func
+// @desc Generate tokens form a splitted input.
+// @param tkn: [[t_token]] **, Token list to fill.
+// @param i: int64_t *, Token list index.
+// @param split: char *, Splitted input.
+// @param env: char***, Environment variables.
+// @return bool, Exit status.
+
+bool	tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env)
+{
+	int64_t	len;
+	int64_t	j;
+
+	j = 0;
+	while (split[j])
+	{
+		len = get_token_len(split, j);
+		(*tkn)[*i].content = ft_substr(split, j, len);
+		if (!(*tkn)[*i].content)
+		{
+			free_token((*tkn));
+			return (!parsing_error(MALLOC, "", env));
+		}
+		(*tkn)[*i].type = get_token_type((*tkn)[*i].content);
+		j += len;
+		(*i)++;
+	}
+	return (true);
+}
+
+// @doc short_type
+// @kind func
+// @desc Get the type of a single element token.
+// @param token: char *, Token content.
+// @return int32_t, Token type.
 
 int32_t	short_type(char *token)
 {
@@ -61,6 +80,12 @@ int32_t	short_type(char *token)
 	return (-1);
 }
 
+// @doc composed_type
+// @kind func
+// @desc Get the type of a composed type token.
+// @param tkn: char *, Token content.
+// @return int32_t, Token type.
+
 int32_t	composed_type(char *tkn)
 {
 	if (ft_strchr(tkn, '$'))
@@ -79,6 +104,11 @@ int32_t	composed_type(char *tkn)
 		return (COMMAND);
 	return (-1);
 }
+
+// @doc free_token
+// @kind func
+// @desc Free a NULL terminated [[t_token]] array.
+// @param token_lst: [[t_token]], Token array to free.
 
 void	free_token(t_token *token_lst)
 {
