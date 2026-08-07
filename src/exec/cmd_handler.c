@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/07 04:30:59 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/07 21:46:14 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 
 #define EXEC_SOURCE
 #include "minishell.h"
-#define BLTS {"cd", "echo", "env", "exit", "export", "pwd", "unset", NULL}
 
 // @doc safe_exec_setup
 // @kind func
@@ -129,12 +128,12 @@ static void	cleanup(t_command *command, pid_t pid)
 // @returns bool, Was it a built-in?
 bool	exec_single(t_command *command, char ***env)
 {
-	const char	*blts[] = {"cd", "echo", "env", "exit",
+	const char		*blts[] = {"cd", "echo", "env", "exit",
 		"export", "pwd", "unset", NULL};
-	const t_cmd_fun funcs[] = {cd, echo, minishell_env,
+	const t_cmd_fun	funcs[] = {cd, echo, minishell_env,
 		minishell_exit, export, pwd, unset, NULL};
-	uint8_t		i;
-	int32_t		pid;
+	uint8_t			i;
+	int32_t			pid;
 
 	i = -1;
 	while (blts[++i])

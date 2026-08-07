@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/06 08:56:36 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/07 05:49:29 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/07 21:43:06 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ bool	handle_var(char **arg, uintmax_t ind, char **env)
 		return (false);
 	}
 	*arg = ft_recalloc(*arg, ft_strlen(*arg), ft_strlen(*arg)
-		 - ft_strlen(evn) + ft_strlen(var), sizeof(char));
+			- ft_strlen(evn) + ft_strlen(var), sizeof(char));
 	if (!*arg)
 		return (true);
 	eov = &(*arg)[ind] + ft_strlen_until(&(*arg)[ind], ' ');

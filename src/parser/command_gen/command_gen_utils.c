@@ -76,7 +76,8 @@ bool	quote_join(t_token **tkns, char ***env)
 		return (!parsing_error(MALLOC, "", env));
 	while ((*tkns)[i[0]].content)
 	{
-		res = ft_recalloc(res, (i[1] + 1) * sizeof(t_token), i[1] + 2, sizeof(t_token));
+		res = ft_recalloc(res, (i[1] + 1)
+				* sizeof(t_token), i[1] + 2, sizeof(t_token));
 		if (!res)
 			return (!parsing_error(MALLOC, "", env));
 		if (!cmpnd_qt_cntnt(i, *tkns, res, env))
