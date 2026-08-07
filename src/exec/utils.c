@@ -6,12 +6,13 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/06 08:56:36 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/07 21:43:06 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/07 23:40:47 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define EXEC_SOURCE
 #include "minishell.h"
+#define LEN ft_strlen
 
 void	remove_quotes(t_command *cmd)
 {
@@ -38,32 +39,31 @@ void	remove_quotes(t_command *cmd)
 // @param index: uintmax_t, The index at which the expand is located.
 // @param env: char **, The environment.
 // @returns bool, Exit status.
-bool	handle_var(char **arg, uintmax_t ind, char **env)
+bool	handle_var(char **ar, uintmax_t ind, char **env)
 {
 	char	*evn;
 	char	*eov;
 	char	*var;
 
-	evn = ft_substr(*arg, ind + 1, ft_strlen_until(&(*arg)[ind + 1], ' '));
+	evn = ft_substr(*ar, ind + 1, ft_strlen_until(&(*ar)[ind + 1], ' '));
 	if (!evn)
 		return (true);
-	eov = &(*arg)[ind] + ft_strlen_until(&(*arg)[ind], ' ');
+	eov = &(*ar)[ind] + ft_strlen_until(&(*ar)[ind], ' ');
 	var = ft_get_env(evn, env);
 	if (ft_strlen(evn) + 1 >= ft_strlen(var))
 	{
-		ft_memcpy(&(*arg)[ind], var, ft_min(ft_strlen(evn), ft_strlen(var)));
+		ft_memcpy(&(*ar)[ind], var, ft_min(ft_strlen(evn), ft_strlen(var)));
 		if (ft_min(ft_strlen(evn), ft_strlen(var)) == ft_strlen(var))
-			ft_memmove(&(*arg)[ind + ft_strlen(var)], eov, ft_strlen(eov) + 1);
+			ft_memmove(&(*ar)[ind + ft_strlen(var)], eov, ft_strlen(eov) + 1);
 		free(evn);
 		return (false);
 	}
-	*arg = ft_recalloc(*arg, ft_strlen(*arg), ft_strlen(*arg)
-			- ft_strlen(evn) + ft_strlen(var), sizeof(char));
-	if (!*arg)
+	*ar = ft_recalloc(*ar, LEN(*ar), LEN(*ar) - LEN(evn) + LEN(var), 1);
+	if (!*ar)
 		return (true);
-	eov = &(*arg)[ind] + ft_strlen_until(&(*arg)[ind], ' ');
+	eov = &(*ar)[ind] + ft_strlen_until(&(*ar)[ind], ' ');
 	ft_memmove(eov - ft_strlen(evn) + ft_strlen(var), eov, ft_strlen(eov));
-	ft_memcpy(&(*arg)[ind], var, ft_strlen(var));
+	ft_memcpy(&(*ar)[ind], var, ft_strlen(var));
 	free(evn);
 	return (false);
 }
