@@ -6,21 +6,59 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/05 23:16:23 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/07 02:48:04 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define EXEC_SOURCE
 #include "minishell.h"
 
+// @doc handle_var
+// @kind func
+// @desc Handles the injection of a variable in an arg.
+// @param arg: char **, The argument to perform the expand on.
+// @param index: uintmax_t, The index at which the expand is located.
+// @param env: char **, The environment.
+// @returns bool, Exit status.
+bool	handle_var(char **arg, uintmax_t ind, char **env)
+{
+	char	*evn;
+	char	*eov;
+	char	*var;
+
+	evn = ft_substr(*arg, ind + 1, ft_strlen_until(&(*arg)[ind + 1], ' '));
+	if (!evn)
+		return (true);
+	eov = &(*arg)[ind] + ft_strlen_until(&(*arg)[ind], ' ');
+	var = ft_get_env(evn, env);
+	if (ft_strlen(evn) + 1 >= ft_strlen(var))
+	{
+		ft_memcpy(&(*arg)[ind], var, ft_min(ft_strlen(evn), ft_strlen(var)));
+		if (ft_min(ft_strlen(evn), ft_strlen(var)) == ft_strlen(var))
+			ft_memmove(&(*arg)[ind + ft_strlen(var)], eov, ft_strlen(eov) + 1);
+		free(evn);
+		return (false);
+	}
+	*arg = ft_recalloc(*arg, ft_strlen(*arg), ft_strlen(*arg)
+		 - ft_strlen(evn) + ft_strlen(var), sizeof(char));
+	if (!*arg)
+		return (true);
+	eov = &(*arg)[ind] + ft_strlen_until(&(*arg)[ind], ' ');
+	ft_memmove(eov - ft_strlen(evn) + ft_strlen(var), eov, ft_strlen(eov));
+	ft_memcpy(&(*arg)[ind], var, ft_strlen(var));
+	free(evn);
+	return (false);
+}
+
 // @doc setup_here_doc
 // @kind func
 // @desc Sets up a here doc for a single command
 // @param target_pipe: [[t_ffile]][2], The pipe to set up and use.
 // @param used_pipe: bool, true if the pipe is used, false if opening it failed.
+// @param env: char **, The environment.
 // @returns [[t_ffile]], The read end of the pipe.
 static int	setup_here_doc(t_ffile target_pipe[2], const char *delimiter,
-	bool *used_pipe)
+	bool *used_pipe, char **env)
 {
 	char	*line;
 
@@ -35,6 +73,8 @@ static int	setup_here_doc(t_ffile target_pipe[2], const char *delimiter,
 		if (!ft_strcmp(line, delimiter) || *line == EOF)
 			break ;
 		line[ft_strlen(line)] = '\n';
+		while (ft_strchr(line, '$'))
+			handle_var(&line, ft_strchr(line, '$') - line, env);
 		write(target_pipe[1], line, ft_strlen(line));
 		free(line);
 		line = get_next_line(STDIN_FILENO);
@@ -58,7 +98,7 @@ static int8_t	execution_pipeline(t_command *cmd, char ***env)
 
 	pipe_used = false;
 	if (!ft_strcmp(cmd->infile, "heredoc"))
-		cmd->infd = setup_here_doc(here_doc_pipe, "EOF", &pipe_used);
+		cmd->infd = setup_here_doc(here_doc_pipe, "EOF", &pipe_used, *env);
 	else if (ft_strcmp(cmd->infile, "stdin"))
 		cmd->infd = ft_ffopen(cmd->infile, "r");
 	if (ft_strcmp(cmd->outfile, "stdout"))
@@ -100,43 +140,6 @@ static bool	setup_pipe(t_command *cmds)
 		first++;
 	}
 	return (true);
-}
-
-// @doc handle_var
-// @kind func
-// @desc Handles the injection of a variable in an arg.
-// @param arg: char **, The argument to perform the expand on.
-// @param index: uintmax_t, The index at which the expand is located.
-// @param env: char **, The environment.
-// @returns bool, Exit status.
-bool	handle_var(char **arg, uintmax_t ind, char **env)
-{
-	char	*evn;
-	char	*eov;
-	char	*var;
-
-	evn = ft_substr(*arg, ind + 1, ft_strlen_until(&(*arg)[ind + 1], ' '));
-	if (!evn)
-		return (true);
-	eov = &(*arg)[ind] + ft_strlen_until(&(*arg)[ind], ' ');
-	var = ft_get_env(evn, env);
-	if (ft_strlen(evn) + 1 >= ft_strlen(var))
-	{
-		ft_memcpy(&(*arg)[ind], var, ft_min(ft_strlen(evn), ft_strlen(var)));
-		if (ft_min(ft_strlen(evn), ft_strlen(var)) == ft_strlen(var))
-			ft_memmove(&(*arg)[ind + ft_strlen(var)], eov, ft_strlen(eov) + 1);
-		free(evn);
-		return (false);
-	}
-	*arg = ft_recalloc(*arg, ft_strlen(*arg), ft_strlen(*arg)
-		 - ft_strlen(evn) + ft_strlen(var), sizeof(char));
-	if (!*arg)
-		return (true);
-	eov = &(*arg)[ind] + ft_strlen_until(&(*arg)[ind], ' ');
-	ft_memmove(eov - ft_strlen(evn) + ft_strlen(var), eov, ft_strlen(eov));
-	ft_memcpy(&(*arg)[ind], var, ft_strlen(var));
-	free(evn);
-	return (false);
 }
 
 // @doc expand
@@ -186,21 +189,22 @@ int32_t	entrypoint(t_command *cmds, char ***env)
 	int32_t		status;
 
 	cmdsc = cmds;
-	while (cmds)
+	if (!setup_pipe(cmds))
 	{
-		if (!setup_pipe(cmds))
-		{
-			error("You confused the heck out of the parser.");
-			return (1);
-		}
+		error("You confused the heck out of the parser.");
+		return (69);
+	}
+	while (cmds->infile)
+	{
+		remove_quotes(cmds);
 		execution_pipeline(cmds++, env);
 	}
-	while (cmdsc)
+	while (cmdsc->infile)
 	{
-		if (!cmds[0].builtin)
-			waitpid(cmds[0].pid, &status, 0);
+		if (!cmdsc[0].builtin)
+			waitpid(cmdsc[0].pid, &status, 0);
 		else
-			status = cmds[0].pid;
+			status = cmdsc[0].pid;
 		cmdsc++;
 	}
 	ft_set_exit_code(status, env);

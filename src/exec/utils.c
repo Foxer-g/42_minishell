@@ -1,36 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
-/*   echo.c                                              ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
+/*   utils.c                                             ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
-/*   Created: 2026/06/03 01:40:00 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/07 02:37:19 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Created: 2026/08/06 08:56:36 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
+/*   Updated: 2026/08/06 09:00:08 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	echo(t_command cmd, char ***env)
+void	remove_quotes(t_command *cmd)
 {
-	bool	nl;
+	char	*tmp;
+	char	**args;
 
-	(void)env;
-	nl = true;
-	cmd.args++;
-	if (*cmd.args)
-		nl = !!ft_strcmp(*cmd.args, "-n");
-	if (!nl)
-		cmd.args++;
-	while (*cmd.args)
+	args = cmd->args;
+	while (*args)
 	{
-		ft_putstr_fd(*cmd.args, cmd.outfd);
-		cmd.args++;
-		if (*cmd.args)
-			ft_putchar_fd(' ', cmd.outfd);
+		if (**args == '\'' || **args == '"')
+		{
+			tmp = ft_substr(*args, 1, ft_strlen(*args) - 2);
+			free(*args);
+			*args = tmp;
+		}
+		args++;
 	}
-	if (nl)
-		ft_putchar_fd('\n', cmd.outfd);
-	return (0);
 }

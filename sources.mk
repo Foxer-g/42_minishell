@@ -6,7 +6,7 @@ TOKENIZER_SRCS_DIR = $(PARSING_SRCS_DIR)token/
 COMMAND_GEN_SRCS_DIR = $(PARSING_SRCS_DIR)command_gen/
 SCHEDULER_SRCS_DIR = $(PARSING_SRCS_DIR)scheduler/
 
-EXEC_FILES = cmd_handler.c entrypoint.c
+EXEC_FILES = cmd_handler.c entrypoint.c utils.c
 BUILTINS_FILES = cd.c echo.c env.c exit.c export.c pwd.c unset.c
 
 PARSING_FILES = parser_check.c parser.c

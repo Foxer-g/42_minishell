@@ -20,31 +20,31 @@
 // @doc token_stack_len
 // @kind func
 // @desc Calculate the amount of tokens in the input string.
-// @param input: char *, Input string to calculate from.
+// @param input: char **, Splited input string to calculate from.
 // @return int64_t, Amount of tokens in the input string.
 
-static int64_t	token_stack_len(char *input)
+static int64_t	token_stack_len(char **input)
 {
 	int64_t	len;
+	char	*str;
 
 	len = 0;
 	while (*input)
 	{
-		if (ft_strchr("|<>&", *input))
-		{
-			if (input[0] == input[1])
-				input++;
-			input++;
-		}
-		else if (ft_strchr("$*", *input) || iscmd_chr(input[0]))
-		{
-			input++;
-			while (*input && iscmd_chr(*input))
-				input++;
-		}
-		else
-			input++;
 		len++;
+		str = *input;
+		while (*str)
+		{
+			if (ft_strchr("|<>&", *str))
+				str += 1 + (*str == str[1]);
+			else if (ft_strchr("$*", *str) || iscmd_chr(*str))
+				while (*++str && iscmd_chr(*str))
+					;
+			else
+				str++;
+			len++;
+		}
+		input++;
 	}
 	return (len);
 }
@@ -77,7 +77,7 @@ static int64_t	get_token_len(char *input, int64_t start)
 	}
 	else
 		i++;
-	while(input[i] == ' ')
+	while (input[i] == ' ')
 		i++;
 	return (i - start);
 }
@@ -140,12 +140,12 @@ t_token	*tokenizer(char *input, char ***env)
 
 	tmp = ft_preserving_split(input, ' ');
 	if (!tmp)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, " : tokenizer.c : tokenizer : tmp", env)));
-	tkn_lst = ft_calloc(token_stack_len(input) + 1, sizeof(t_token));
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, " : tokenizer.c : tokenizer : tmp", env)));
+	tkn_lst = ft_calloc(token_stack_len(tmp) + 1, sizeof(t_token));
 	if (!tkn_lst)
 	{
 		ft_free_nt_tab(tmp, (int32_t) ft_nt_tablen((void *) tmp));
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, " : tokenizer.c : tokenizer : tkn_lst", env)));
 	}
 	i = 0;
 	j = -1;
