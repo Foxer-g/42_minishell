@@ -85,6 +85,7 @@ void	test_print(t_command *input)
 		ft_printf("Append : %i\n", input[i].append);
 		ft_printf("Infile : %s\n", input[i].infile);
 		ft_printf("Outfile : %s\n", input[i].outfile);
+		ft_printf("Builtin : %i\n", input[i].builtin);
 		i++;
 	}
 }
