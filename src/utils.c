@@ -68,11 +68,6 @@ char	*prompt(char **env)
 	str_prompt = ft_extend(str_prompt, path[0]);
 	str_prompt = ft_extend(str_prompt, PROMPT_C);
 	out = readline(str_prompt);
-	if (g_sig_handle == SIGINT)
-	{
-		ft_printf("\n");
-		g_sig_handle = 0;
-	}
 	free(str_prompt);
 	free(path[1]);
 	return (out);

@@ -85,13 +85,11 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 	input = prompt(env);
 	while (input)
 	{
-		if (g_sig_handle == SIGINT)
-			res = 130;
+		res = (g_sig_handle == SIGINT) * 130;
 		if (input[0] && !(res < 0))
 		{
 			add_history(input);
 			res = -(minishell_action(input, &env) + 1);
-			g_sig_handle = 0;
 		}
 		input = prompt(env);
 	}
