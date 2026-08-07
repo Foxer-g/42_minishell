@@ -1,3 +1,4 @@
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -45,7 +46,10 @@ void	minishell_action(char *input, char ***env)
 	parsed_input = parser(input, env);
 	if (!parsed_input)
 		return ;
+	test_print(parsed_input);
+	ft_printf("\n\e[32m========================================================\e[0m\n\n");
 	entrypoint(parsed_input, env);
+	ft_printf("\n\e[35m========================================================\e[0m\n\n");
 	test_print(parsed_input);
 	free_command(parsed_input);
 	free(input);
