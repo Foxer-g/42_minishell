@@ -6,7 +6,7 @@
 /*   By: rboutelo  rboutelo@student.42angouleme.fr       ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/07 23:46:31 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/08 06:55:40 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 07:05:47 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,9 @@ int32_t	minishell_action(char *input, char ***env)
 		free(input);
 		return (-1);
 	}
-	res = entrypoint(parsed_input, env);
-	test_print(parsed_input);
+	res = -(entrypoint(parsed_input, env) + 1);
+	if (g_sig_handle == SIGINT)
+		res = 130;
 	free_command(parsed_input);
 	free(input);
 	return (res);
