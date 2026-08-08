@@ -1,24 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/05 03:01:38 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/08 04:53:34 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
-/*                                                                            */
-/* ************************************************************************** */
-
-/* ************************************************************************** */
-/*                                                                            */
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
 /*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/05 21:23:06 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 21:29:59 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +107,7 @@ void	execute(t_command *cmd, t_command *o, char **env)
 		envpath = ft_split(ft_get_env("PATH", env), ':');
 		path = ft_find_exec(cmd->path, (void *)envpath);
 		ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
+		sig_child();
 		if (!ft_strcmp(cmd->infile, "<<"))
 			execve(path, cmd->args + 1, env);
 		else
@@ -162,6 +151,23 @@ static void	cleanup(t_command *command, pid_t pid)
 		ft_ffclose(&command->outfd);
 }
 
+t_cmd_fun	get_builtin(t_command *cmd)
+{
+	const char		*blts[] = {"cd", "echo", "env", "exit",
+		"export", "pwd", "unset", NULL};
+	const t_cmd_fun	funcs[] = {cd, echo, minishell_env,
+		minishell_exit, export, pwd, unset, NULL};
+	uint8_t			i;
+
+	i = -1;
+	while (blts[++i])
+	{
+		if (!ft_strcmp(blts[i], cmd->path))
+			return ((void *)funcs[i]);
+	}
+	return (NULL);
+}
+
 // @doc exec_single
 // @kind func
 // @desc Execute a single command/handles builtins.
@@ -170,27 +176,33 @@ static void	cleanup(t_command *command, pid_t pid)
 // @returns bool, Was it a built-in?
 bool	exec_single(t_command *command, t_command *o, char ***env)
 {
-	const char		*blts[] = {"cd", "echo", "env", "exit",
-		"export", "pwd", "unset", NULL};
-	const t_cmd_fun	funcs[] = {cd, echo, minishell_env,
-		minishell_exit, export, pwd, unset, NULL};
-	uint8_t			i;
-	int32_t			pid;
+	int32_t		pid;
+	t_cmd_fun	builtin;
 
-	i = -1;
-	while (blts[++i])
+	builtin = get_builtin(command);
+	if (builtin && !has_pipe(o))
 	{
-		if (!ft_strcmp(blts[i], command->path))
-		{
-			pid = funcs[i](*command, env);
-			command->builtin = true;
-			cleanup(command, pid);
-			return (true);
-		}
+		pid = builtin(*command, env);
+		command->builtin = true;
+		cleanup(command, pid);
+		return (true);
 	}
+	sig_parent();
 	pid = fork();
 	if (!pid)
-		execute(command, o, *env);
+	{
+		if (builtin && has_pipe(o))
+		{
+			sig_child();
+			pid = builtin(*command, env);
+			ft_free_nt_tab(*env, ft_nt_tablen((void *)env));
+			fail_free(command, NULL, o);
+			ft_clear_filelist();
+			exit(pid);
+		}
+		else
+			execute(command, o, *env);
+	}
 	else if (pid < 0)
 		return (false);
 	cleanup(command, pid);

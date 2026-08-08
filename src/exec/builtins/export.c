@@ -6,13 +6,13 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 04:54:12 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/08 05:31:15 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 20:57:46 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	display_env_as_bash(char ***env)
+void	display_env_as_bash(t_ffile fd, char ***env)
 {
 	char *const	*aenv = *env;
 	char		*var_name;
@@ -26,11 +26,11 @@ void	display_env_as_bash(char ***env)
 		{
 			if (ft_strchr(*aenv, '='))
 			{
-				printf("declare -x %s=\"%s\"\n", var_name,
+				ft_dprintf(fd, "declare -x %s=\"%s\"\n", var_name,
 					*aenv + var_name_len + 1);
 			}
 			else
-				printf("declare -x %s\n", var_name);
+				ft_dprintf(fd, "declare -x %s\n", var_name);
 		}
 		free(var_name);
 		aenv++;
@@ -45,7 +45,7 @@ int	export(t_command cmd, char ***env)
 
 	if (ac == 1)
 	{
-		display_env_as_bash(env);
+		display_env_as_bash(cmd.outfd, env);
 		return (0);
 	}
 	while (*++cmd.args)
