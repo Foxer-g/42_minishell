@@ -1,28 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
-/*   main.c                                              ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
 /*   By: rboutelo  rboutelo@student.42angouleme.fr       ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/07 23:46:31 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/08 08:15:10 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 20:58:41 by f0xer            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-sig_atomic_t	g_sig_handle = 0;
+volatile sig_atomic_t	g_sig_handle = 0;
 
 void	sig_init(void)
 {
-	struct sigaction	sig_action;
+	struct sigaction	action;
 
-	sig_action.sa_sigaction = sig_handle;
-	sig_action.sa_flags = SA_SIGINFO;
-	sigemptyset(&sig_action.sa_mask);
-	sigaction(SIGINT, &sig_action, NULL);
-	sigaction(SIGQUIT, &sig_action, NULL);
+	ft_bzero(&action, sizeof(action));
+	sigemptyset(&action.sa_mask);
+	action.sa_sigaction = sig_handle;
+	action.sa_flags = SA_SIGINFO;
+	sigaction(SIGINT, &action, NULL);
+	action.sa_handler = SIG_IGN;
+	action.sa_flags = 0;
+	sigaction(SIGQUIT, &action, NULL);
 	rl_catch_signals = 0;
 }
 
@@ -38,8 +41,6 @@ int32_t	minishell_action(char *input, char ***env)
 		return (-1);
 	}
 	res = entrypoint(parsed_input, env);
-	if (g_sig_handle == SIGINT)
-		res = 130;
 	free_command(parsed_input);
 	free(input);
 	return (res);
@@ -47,6 +48,25 @@ int32_t	minishell_action(char *input, char ***env)
 
 static int32_t	main_exit(char **env, int32_t res)
 {
+	char	*input;
+
+	input = prompt(env);
+	while (input && res >= 0)
+	{
+		if (g_sig_handle == SIGINT)
+			res = 130;
+		g_sig_handle = 0;
+		if (input[0])
+		{
+			add_history(input);
+			res = minishell_action(input, &env);
+		}
+		else
+			free(input);
+		input = prompt(env);
+	}
+	if (g_sig_handle == SIGINT)
+		res = 130;
 	rl_clear_history();
 	ft_printf("exit\n");
 	ft_free_nt_tab(env, ft_nt_tablen((void *)env));
@@ -57,31 +77,15 @@ static int32_t	main_exit(char **env, int32_t res)
 
 int32_t	main(int32_t ac, char **av, const char **aenv)
 {
-	char	*input;
-	char	**env;
-	int32_t	res;
+	char		**env;
 
 	sig_init();
 	env = ft_copy_env(aenv);
-	res = 0;
 	if (ac != 1)
 	{
 		minishell_action(join_tab(++av), &env);
 		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
 		return (0);
 	}
-	input = prompt(env);
-	while (input)
-	{
-		res = (g_sig_handle == SIGINT) * 130;
-		if (input[0])
-		{
-			add_history(input);
-			res = minishell_action(input, &env);
-			if (res < 0)
-				break ;
-		}
-		input = prompt(env);
-	}
-	return (main_exit(env, res));
+	return (main_exit(env, 0));
 }
