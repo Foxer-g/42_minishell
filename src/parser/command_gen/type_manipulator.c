@@ -68,6 +68,7 @@ t_command	init_command(char ***env)
 	res.pid = 0;
 	res.infd = STDIN_FILENO;
 	res.outfd = STDOUT_FILENO;
+	res.hd_pipe = 0;
 	res.append = false;
 	res.infile = ft_strdup("stdin");
 	if (!res.infile)
