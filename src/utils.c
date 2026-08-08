@@ -6,11 +6,23 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 07:31:09 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/07 23:59:34 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/08 20:52:34 by f0xer            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	sig_parent(void)
+{
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void	sig_child(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
 
 char	*join_tab(char **tab)
 {
@@ -38,13 +50,11 @@ void	sig_handle(int32_t signal, siginfo_t *info, void *context)
 	if (signal == SIGINT)
 	{
 		g_sig_handle = SIGINT;
-		write(1, "^C\n", 3);
+		write(STDOUT_FILENO, "^C\n", 3);
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
 	}
-	else if (signal == SIGQUIT)
-		g_sig_handle = SIGQUIT;
 }
 
 char	*prompt(char **env)
