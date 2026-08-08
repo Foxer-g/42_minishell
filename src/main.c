@@ -46,6 +46,23 @@ int32_t	minishell_action(char *input, char ***env)
 	return (res);
 }
 
+static int32_t	main_loop(char *input, char ***env, int32_t res)
+{
+	if (g_sig_handle == SIGINT)
+	{
+		free(input);
+		return (130);
+	}
+	if (input[0])
+	{
+		add_history(input);
+		res = minishell_action(input, env);
+	}
+	else
+		free(input);
+	return (res);
+}
+
 static int32_t	main_exit(char **env, int32_t res)
 {
 	char	*input;
@@ -56,13 +73,7 @@ static int32_t	main_exit(char **env, int32_t res)
 		if (g_sig_handle == SIGINT)
 			res = 130;
 		g_sig_handle = 0;
-		if (input[0])
-		{
-			add_history(input);
-			res = minishell_action(input, &env);
-		}
-		else
-			free(input);
+		res = main_loop(input, &env, res);
 		input = prompt(env);
 	}
 	if (g_sig_handle == SIGINT)

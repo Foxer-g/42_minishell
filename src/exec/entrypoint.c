@@ -113,11 +113,12 @@ int32_t	entrypoint(t_command *cmds, char ***env)
 	while (cmdsc->infile)
 	{
 		if (!cmdsc[0].builtin)
-			waitpid(cmdsc[0].pid, &status, 0);
+ 			waitpid(cmdsc[0].pid, &status, 0);
 		else
 			status = cmdsc[0].pid;
 		cmdsc++;
 	}
+	sig_init();
 	ft_set_exit_code(status, env);
 	return (status);
 }

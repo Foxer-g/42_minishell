@@ -31,9 +31,9 @@
 # define WE 1
 # define RE 0
 
-# define PROMPT_A "\x1b[22;36m"
-# define PROMPT_B "\x1b[0m@\x1b[32m"
-# define PROMPT_C "\x1b[0m$ "
+# define PROMPT_A "\001\x1b[22;36m\002"
+# define PROMPT_B "\001\x1b[0m\002@\001\x1b[32m\002"
+# define PROMPT_C "\001\x1b[0m\002$ "
 
 // @doc t_command
 // @kind type
@@ -76,6 +76,7 @@ bool		expand(t_command *cmd, char ***env);
 bool		expand_here_doc(char **line, char ***env);
 bool		has_pipe(t_command *cmds);
 
+void		sig_init(void);
 void		sig_parent(void);
 void		sig_child(void);
 
