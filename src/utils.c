@@ -6,11 +6,24 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 07:31:09 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/08 05:32:18 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 21:15:33 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+bool	has_pipe(t_command *cmds)
+{
+	uintmax_t	len;
+
+	len = 0;
+	while (cmds->path)
+	{
+		len++;
+		cmds++;
+	}
+	return (len > 1);
+}
 
 char	*join_tab(char **tab)
 {
