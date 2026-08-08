@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 04:54:12 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/02 19:03:31 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 05:31:15 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,16 @@ void	display_env_as_bash(char ***env)
 	{
 		var_name_len = ft_strlen_until(*aenv, '=');
 		var_name = ft_substr(*aenv, 0, var_name_len);
-		if (ft_strchr(*aenv, '='))
+		if (ft_strncmp("?=", *aenv, 2))
 		{
-			printf("declare -x %s=\"%s\"\n", var_name,
-				*aenv + var_name_len + 1);
+			if (ft_strchr(*aenv, '='))
+			{
+				printf("declare -x %s=\"%s\"\n", var_name,
+					*aenv + var_name_len + 1);
+			}
+			else
+				printf("declare -x %s\n", var_name);
 		}
-		else
-			printf("declare -x %s\n", var_name);
 		free(var_name);
 		aenv++;
 	}
@@ -38,6 +41,7 @@ int	export(t_command cmd, char ***env)
 {
 	const uintmax_t	ac = ft_nt_tablen((void*)cmd.args);
 	char			*var;
+	uintmax_t		eq_pos;
 
 	if (ac == 1)
 	{
@@ -46,8 +50,12 @@ int	export(t_command cmd, char ***env)
 	}
 	while (*++cmd.args)
 	{
+		eq_pos = ft_strlen_until(*cmd.args, '=');
 		var = ft_strndup(*cmd.args, ft_strlen_until(*cmd.args, '='));
-		ft_set_env(var, env, *cmd.args + ft_strlen_until(*cmd.args, '='));
+		if ((*cmd.args)[eq_pos] == '=')
+			ft_set_env(var, env, *cmd.args + ft_strlen_until(*cmd.args, '=') + 1);
+		else
+			ft_set_env_no_val(var, env);
 		free(var);
 	}
 	return (0);

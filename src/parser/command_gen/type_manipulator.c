@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   type_manipulator.c                                 :+:      :+:    :+:   */
+/*   type_manipulator.c                                  ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/07 23:49:53 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/07 23:49:54 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/08 04:34:51 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ t_command	init_command(char ***env)
 	res.pid = 0;
 	res.infd = STDIN_FILENO;
 	res.outfd = STDOUT_FILENO;
+	res.outpipe_end = -1;
 	res.hd_pipe = 0;
 	res.append = false;
 	res.infile = ft_strdup("stdin");

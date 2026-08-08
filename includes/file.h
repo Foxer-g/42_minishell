@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 22:09:10 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/01 17:24:47 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 04:21:14 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ intmax_t	ft_ffwrite(t_ffile file, const void *buf, intmax_t nbyte);
 /* *************** */
 /*      CLOSE      */
 /* *************** */
-void		ft_ffclose(t_ffile file);
+void		ft_ffclose(t_ffile *file);
 void		ft_close_pipe(t_ffile fds[2]);
 
 /* *************** */

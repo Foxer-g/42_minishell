@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 14:45:16 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/07 21:41:19 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 05:27:48 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,7 @@ char		*ft_strtrim(char const *s1, char const *set);
 char		*ft_get_env(const char *name, char *const *env);
 void		ft_set_var(char **var, char *val);
 void		ft_set_env(const char *name, char ***env, char *value);
+void		ft_set_env_no_val(const char *name, char ***env);
 void		ft_set_exit_code(int32_t code, char ***env);
 char		**ft_copy_env(const char **env);
 

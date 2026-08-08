@@ -6,7 +6,7 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/08 01:13:51 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 04:47:50 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static int	setup_here_doc(t_command *cmd,
 		return (-1);
 	*used_pipe = true;
 	cmd->infd = target_pipe[RE];
-	cmd->append = target_pipe[WE];
+	cmd->hd_pipe = target_pipe[WE];
 	return (target_pipe[0]);
 }
 
@@ -37,7 +37,7 @@ static int	setup_here_doc(t_command *cmd,
 // @param cmd: [[t_command]] *, The command to execute.
 // @param env: char **, The environment to use for the command.
 // @returns int8_t, The exit status.
-static int8_t	execution_pipeline(t_command *cmd, char ***env)
+static int8_t	execution_pipeline(t_command *cmd, t_command *o, char ***env)
 {
 	t_ffile	here_doc_pipe[2];
 	bool	pipe_used;
@@ -48,11 +48,13 @@ static int8_t	execution_pipeline(t_command *cmd, char ***env)
 		setup_here_doc(cmd, here_doc_pipe, &pipe_used);
 	else if (ft_strcmp(cmd->infile, "stdin"))
 		cmd->infd = ft_ffopen(cmd->infile, "r");
-	if (ft_strcmp(cmd->outfile, "stdout"))
+	if (ft_strcmp(cmd->outfile, "stdout") && !cmd->append)
 		cmd->outfd = ft_ffopen(cmd->outfile, "w");
+	else if (ft_strcmp(cmd->outfile, "stdout"))
+		cmd->outfd = ft_ffopen(cmd->outfile, "a");
 	if (cmd->infd < 0 || cmd->outfd < 0)
 		return (false);
-	status = exec_single(cmd, env);
+	status = exec_single(cmd, o, env);
 	return (status);
 }
 
@@ -81,6 +83,7 @@ static bool	setup_pipe(t_command *cmds)
 			return (false);
 		}
 		first->outfd = wpipe[WE];
+		first->outpipe_end = wpipe[RE];
 		(first + 1)->infd = wpipe[RE];
 		first++;
 	}
@@ -104,7 +107,7 @@ int32_t	entrypoint(t_command *cmds, char ***env)
 	while (cmds->infile)
 	{
 		remove_quotes(cmds);
-		execution_pipeline(cmds++, env);
+		execution_pipeline(cmds++, cmdsc, env);
 	}
 	status = 0;
 	while (cmdsc->infile)

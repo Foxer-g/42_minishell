@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main.c                                              ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
 /*   By: rboutelo  rboutelo@student.42angouleme.fr       ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/07 23:46:31 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/07 23:59:16 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/08 06:55:40 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int32_t	minishell_action(char *input, char ***env)
 		return (-1);
 	}
 	res = entrypoint(parsed_input, env);
+	test_print(parsed_input);
 	free_command(parsed_input);
 	free(input);
 	return (res);
@@ -48,6 +49,8 @@ static int32_t	main_exit(char **env, int32_t res)
 	rl_clear_history();
 	ft_printf("exit\n");
 	ft_free_nt_tab(env, ft_nt_tablen((void *)env));
+	if (res < 0)
+		return (-(res + 1));
 	return (res);
 }
 
@@ -70,10 +73,12 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 	while (input)
 	{
 		res = (g_sig_handle == SIGINT) * 130;
-		if (input[0] && !(res < 0))
+		if (input[0])
 		{
 			add_history(input);
-			res = -(minishell_action(input, &env) + 1);
+			res = minishell_action(input, &env);
+			if (res < 0)
+				break ;
 		}
 		input = prompt(env);
 	}

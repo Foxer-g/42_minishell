@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   command_gen_utils.c                                :+:      :+:    :+:   */
+/*   command_gen_utils.c                                 ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/07 23:49:46 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/07 23:49:50 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/08 06:03:43 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,21 @@ char	**tkn_to_tab(t_token *tkns, intmax_t i, intmax_t len, char ***env)
 	return (res);
 }
 
+static bool	ends_with_space(const char *s)
+{
+	size_t	len;
+
+	len = ft_strlen(s);
+	return (len > 0 && s[len - 1] == ' ');
+}
+
 static bool	cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
 {
 	char			*tmp;
 	t_token_type	res_type;
+	bool			glue;
 
+	glue = (i[1] > 0 && i[0] > 0 && !ends_with_space(o[i[0] - 1].content));
 	tmp = ft_strdup(o[i[0]].content);
 	if (!tmp)
 		return (!parsing_error(MALLOC, "", env));
@@ -82,7 +92,15 @@ static bool	cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
 	}
 	else
 		res_type = o[i[0]].type;
-	res[i[1]++] = (t_token){tmp, res_type};
+	if (glue)
+	{
+		res[i[1] - 1].content = ft_extend(res[i[1] - 1].content, tmp);
+		free(tmp);
+		if (!res[i[1] - 1].content)
+			return (!parsing_error(MALLOC, "", env));
+	}
+	else
+		res[i[1]++] = (t_token){tmp, res_type};
 	return (true);
 }
 

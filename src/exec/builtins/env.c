@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 01:04:01 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/04 22:30:21 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 05:03:35 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	minishell_env(t_command cmd, char ***ev)
 	i = 0;
 	while ((*ev)[i])
 	{
-		if (ft_strchr((*ev)[i], '='))
+		if (ft_strchr((*ev)[i], '=') && ft_strncmp("?=", (*ev)[i], 2))
 			printf("%s\n", (*ev)[i]);
 		i++;
 	}
