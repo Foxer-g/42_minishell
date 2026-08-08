@@ -1,37 +1,63 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   scheduler_utils.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/07 23:50:19 by toespino          #+#    #+#             */
+/*   Updated: 2026/08/07 23:58:45 by toespino         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include "parser.h"
 
-static bool	free_hd_tab(char **res, intmax_t len, char ***env)
-{
-	ft_free_nt_tab(res, len);
-	return (!parsing_error(MALLOC, "", env));
-}
-
-static char	**args_to_tab_without_hd(t_command cmd, intmax_t index, char ***env)
+static bool	fill_args_without_hd(char **res, t_command cmd,
+	intmax_t index, char ***env)
 {
 	intmax_t	i;
 	intmax_t	j;
-	char		**res;
 
-	res = ft_calloc(args_len(cmd), sizeof(char *));
-	if (!res)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
 	res[0] = ft_strdup(cmd.args[index + 1]);
 	if (!res[0])
-		return ((void *)((uintptr_t)free_hd_tab(res, args_len(cmd), env)));
-	i = 0;
+	{
+		parsing_error(MALLOC, "", env);
+		return (false);
+	}
+	i = -1;
 	j = 1;
-	while (cmd.args[i])
+	while (cmd.args[++i])
 	{
 		if (i != index && i != index + 1)
 		{
 			res[j] = ft_strdup(cmd.args[i]);
 			if (!res[j])
-				return ((void *)((uintptr_t)free_hd_tab(res,
-							args_len(cmd), env)));
+			{
+				parsing_error(MALLOC, "", env);
+				return (false);
+			}
 			j++;
 		}
-		i++;
+	}
+	return (true);
+}
+
+static char	**args_to_tab_without_hd(t_command cmd, intmax_t index,
+	char ***env)
+{
+	char	**res;
+
+	res = ft_calloc(args_len(cmd), sizeof(char *));
+	if (!res)
+	{
+		parsing_error(MALLOC, "", env);
+		return (NULL);
+	}
+	if (!fill_args_without_hd(res, cmd, index, env))
+	{
+		ft_free_nt_tab(res, args_len(cmd));
+		return (NULL);
 	}
 	return (res);
 }
