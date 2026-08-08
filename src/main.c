@@ -37,7 +37,9 @@ int32_t	minishell_action(char *input, char ***env)
 		free(input);
 		return (-1);
 	}
-	res = entrypoint(parsed_input, env);
+	res = -(entrypoint(parsed_input, env) + 1);
+	if (g_sig_handle == SIGINT)
+		res = 130;
 	free_command(parsed_input);
 	free(input);
 	return (res);
@@ -73,7 +75,7 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 		if (input[0] && !(res < 0))
 		{
 			add_history(input);
-			res = -(minishell_action(input, &env) + 1);
+			res = minishell_action(input, &env);
 		}
 		input = prompt(env);
 	}
