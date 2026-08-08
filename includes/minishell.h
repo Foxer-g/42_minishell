@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/08 21:16:01 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 21:31:31 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ enum e_builtin
 	ENV = 'v',
 };
 
-extern sig_atomic_t	g_sig_handle;
+extern volatile sig_atomic_t	g_sig_handle;
 
 char		**command_to_args(char *command);
 char		*join_tab(char **tab);
@@ -75,6 +75,9 @@ void		error(const char *err_message);
 bool		expand(t_command *cmd, char ***env);
 bool		expand_here_doc(char **line, char ***env);
 bool		has_pipe(t_command *cmds);
+
+void		sig_parent(void);
+void		sig_child(void);
 
 void		test_print(t_command *input);
 #endif
