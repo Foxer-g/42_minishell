@@ -75,5 +75,8 @@ void		error(const char *err_message);
 bool		expand(t_command *cmd, char ***env);
 bool		expand_here_doc(char **line, char ***env);
 
+void		sig_parent(void);
+void		sig_child(void);
+
 void		test_print(t_command *input);
 #endif
