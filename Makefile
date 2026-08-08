@@ -1,9 +1,9 @@
 include sources.mk
 NAME	=	minishell
-INCLUDES = ./includes
 BUILD_DIR = build/
+INCLUDES = ./includes
 OBJECTS = $(SOURCES:src/%.c=$(BUILD_DIR)%.o)
-CFLAGS = -Wall -Wextra  -Werror -ggdb
+CFLAGS = -Wall -Wextra -Werror -ggdb
 LDFLAGS = -L libft -lft -lreadline
 CC = cc
 
@@ -22,31 +22,13 @@ libft.a:
 $(NAME): $(BUILD_DIR) $(OBJECTS) libft.a
 	$(CC)  $(OBJECTS) -o $@ $(LDFLAGS)
 
-
 clean:
 	-rm -f $(OBJECTS)
 
 fclean: clean
 	-rm -f $(NAME)
+	-rm -fr $(BUILD_DIR)
 
 re: fclean all
 
-compile_commands.json:
-	bear -- make
-
-frama-c-available:
-	@frama-c -v
-
-kernel: frama-c-available $(SOURCES) compile_commands.json
-	@frama-c -cpp-extra-args="-I/usr/include/" $(SOURCES) -compilation-db compile_commands.json -save kernel.sav
-
-eva: kernel
-	@frama-c -load kernel.sav -eva -eva-precision 3 -save eva.sav
-
-frama-c: eva
-
-test:
-	./waf configure build
-	testament all
-
-.PHONY: clean all re fclean frama-c-available frama-c kernel eva libft.a
+.PHONY: all re fclean clean
