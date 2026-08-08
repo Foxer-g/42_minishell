@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/06 08:56:36 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/08 06:43:40 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 08:17:51 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ intmax_t	handle_var(char **ar, uintmax_t ind, char **env)
 	evn = ft_substr(*ar, ind + 1, eovn(&(*ar)[ind + 1]));
 	if (!evn)
 		return (-1);
-	eov = &(*ar)[ind] + eovn(&(*ar)[ind]);
+	eov = &(*ar)[ind + 1] + eovn(&(*ar)[ind + 1]);
 	var = ft_get_env(evn, env);
 	inserted = (intmax_t)ft_strlen(var);
 	if (ft_strlen(evn) + 1 >= ft_strlen(var))
@@ -79,41 +79,12 @@ intmax_t	handle_var(char **ar, uintmax_t ind, char **env)
 	*ar = ft_recalloc(*ar, LEN(*ar), LEN(*ar) - LEN(evn) + LEN(var), 1);
 	if (!*ar)
 		return (-1);
-	eov = &(*ar)[ind] + eovn(&(*ar)[ind]);
+	eov = &(*ar)[ind + 1] + eovn(&(*ar)[ind + 1]);
 	ft_memmove(eov - (LEN(evn) + 1) + LEN(var), eov, LEN(eov) + 1);
 	ft_memcpy(&(*ar)[ind], var, ft_strlen(var));
 	free(evn);
 	return (inserted);
 }
-
-/*bool	handle_var(char **ar, uintmax_t ind, char **env)
-{
-	char	*evn;
-	char	*eov;
-	char	*var;
-
-	evn = ft_substr(*ar, ind + 1, ft_strlen_until(&(*ar)[ind + 1], ' '));
-	if (!evn)
-		return (true);
-	eov = &(*ar)[ind] + ft_strlen_until(&(*ar)[ind], ' ');
-	var = ft_get_env(evn, env);
-	if (ft_strlen(evn) + 1 >= ft_strlen(var))
-	{
-		ft_memcpy(&(*ar)[ind], var, ft_min(ft_strlen(evn), ft_strlen(var)));
-		if (ft_min(ft_strlen(evn), ft_strlen(var)) == ft_strlen(var))
-			ft_memmove(&(*ar)[ind + ft_strlen(var)], eov, ft_strlen(eov) + 1);
-		free(evn);
-		return (false);
-	}
-	*ar = ft_recalloc(*ar, LEN(*ar), LEN(*ar) - LEN(evn) + LEN(var), 1);
-	if (!*ar)
-		return (true);
-	eov = &(*ar)[ind] + ft_strlen_until(&(*ar)[ind], ' ');
-	ft_memmove(eov - ft_strlen(evn) + ft_strlen(var), eov, ft_strlen(eov));
-	ft_memcpy(&(*ar)[ind], var, ft_strlen(var));
-	free(evn);
-	return (false);
-}*/
 
 // @doc expand
 // @kind func
