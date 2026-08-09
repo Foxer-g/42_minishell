@@ -14,7 +14,7 @@ PARSING_FILES = parser_check.c parser.c
 TOKENIZER_FILES = tokenizer.c token_utils.c
 COMMAND_GEN_FILES = command_gen.c command_gen_utils.c
 COMMAND_UTILS_FILES = command_manipulator.c command_duplication.c command_lens.c
-SCHEDULER_FILES = scheduler.c scheduler_utils.c redir_utils.c piping_utils.c heredoc_utils.c
+SCHEDULER_FILES = scheduler.c scheduler_utils.c redir_utils.c redir_manipulator.c piping_utils.c heredoc_utils.c
 
 EXEC_SOURCES = $(addprefix $(EXEC_SRCS_DIR), $(EXEC_FILES))
 BUILTINS_SOURCES = $(addprefix $(BUILTINS_SRCS_DIR), $(BUILTINS_FILES))

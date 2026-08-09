@@ -114,8 +114,10 @@ intmax_t	*find_heredoc(t_command *cmd, char ***env);
 t_command	*is_error(t_command *cmd, intmax_t len, char ***env);
 
 t_redir		*find_redir(t_command cmd, char ***env);
-void		free_redir(t_redir *redir);
 char		**cmddup_without_redir(t_command cmd, t_redir *redir, char ***env);
+
+void		free_redir(t_redir *redir);
+t_redir		*redir_calloc(intmax_t n, char ***env);
 
 intmax_t	*find_pipe(t_command *cmd, char ***env);
 bool		is_valid_pipes(const intmax_t *pipes, char ***env);
