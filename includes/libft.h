@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 14:45:16 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/08 05:27:48 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/09 02:06:09 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdarg.h>
+# include <signal.h>
 # ifndef FORBIDDEN_ERRNO_H
 #  include <errno.h>
 # endif //FORBIDDEN_ERRNO_H
@@ -107,6 +108,7 @@ char		*ft_strnstr(const char *big, const char *little, size_t len);
 /*    CONVERSION    */
 /* **************** */
 int32_t		ft_atoi(const char *str);
+int64_t		ft_atol(const char *str);
 char		*ft_itoa(int32_t n);
 
 /* **************** */
@@ -151,6 +153,7 @@ char		**ft_copy_env(const char **env);
 /* **************** */
 /*    EXECUTION     */
 /* **************** */
+int32_t		ft_get_exit_code_from_status(int32_t status);
 char		*ft_get_executable(const char *str);
 char		*ft_find_exec(const char *name, char const **env);
 

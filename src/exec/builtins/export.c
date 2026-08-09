@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 04:54:12 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/08 20:57:46 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/09 07:19:55 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,28 @@ void	display_env_as_bash(t_ffile fd, char ***env)
 	}
 }
 
+bool	is_valid_name_char(int32_t val)
+{
+	return (ft_isalnum(val) || val == '_');
+}
+
+bool	is_valid_name(char *name)
+{
+	if (!(*name == '_' || ft_isalpha(*name)))
+		return (false);
+	if (!ft_str_is_valid(name, is_valid_name_char))
+		return (false);
+	return (true);
+}
+
 int	export(t_command cmd, char ***env)
 {
 	const uintmax_t	ac = ft_nt_tablen((void*)cmd.args);
 	char			*var;
 	uintmax_t		eq_pos;
+	int32_t			exit;
 
+	exit = 0;
 	if (ac == 1)
 	{
 		display_env_as_bash(cmd.outfd, env);
@@ -52,11 +68,14 @@ int	export(t_command cmd, char ***env)
 	{
 		eq_pos = ft_strlen_until(*cmd.args, '=');
 		var = ft_strndup(*cmd.args, ft_strlen_until(*cmd.args, '='));
-		if ((*cmd.args)[eq_pos] == '=')
+		exit |= !is_valid_name(var);
+		if ((*cmd.args)[eq_pos] == '=' && is_valid_name(var))
 			ft_set_env(var, env, *cmd.args + ft_strlen_until(*cmd.args, '=') + 1);
-		else
+		else if (is_valid_name(var))
 			ft_set_env_no_val(var, env);
+		else
+			ft_dprintf(2, "minishell: export: %s: not a valid identifier", var);
 		free(var);
 	}
-	return (0);
+	return (exit);
 }

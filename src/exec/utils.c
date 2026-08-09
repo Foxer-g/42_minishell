@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/06 08:56:36 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/08 08:17:51 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/09 07:24:27 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,38 @@
 
 void	remove_quotes(t_command *cmd)
 {
-	char	*tmp;
-	char	**args;
+	char		*src;
+	char		*dst;
+	t_quotetype	quote;
+	uintmax_t	i[2];
+	char		**args;
 
 	args = cmd->args;
 	while (*args)
 	{
-		if ((**args == '\'' || **args == '"') && (*args)[ft_strlen(*args) - 1] == **args)
+		src = *args;
+		dst = ft_calloc(ft_strlen(src) + 1, 1);
+		if (!dst)
+			return ;
+		ft_bzero(i, sizeof(i));
+		quote = 0;
+		while (src[i[0]])
 		{
-			tmp = ft_substr(*args, 1, ft_strlen(*args) - 2);
-			free(*args);
-			*args = tmp;
+			if (quote)
+			{
+				if (src[i[0]] == ((char)quote))
+					quote = 0;
+				else
+					dst[i[1]++] = src[i[0]];
+			}
+			else if (src[i[0]] == SGL || src[i[0]] == DBL)
+				quote = src[i[0]];
+			else
+				dst[i[1]++] = src[i[0]];
+			i[0]++;
 		}
+		free(*args);
+		*args = dst;
 		args++;
 	}
 }
@@ -62,7 +82,10 @@ intmax_t	handle_var(char **ar, uintmax_t ind, char **env)
 	char		*var;
 	intmax_t	inserted;
 
-	evn = ft_substr(*ar, ind + 1, eovn(&(*ar)[ind + 1]));
+	if (!ft_strncmp(*ar, "$?", 2))
+		evn = ft_strdup("?");
+	else
+		evn = ft_substr(*ar, ind + 1, eovn(&(*ar)[ind + 1]));
 	if (!evn)
 		return (-1);
 	eov = &(*ar)[ind + 1] + eovn(&(*ar)[ind + 1]);

@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/06/03 00:51:02 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/08 20:59:25 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/09 06:40:25 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,13 @@ static bool	update_pwd(char ***env)
 
 int	cd(t_command cmd, char ***env)
 {
+	const uintmax_t	ac = ft_nt_tablen((void *)cmd.args);
+
+	if (ac > 2)
+	{
+		ft_dprintf(2, "minishell: cd: too many arguments\n");
+		return (2);
+	}
 	if (!cmd.args[1])
 	{
 		ft_dprintf(STDERR_FILENO, "Sorry, cd needs at least one argument\n");
@@ -35,7 +42,7 @@ int	cd(t_command cmd, char ***env)
 	if (chdir(cmd.args[1]))
 	{
 		perror("cd");
-		return (127);
+		return (1);
 	}
 	if (!update_pwd(env))
 		return (1);

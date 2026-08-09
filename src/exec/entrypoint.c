@@ -6,7 +6,7 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/08 04:47:50 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/09 01:55:49 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,11 +113,18 @@ int32_t	entrypoint(t_command *cmds, char ***env)
 	while (cmdsc->infile)
 	{
 		if (!cmdsc[0].builtin)
+		{
 			waitpid(cmdsc[0].pid, &status, 0);
+			ft_set_exit_code(ft_get_exit_code_from_status(status), env);
+		}
 		else
+		{
 			status = cmdsc[0].pid;
+			ft_set_exit_code(status, env);
+		}
 		cmdsc++;
 	}
-	ft_set_exit_code(status, env);
-	return (status);
+	if ((cmdsc - 1)->builtin)
+		return (status);
+	return (ft_get_exit_code_from_status(status));
 }

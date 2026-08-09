@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 07:31:09 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/08 21:33:26 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/09 07:01:03 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,25 +74,21 @@ char	*prompt(char **env)
 {
 	char	*str_prompt;
 	char	*out;
-	char	*path[2];
+	char	*path;
 	char	*usr;
 
 	str_prompt = ft_strdup(PROMPT_A);
 	usr = ft_get_env("USER", env);
-	path[0] = ft_strdup(ft_get_env("PWD", env));
-	path[1] = path[0];
-	if (ft_strlen(path[0]) > (ft_strlen(ft_get_env("HOME", env))))
-	{
-		path[0] += ft_strlen(ft_get_env("HOME", env)) - 1;
-		path[0][0] = '~';
-	}
+	path = ft_strdup(ft_get_env("PWD", env));
 	str_prompt = ft_extend(str_prompt, usr);
 	str_prompt = ft_extend(str_prompt, PROMPT_B);
-	str_prompt = ft_extend(str_prompt, path[0]);
+	str_prompt = ft_extend(str_prompt, path);
 	str_prompt = ft_extend(str_prompt, PROMPT_C);
-	out = readline(str_prompt);
+	if (isatty(STDIN_FILENO))
+		out = readline(str_prompt);
+	else
+		out = readline(NULL);
 	free(str_prompt);
-	free(path[1]);
 	return (out);
 }
 

@@ -1,12 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cmd_handler.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/08 19:29:23 by rboutelo          #+#    #+#             */
+/*   Updated: 2026/08/08 23:44:55 by rboutelo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
 /*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/08 21:29:59 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/08 23:29:50 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +94,7 @@ void	fail_free(t_command *cmd, char *path, t_command *o)
 	ft_ffclose(&cmd->outpipe_end);
 	free(path);
 	free_command(o);
+	ft_clear_filelist();
 }
 
 // @doc execute
@@ -94,9 +107,10 @@ void	fail_free(t_command *cmd, char *path, t_command *o)
 // @returns int8_t, exit status.
 void	execute(t_command *cmd, t_command *o, char **env)
 {
-	int32_t	failed;
-	char	*path;
-	char	**envpath;
+	const int32_t	exit_code[] = {[ENOENT] = 127, [EACCES] = 126,};
+	int32_t			failed;
+	char			*path;
+	char			**envpath;
 
 	path = NULL;
 	if (!ft_strcmp(cmd->infile, "<<"))
@@ -117,8 +131,7 @@ void	execute(t_command *cmd, t_command *o, char **env)
 	}
 	ft_free_nt_tab(env, ft_nt_tablen((void *)env));
 	fail_free(cmd, path, o);
-	ft_clear_filelist();
-	exit(127 * (failed == ENOENT) | 1);
+	exit(exit_code[failed]);
 }
 
 /*
