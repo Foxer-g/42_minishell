@@ -13,22 +13,30 @@
 #include "minishell.h"
 #include "parser.h"
 
-bool	command_redir_set(t_command *command, t_redir *redir, char ***env)
+bool	command_redir_set(t_command *cmd, t_redir *r, char ***env)
 {
-	if (redir[0].type)
+	intmax_t	i;
+
+	if (r[0].index[0] != -1)
 	{
-		free(command->infile);
-		command->infile = ft_strdup(command->args[redir[0].index + 1]);
-		if (!command->infile)
+		i = 0;
+		while (r[0].index[i + 1] != -1)
+			i++;
+		free(cmd->infile);
+		cmd->infile = ft_strdup(r[0].file[i]);
+		if (!cmd->infile)
 			return (!parsing_error(MALLOC, "", env));
 	}
-	if (redir[1].type)
+	if (r[1].index[0] != -1)
 	{
-		free(command->outfile);
-		command->outfile = ft_strdup(command->args[redir[1].index + 1]);
-		if (!command->outfile)
+		i = 0;
+		while (r[1].index[i] != -1)
+			ft_ffopen(r[1].file[i++], "w");
+		free(cmd->outfile);
+		cmd->outfile = ft_strdup(r[1].file[i - 1]);
+		if (!cmd->outfile)
 			return (!parsing_error(MALLOC, "", env));
-		command->append = (redir[1].type == APPEND);
+		cmd->append = (r[1].type == APPEND);
 	}
 	return (true);
 }
@@ -48,31 +56,65 @@ static int32_t	is_redir(char c1, char c2)
 	return (0);
 }
 
-t_redir	*find_redir(t_command cmd, char ***env)
+void	free_redir(t_redir *redir)
 {
-	t_redir		*redir;
-	intmax_t	i;
-	int32_t		type;
+	free(redir[0].index);
+	free(redir[1].index);
+	free(redir[0].file);
+	free(redir[1].file);
+	free(redir);
+}
 
-	redir = ft_calloc(2, sizeof(t_redir));
-	if (!redir)
-		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+static bool	fill_redir(t_redir *r, t_command cmd)
+{
+	intmax_t	i;
+	intmax_t	n[2];
+	int32_t		type;
+	int32_t		pos;
+
 	i = 0;
-	while (cmd.args[i++])
+	ft_bzero(n, sizeof(n));
+	while (cmd.args[i])
 	{
-		type = is_redir(cmd.args[i - 1][0], cmd.args[i - 1][1]);
+		type = is_redir(cmd.args[i][0], cmd.args[i][1]);
 		if (type)
 		{
-			if (i - 1 == 0 || !cmd.args[i - 1] || redir[type != I_REDIR].type)
-			{
-				free(redir);
-				parsing_error(PARSING, cmd.args[i - 1], env);
-				return (NULL);
-			}
-			redir[type != I_REDIR].type = type;
-			redir[type != I_REDIR].index = (++i) - 2;
-			redir[type != I_REDIR].file = cmd.args[i - 1];
+			pos = type != I_REDIR;
+			r[pos].type = type;
+			r[pos].index[n[pos]] = i;
+			r[pos].index[n[pos] + 1] = -1;
+			r[pos].file[n[pos]] = cmd.args[i + 1];
+			r[pos].file[n[pos] + 1] = NULL;
+			n[pos]++;
+			i += 2;
 		}
+		else
+			i++;
 	}
-	return (redir);
+	return (true);
+}
+
+t_redir	*find_redir(t_command cmd, char ***env)
+{
+	t_redir		*r;
+	intmax_t	n;
+
+	r = ft_calloc(2, sizeof(t_redir));
+	if (!r)
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+	n = args_len(cmd) + 1;
+	r[0].index = ft_calloc(n, sizeof(intmax_t));
+	r[1].index = ft_calloc(n, sizeof(intmax_t));
+	r[0].file = ft_calloc(n, sizeof(char *));
+	r[1].file = ft_calloc(n, sizeof(char *));
+	if (!r[0].index || !r[1].index || !r[0].file || !r[1].file)
+	{
+		free_redir(r);
+		parsing_error(MALLOC, "", env);
+		return (NULL);
+	}
+	r[0].index[0] = -1;
+	r[1].index[0] = -1;
+	fill_redir(r, cmd);
+	return (r);
 }

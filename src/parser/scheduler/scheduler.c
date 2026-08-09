@@ -46,15 +46,16 @@ static bool	redir_apply(t_command **cmd, char ***env)
 		tmp = cmddup_without_redir((*cmd)[i], red, env);
 		if (!tmp || !command_redir_set(&(*cmd)[i], red, env))
 		{
-			free(red);
+			free_redir(red);
 			ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
 			return (!parsing_error(MALLOC, "", env));
 		}
 		command_exec_set(&(*cmd)[i], tmp, ft_nt_tablen((void *)tmp));
 		ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
-		free(red);
+		free_redir(red);
 		i++;
 	}
+	ft_clear_filelist();
 	return (true);
 }
 

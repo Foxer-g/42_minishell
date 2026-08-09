@@ -64,6 +64,26 @@ t_command	*full_cmd_dup(t_command *src, char ***env)
 	return (res);
 }
 
+static bool	is_redir_arg(t_redir *r, intmax_t index)
+{
+	int32_t	k;
+	int32_t	i;
+
+	k = 0;
+	while (k < 2)
+	{
+		i = 0;
+		while (r[k].index && r[k].index[i] != -1)
+		{
+			if (index == r[k].index[i] || index == r[k].index[i] + 1)
+				return (true);
+			i++;
+		}
+		k++;
+	}
+	return (false);
+}
+
 // @doc cmd_dup_witout_redir
 // @kind func
 // @desc Duplicate an inputed [[t_command]] array without the redirs.
@@ -72,29 +92,25 @@ t_command	*full_cmd_dup(t_command *src, char ***env)
 // @param env: char ***, Environement variables.
 // @return [[t_command]] *, Duplicated commands.
 
-char	**cmddup_without_redir(t_command cmd, t_redir *redir, char ***env)
+char	**cmddup_without_redir(t_command cmd, t_redir *r, char ***env)
 {
 	char		**res;
 	intmax_t	i;
 	intmax_t	j;
 
-	i = -1;
-	j = 0;
 	res = ft_calloc(args_len(cmd) + 1, sizeof(char *));
 	if (!res)
 		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+	i = -1;
+	j = 0;
 	while (cmd.args[++i])
 	{
-		if (!((redir[0].index && (i == redir[0].index
-						|| i == redir[0].index + 1)) || ((redir[1].index
-						&& (i == redir[1].index || i == redir[1].index + 1)))))
+		if (!is_redir_arg(r, i))
 		{
 			res[j] = ft_strdup(cmd.args[i]);
 			if (!res[j++])
-			{
-				ft_free_nt_tab(res, j);
-				return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
-			}
+				return (ft_free_nt_tab(res, j),
+					(void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 		}
 	}
 	return (res);
