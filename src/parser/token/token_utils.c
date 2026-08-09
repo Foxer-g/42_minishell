@@ -13,6 +13,33 @@
 #include "minishell.h"
 #include "parser.h"
 
+// @doc quote_to_command
+// @kind func
+// @desc Change the token type between quotes to COMMAND.
+// @param tkn: [[t_token]] *, Token array to update.
+
+void	quote_to_command(t_token *tkn)
+{
+	int32_t	quote;
+	int64_t	i;
+
+	quote = 0;
+	i = 0;
+	while (tkn[i].content)
+	{
+		if (tkn[i].type == QUOTE || tkn[i].type == DQUOTE)
+		{
+			if (!quote)
+				quote = tkn[i].type;
+			else if (quote == tkn[i].type)
+				quote = 0;
+		}
+		else if (quote)
+			tkn[i].type = COMMAND;
+		i++;
+	}
+}
+
 // @doc iscmd_chr
 // @kind func
 // @desc Check if the char is in the command type charset.
@@ -87,9 +114,7 @@ int32_t	short_type(char *token)
 		return (O_REDIR);
 	else if (token[0] == '*')
 		return (WILDCARD);
-	else if (iscmd_chr(token[0]))
-		return (COMMAND);
-	else if (token[0] == '$')
+	else if (iscmd_chr(token[0]) || token[0] == '$')
 		return (COMMAND);
 	return (-1);
 }

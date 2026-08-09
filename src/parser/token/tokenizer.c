@@ -139,6 +139,7 @@ t_token	*tokenizer(char *input, char ***env)
 	}
 	if (!tokenizer_fill(tkn_lst, tmp, env))
 		return (NULL);
+	quote_to_command(tkn_lst);
 	ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
 	return (tkn_lst);
 }
