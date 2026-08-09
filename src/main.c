@@ -63,6 +63,14 @@ static int32_t	main_loop(char *input, char ***env, int32_t res)
 	return (res);
 }
 
+static void main_cleanup(char **env)
+{
+	rl_clear_history();
+	if (isatty(STDIN_FILENO))
+		ft_printf("exit\n");
+	ft_free_nt_tab(env, ft_nt_tablen((void *)env));
+}
+
 static int32_t	main_exit(char **env, int32_t res)
 {
 	char	*input;
@@ -78,9 +86,7 @@ static int32_t	main_exit(char **env, int32_t res)
 	}
 	if (g_sig_handle == SIGINT)
 		res = 130;
-	rl_clear_history();
-	ft_printf("exit\n");
-	ft_free_nt_tab(env, ft_nt_tablen((void *)env));
+	main_cleanup(env);
 	if (res < 0)
 		return (-(res + 1));
 	return (res);
@@ -92,6 +98,9 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 
 	sig_init();
 	env = ft_copy_env(aenv);
+	rl_outstream = stderr;
+	if (!isatty(STDIN_FILENO))
+		rl_prep_term_function = 0;
 	if (ac != 1)
 	{
 		minishell_action(join_tab(++av), &env);

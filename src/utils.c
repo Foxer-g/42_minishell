@@ -100,7 +100,10 @@ char	*prompt(char **env)
 	str_prompt = ft_extend(str_prompt, PROMPT_B);
 	str_prompt = ft_extend(str_prompt, path[0]);
 	str_prompt = ft_extend(str_prompt, PROMPT_C);
-	out = readline(str_prompt);
+	if (isatty(STDIN_FILENO))
+		out = readline(str_prompt);
+	else
+		out = readline(NULL);
 	free(str_prompt);
 	free(path[1]);
 	return (out);
