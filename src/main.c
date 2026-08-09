@@ -6,7 +6,7 @@
 /*   By: rboutelo  rboutelo@student.42angouleme.fr       ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/07 23:46:31 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/08 22:31:48 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/09 10:41:59 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,21 @@ int32_t	minishell_action(char *input, char ***env)
 	return (res);
 }
 
-static void main_cleanup(char **env)
+static int32_t	main_loop(char *input, char ***env, int32_t res)
 {
-	rl_clear_history();
-	if (isatty(STDIN_FILENO))
-		ft_printf("exit\n");
-	ft_free_nt_tab(env, ft_nt_tablen((void *)env));
+	if (g_sig_handle == SIGINT)
+	{
+		free(input);
+		return (130);
+	}
+	if (input[0])
+	{
+		add_history(input);
+		res = minishell_action(input, env);
+	}
+	else
+		free(input);
+	return (res);
 }
 
 static int32_t	main_exit(char **env, int32_t res)
@@ -64,18 +73,11 @@ static int32_t	main_exit(char **env, int32_t res)
 		if (g_sig_handle == SIGINT)
 			res = 130;
 		g_sig_handle = 0;
-		if (input[0])
-		{
-			add_history(input);
-			res = minishell_action(input, &env);
-		}
-		else
-			free(input);
+		res = main_loop(input, &env, res);
 		input = prompt(env);
 	}
 	if (g_sig_handle == SIGINT)
 		res = 130;
-	main_cleanup(env);
 	if (res < 0)
 		return (-(res + 1));
 	return (res);

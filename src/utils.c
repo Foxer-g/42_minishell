@@ -27,14 +27,24 @@ bool	has_pipe(t_command *cmds)
 
 void	sig_parent(void)
 {
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	struct sigaction	action;
+
+	ft_bzero(&action, sizeof(action));
+	sigemptyset(&action.sa_mask);
+	action.sa_handler = SIG_IGN;
+	sigaction(SIGINT, &action, NULL);
+	sigaction(SIGQUIT, &action, NULL);
 }
 
 void	sig_child(void)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	struct sigaction	action;
+
+	ft_bzero(&action, sizeof(action));
+	sigemptyset(&action.sa_mask);
+	action.sa_handler = SIG_DFL;
+	sigaction(SIGINT, &action, NULL);
+	sigaction(SIGQUIT, &action, NULL);
 }
 
 char	*join_tab(char **tab)
