@@ -6,7 +6,7 @@
 /*   By: rboutelo  rboutelo@student.42angouleme.fr       ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/07 23:46:31 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/09 10:41:59 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/09 22:57:07 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int32_t	minishell_action(char *input, char ***env)
 	if (!parsed_input)
 	{
 		free(input);
-		return (-1);
+		return (2);
 	}
 	res = entrypoint(parsed_input, env);
 	free_command(parsed_input);
@@ -63,6 +63,14 @@ static int32_t	main_loop(char *input, char ***env, int32_t res)
 	return (res);
 }
 
+static void main_cleanup(char **env)
+{
+	rl_clear_history();
+	if (isatty(STDIN_FILENO))
+		ft_printf("exit\n");
+	ft_free_nt_tab(env, ft_nt_tablen((void *)env));
+}
+
 static int32_t	main_exit(char **env, int32_t res)
 {
 	char	*input;
@@ -78,6 +86,7 @@ static int32_t	main_exit(char **env, int32_t res)
 	}
 	if (g_sig_handle == SIGINT)
 		res = 130;
+	main_cleanup(env);
 	if (res < 0)
 		return (-(res + 1));
 	return (res);

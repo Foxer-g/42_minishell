@@ -39,26 +39,6 @@ bool	command_exec_set(t_command *command, char **cmd, uint64_t len)
 	return (true);
 }
 
-bool	command_redir_set(t_command *command, t_redir *redir, char ***env)
-{
-	if (redir[0].type)
-	{
-		free(command->infile);
-		command->infile = ft_strdup(command->args[redir[0].index + 1]);
-		if (!command->infile)
-			return (!parsing_error(MALLOC, "", env));
-	}
-	if (redir[1].type)
-	{
-		free(command->outfile);
-		command->outfile = ft_strdup(command->args[redir[1].index + 1]);
-		if (!command->outfile)
-			return (!parsing_error(MALLOC, "", env));
-		command->append = (redir[1].type == APPEND);
-	}
-	return (true);
-}
-
 t_command	init_command(char ***env)
 {
 	t_command	res;
@@ -78,29 +58,6 @@ t_command	init_command(char ***env)
 	if (!res.infile)
 		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
 	res.builtin = false;
-	return (res);
-}
-
-t_command	cmd_dup(t_command cmd, char ***env)
-{
-	t_command	res;
-
-	res = init_command(env);
-	command_exec_set(&res, cmd.args, args_len(cmd));
-	free(res.infile);
-	free(res.outfile);
-	res.infile = ft_strdup(cmd.infile);
-	if (!res.infile)
-		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
-	res.outfile = ft_strdup(cmd.outfile);
-	if (!res.outfile)
-		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
-	res.append = cmd.append;
-	if (!res.infile || !res.outfile)
-	{
-		free_command(&res);
-		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
-	}
 	return (res);
 }
 

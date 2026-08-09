@@ -13,6 +13,12 @@
 #include "minishell.h"
 #include "parser.h"
 
+// @doc count_space
+// @kind func
+// @desc Count spaces in a string.
+// @param str: char *, String to process.
+// @return intmax_t, Spaces count.
+
 intmax_t	count_space(char *str)
 {
 	intmax_t	i;

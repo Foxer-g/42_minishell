@@ -57,8 +57,8 @@ typedef struct s_token
 typedef struct s_redir
 {
 	int32_t		type;
-	intmax_t	index;
-	char		*file;
+	intmax_t	*index;
+	char		**file;
 }	t_redir;
 
 typedef struct s_command	t_command;
@@ -85,6 +85,7 @@ int32_t		composed_type(char *token);
 void		free_token(t_token *token_lst);
 int64_t		get_token_len(char *input, int64_t start);
 int32_t		get_token_type(char *token);
+void		quote_to_command(t_token *tkn);
 
 /*----------------------*/
 /* command gen includes */
@@ -115,6 +116,9 @@ t_command	*is_error(t_command *cmd, intmax_t len, char ***env);
 
 t_redir		*find_redir(t_command cmd, char ***env);
 char		**cmddup_without_redir(t_command cmd, t_redir *redir, char ***env);
+
+void		free_redir(t_redir *redir);
+t_redir		*redir_calloc(intmax_t n, char ***env);
 
 intmax_t	*find_pipe(t_command *cmd, char ***env);
 bool		is_valid_pipes(const intmax_t *pipes, char ***env);
