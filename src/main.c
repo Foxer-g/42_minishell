@@ -38,7 +38,7 @@ int32_t	minishell_action(char *input, char ***env)
 	if (!parsed_input)
 	{
 		free(input);
-		return (-1);
+		return (2);
 	}
 	res = entrypoint(parsed_input, env);
 	free_command(parsed_input);
