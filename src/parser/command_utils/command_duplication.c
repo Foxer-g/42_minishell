@@ -1,6 +1,13 @@
 #include "minishell.h"
 #include "parser.h"
 
+// @doc cmd_dup
+// @kind func
+// @desc Duplicate an inputed [[t_command]].
+// @param cmd: [[t_command]], Command to duplicate.
+// @param env: char ***, Environement variables.
+// @return [[t_command]], Duplicated command.
+
 t_command	cmd_dup(t_command cmd, char ***env)
 {
 	t_command	res;
@@ -23,6 +30,13 @@ t_command	cmd_dup(t_command cmd, char ***env)
 	}
 	return (res);
 }
+
+// @doc full_cmd_dup
+// @kind func
+// @desc Duplicate an inputed [[t_command]] array.
+// @param cmd: [[t_command]] *, Command array to duplicate.
+// @param env: char ***, Environement variables.
+// @return [[t_command]] *, Duplicated command array.
 
 t_command	*full_cmd_dup(t_command *src, char ***env)
 {
@@ -49,6 +63,14 @@ t_command	*full_cmd_dup(t_command *src, char ***env)
 	}
 	return (res);
 }
+
+// @doc cmd_dup_witout_redir
+// @kind func
+// @desc Duplicate an inputed [[t_command]] array without the redirs.
+// @param cmd: [[t_command]] *, Command array to duplicate.
+// @param redir: [[t_redir]] *, Redirs to remove.
+// @param env: char ***, Environement variables.
+// @return [[t_command]] *, Duplicated commands.
 
 char	**cmddup_without_redir(t_command cmd, t_redir *redir, char ***env)
 {
