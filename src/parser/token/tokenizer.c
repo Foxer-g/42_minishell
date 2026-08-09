@@ -26,22 +26,15 @@
 static int64_t	token_stack_len(char **input)
 {
 	int64_t	len;
-	char	*str;
+	int64_t	i;
 
 	len = 0;
 	while (*input)
 	{
-		len++;
-		str = *input;
-		while (*str)
+		i = 0;
+		while ((*input)[i])
 		{
-			if (ft_strchr("|<>&", *str))
-				str += 1 + (*str == str[1]);
-			else if (ft_strchr("$*", *str) || iscmd_chr(*str))
-				while (*++str && iscmd_chr(*str))
-					;
-			else
-				str++;
+			i += get_token_len(*input, i);
 			len++;
 		}
 		input++;
@@ -65,14 +58,14 @@ int64_t	get_token_len(char *input, int64_t start)
 		i++;
 	else if (ft_strchr("|<>&", input[i]))
 	{
-		if (input[i] == input[i + 1])
-			i++;
 		i++;
+		if (input[i - 1] == input[i] && input[i])
+			i++;
 	}
 	else if (ft_strchr("$*", input[i]) || iscmd_chr(input[i]))
 	{
 		i++;
-		while (iscmd_chr(input[i]))
+		while (input[i] && input[i] != ' ' && iscmd_chr(input[i]))
 			i++;
 	}
 	else

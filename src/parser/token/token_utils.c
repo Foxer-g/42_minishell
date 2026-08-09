@@ -89,6 +89,8 @@ int32_t	short_type(char *token)
 		return (WILDCARD);
 	else if (iscmd_chr(token[0]))
 		return (COMMAND);
+	else if (token[0] == '$')
+		return (COMMAND);
 	return (-1);
 }
 
