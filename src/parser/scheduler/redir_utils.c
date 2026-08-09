@@ -13,38 +13,24 @@
 #include "minishell.h"
 #include "parser.h"
 
-bool	strtrim_cmd_end(t_command *cmd, char ***env)
+bool	command_redir_set(t_command *command, t_redir *redir, char ***env)
 {
-	char		**tmp;
-	intmax_t	i;
-
-	tmp = ft_calloc(args_len(*cmd) + 1, sizeof(char *));
-	if (!tmp)
-		return (!parsing_error(MALLOC, "", env));
-	i = 0;
-	while ((*cmd).args[i])
+	if (redir[0].type)
 	{
-		tmp[i] = ft_strtrim((*cmd).args[i], " ");
-		if (!tmp[i])
-		{
-			ft_free_nt_tab(tmp, i);
+		free(command->infile);
+		command->infile = ft_strdup(command->args[redir[0].index + 1]);
+		if (!command->infile)
 			return (!parsing_error(MALLOC, "", env));
-		}
-		i++;
 	}
-	command_exec_set(cmd, tmp, args_len(*cmd));
-	ft_free_nt_tab(tmp, args_len(*cmd));
+	if (redir[1].type)
+	{
+		free(command->outfile);
+		command->outfile = ft_strdup(command->args[redir[1].index + 1]);
+		if (!command->outfile)
+			return (!parsing_error(MALLOC, "", env));
+		command->append = (redir[1].type == APPEND);
+	}
 	return (true);
-}
-
-intmax_t	args_len(t_command cmd)
-{
-	intmax_t	i;
-
-	i = 0;
-	while (cmd.args[i])
-		i++;
-	return (i);
 }
 
 static int32_t	is_redir(char c1, char c2)
@@ -60,34 +46,6 @@ static int32_t	is_redir(char c1, char c2)
 	if (c1 == c2 && c1 == '>')
 		return (APPEND);
 	return (0);
-}
-
-char	**cmddup_without_redir(t_command cmd, t_redir *redir, char ***env)
-{
-	char		**res;
-	intmax_t	i;
-	intmax_t	j;
-
-	i = -1;
-	j = 0;
-	res = ft_calloc(args_len(cmd) + 1, sizeof(char *));
-	if (!res)
-		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
-	while (cmd.args[++i])
-	{
-		if (!((redir[0].index && (i == redir[0].index
-						|| i == redir[0].index + 1)) || ((redir[1].index
-						&& (i == redir[1].index || i == redir[1].index + 1)))))
-		{
-			res[j] = ft_strdup(cmd.args[i]);
-			if (!res[j++])
-			{
-				ft_free_nt_tab(res, j);
-				return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
-			}
-		}
-	}
-	return (res);
 }
 
 t_redir	*find_redir(t_command cmd, char ***env)
