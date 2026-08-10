@@ -26,7 +26,7 @@ static bool	redir_apply(t_command **cmd, char ***env)
 		red = find_redir((*cmd)[i], env);
 		if (!red)
 			return (false);
-		tmp = cmddup_without_redir((*cmd)[i], red, env);
+		tmp = cmddup_without_redir((*cmd)[i], env);
 		if (!tmp || !command_redir_set(&(*cmd)[i], red, env))
 		{
 			free_redir(red);
@@ -57,11 +57,8 @@ static bool	command_expand(t_command **cmd, char ***env)
 			return (false);
 		if (!RMV_QT(&((*cmd)[i]), true) && !RMV_QT(&((*cmd)[i]), false))
 			return (!parsing_error(MALLOC, "", env));
-		if ((*cmd)[i].args[0][0])
-		{
-			if (!cmddup_without_empty(&((*cmd)[i]), env))
-				return (false);
-		}
+		if (!cmddup_without_empty(&((*cmd)[i]), env))
+			return (false);
 	}
 	return (true);
 }
