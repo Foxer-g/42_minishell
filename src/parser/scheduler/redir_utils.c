@@ -17,9 +17,9 @@ bool	command_redir_set(t_command *cmd, t_redir *r, char ***env)
 {
 	intmax_t	i;
 
+	i = 0;
 	if (r[0].index[0] != -1)
 	{
-		i = 0;
 		while (r[0].index[i + 1] != -1)
 			i++;
 		free(cmd->infile);
@@ -29,7 +29,8 @@ bool	command_redir_set(t_command *cmd, t_redir *r, char ***env)
 	}
 	if (r[1].index[0] != -1)
 	{
-		i = 0;
+		if (!remove_quotes((void *) r, true))
+			return (!parsing_error(MALLOC, "", env));
 		while (r[1].index[i] != -1)
 			ft_ffopen(r[1].file[i++], "w");
 		free(cmd->outfile);

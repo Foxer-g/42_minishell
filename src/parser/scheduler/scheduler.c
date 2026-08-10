@@ -54,7 +54,8 @@ static bool	command_expand(t_command **cmd, char ***env)
 			return (false);
 		if (!redir_apply(cmd, env))
 			return (false);
-		if (!remove_quotes(&((*cmd)[i])))
+		if (!remove_quotes(&((*cmd)[i]), true)
+			&& !remove_quotes(&((*cmd)[i]), false))
 			return (!parsing_error(MALLOC, "", env));
 		if ((*cmd)[i].args[0][0])
 		{

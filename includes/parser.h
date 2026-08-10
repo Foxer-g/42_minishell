@@ -56,9 +56,9 @@ typedef struct s_token
 
 typedef struct s_redir
 {
+	char		**file;
 	int32_t		type;
 	intmax_t	*index;
-	char		**file;
 }	t_redir;
 
 typedef struct s_command	t_command;
