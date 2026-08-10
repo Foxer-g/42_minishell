@@ -112,9 +112,11 @@ bool		strtrim_cmd_end(t_command *cmd, char ***env);
 intmax_t	args_len(t_command cmd);
 bool		cmd_set_hd(t_command *cmd, intmax_t index, char ***env);
 intmax_t	*find_heredoc(t_command *cmd, char ***env);
+bool		is_valid_heredocs(const intmax_t *heredocs, t_command *cmd);
 t_command	*is_error(t_command *cmd, intmax_t len, char ***env);
 
 t_redir		*find_redir(t_command cmd, char ***env);
+int32_t		is_redir(char c1, char c2);
 char		**cmddup_without_redir(t_command cmd, t_redir *redir, char ***env);
 
 void		free_redir(t_redir *redir);

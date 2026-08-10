@@ -1,42 +1,54 @@
 #include "minishell.h"
 #include "parser.h"
 
-static bool	fill_args_without_hd(char **res, t_command cmd,
-	intmax_t index, char ***env)
+bool	is_valid_heredocs(const intmax_t *heredocs, t_command *cmd)
 {
 	intmax_t	i;
 	intmax_t	j;
 
-	res[0] = ft_strdup(cmd.args[index + 1]);
-	if (!res[0])
+	i = 0;
+	while (cmd[i].args)
 	{
-		parsing_error(MALLOC, "", env);
-		return (false);
+		j = heredocs[i];
+		if (j != -1 && (!cmd[i].args[j + 1]
+				|| is_redir(cmd[i].args[j + 1][0],
+				cmd[i].args[j + 1][1])))
+			return (false);
+		i++;
 	}
-	i = -1;
-	j = 1;
-	while (cmd.args[++i])
+	return (true);
+}
+
+static bool	fill_args_without_hd(char **res, t_command cmd,
+		intmax_t index, char ***env)
+{
+	intmax_t	i;
+	intmax_t	j;
+
+	i = 0;
+	j = 0;
+	while (cmd.args[i])
 	{
 		if (i != index && i != index + 1)
 		{
 			res[j] = ft_strdup(cmd.args[i]);
-			if (!res[j])
+			if (!res[j++])
 			{
 				parsing_error(MALLOC, "", env);
 				return (false);
 			}
-			j++;
 		}
+		i++;
 	}
 	return (true);
 }
 
 static char	**args_to_tab_without_hd(t_command cmd, intmax_t index,
-	char ***env)
+		char ***env)
 {
 	char	**res;
 
-	res = ft_calloc(args_len(cmd), sizeof(char *));
+	res = ft_calloc(args_len(cmd) + 1, sizeof(char *));
 	if (!res)
 	{
 		parsing_error(MALLOC, "", env);
@@ -57,19 +69,24 @@ bool	cmd_set_hd(t_command *cmd, intmax_t index, char ***env)
 	tmp = args_to_tab_without_hd(*cmd, index, env);
 	if (!tmp)
 		return (false);
-	if (!command_exec_set(cmd, tmp, args_len(*cmd) - 1))
+	if (!tmp[0])
+	{
+		free(cmd->path);
+		cmd->path = NULL;
+		free(cmd->infile);
+		cmd->infile = ft_strdup("<<");
+		ft_free_nt_tab(tmp, args_len(*cmd));
+		return (cmd->infile != NULL);
+	}
+	if (!command_exec_set(cmd, tmp, args_len(*cmd) - 2))
 	{
 		ft_free_nt_tab(tmp, args_len(*cmd));
 		return (false);
 	}
 	ft_free_nt_tab(tmp, args_len(*cmd));
-	free((*cmd).path);
-	free((*cmd).infile);
-	(*cmd).path = ft_strdup((*cmd).args[1]);
-	(*cmd).infile = ft_strdup("<<");
-	if (!(*cmd).path || !(*cmd).infile)
-		return (false);
-	return (true);
+	free(cmd->infile);
+	cmd->infile = ft_strdup("<<");
+	return (cmd->infile != NULL);
 }
 
 static intmax_t	*heredoc_error(intmax_t *res, char *arg, char ***env)
@@ -86,9 +103,9 @@ intmax_t	*find_heredoc(t_command *c, char ***env)
 
 	res = ft_calloc(cmd_len(c) + 1, sizeof(intmax_t));
 	if (!res)
-		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
 	i[0] = -1;
-	while (c[++i[0]].infile)
+	while (c[++i[0]].args)
 	{
 		res[i[0]] = -1;
 		i[1] = -1;
@@ -98,7 +115,8 @@ intmax_t	*find_heredoc(t_command *c, char ***env)
 				&& c[i[0]].args[i[1]][1] == '<')
 			{
 				if (res[i[0]] != -1)
-					return (heredoc_error(res, c[i[0]].args[i[1]], env));
+					return (heredoc_error(res,
+						c[i[0]].args[i[1]], env));
 				res[i[0]] = i[1];
 			}
 		}

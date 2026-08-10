@@ -95,11 +95,13 @@ static bool	heredocs_handler(t_command **cmd, char ***env)
 	if (!heredocs)
 		return (false);
 	i = 0;
+	if (!is_valid_heredocs(heredocs, *cmd))
+		return (!parsing_error(INV_HEREDOC, "<<", env));
 	while ((*cmd)[i].args)
 	{
 		if (heredocs[i] != -1)
 		{
-			if (!cmd_set_hd(&(*cmd[i]), heredocs[i], env))
+			if (!cmd_set_hd(&(*cmd)[i], heredocs[i], env))
 			{
 				free((void *)heredocs);
 				return (false);

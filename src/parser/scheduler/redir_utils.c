@@ -41,7 +41,7 @@ bool	command_redir_set(t_command *cmd, t_redir *r, char ***env)
 	return (true);
 }
 
-static int32_t	is_redir(char c1, char c2)
+int32_t	is_redir(char c1, char c2)
 {
 	if (!c1)
 		return (0);
