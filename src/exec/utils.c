@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/06 08:56:36 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/09 07:24:27 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/10 03:21:33 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "minishell.h"
 #define LEN ft_strlen
 
-void	remove_quotes(t_command *cmd)
+bool	remove_quotes(t_command *cmd)
 {
 	char		*src;
 	char		*dst;
@@ -28,7 +28,7 @@ void	remove_quotes(t_command *cmd)
 		src = *args;
 		dst = ft_calloc(ft_strlen(src) + 1, 1);
 		if (!dst)
-			return ;
+			return (false);
 		ft_bzero(i, sizeof(i));
 		quote = 0;
 		while (src[i[0]])
@@ -50,15 +50,21 @@ void	remove_quotes(t_command *cmd)
 		*args = dst;
 		args++;
 	}
+	return (true);
 }
 
 static	uintmax_t	eovn(const char *s)
 {
+	if (*s == '?')
+		return (1);
 	return (
 		ft_min(
 			ft_min(
-				ft_strlen_until(s, '\''),
-				ft_strlen_until(s, '"')
+				ft_min(
+					ft_strlen_until(s, '\''),
+					ft_strlen_until(s, '"')
+				),
+				ft_strlen_until(s, '=')
 			),
 			ft_min(
 				ft_strlen_until(s, ' '),
@@ -75,7 +81,108 @@ static	uintmax_t	eovn(const char *s)
 // @param index: uintmax_t, The index at which the expand is located.
 // @param env: char **, The environment.
 // @returns bool, Exit status.
+
+static bool	drop_dollar_quote(char **arg, uintmax_t i, t_quotetype in_quote)
+{
+	char	next;
+
+	next = (*arg)[i + 1];
+	if (in_quote != NOT || (next != '\'' && next != '"'))
+		return (false);
+	ft_memmove(&(*arg)[i], &(*arg)[i + 1], ft_strlen(&(*arg)[i + 1]) + 1);
+	return (true);
+}
+
+static intmax_t	splice_var(char **ar, uintmax_t ind, char *evn, char *var)
+{
+	char	*eov;
+
+	eov = &(*ar)[ind + 1] + ft_strlen(evn);
+	if (ft_strlen(evn) + 1 >= ft_strlen(var))
+	{
+		ft_memcpy(&(*ar)[ind], var, ft_strlen(var));
+		if (ft_strlen(var) <= ft_strlen(evn))
+			ft_memmove(&(*ar)[ind + ft_strlen(var)], eov, ft_strlen(eov) + 1);
+		return ((intmax_t)ft_strlen(var));
+	}
+	*ar = ft_recalloc(*ar, LEN(*ar), LEN(*ar) - LEN(evn) - 1 + LEN(var), 1);
+	if (!*ar)
+		return (-1);
+	eov = &(*ar)[ind + 1] + ft_strlen(evn);
+	ft_memmove(&(*ar)[ind] + ft_strlen(var), eov, ft_strlen(eov) + 1);
+	ft_memcpy(&(*ar)[ind], var, ft_strlen(var));
+	return ((intmax_t)ft_strlen(var));
+}
+
 intmax_t	handle_var(char **ar, uintmax_t ind, char **env)
+{
+	char		*evn;
+	char		*var;
+	intmax_t	inserted;
+	uintmax_t	nlen;
+
+	nlen = eovn(&(*ar)[ind + 1]);
+	if (nlen == 0)
+		return (1);
+	evn = ft_substr(*ar, ind + 1, nlen);
+	if (!evn)
+		return (-1);
+	var = ft_get_env(evn, env);
+	if (!var)
+		var = "";
+	inserted = splice_var(ar, ind, evn, var);
+	free(evn);
+	return (inserted);
+}
+
+static bool	track_quote(char c, t_quotetype *in_quote)
+{
+	if (c == (char)*in_quote)
+		*in_quote = NOT;
+	else if ((c == '\'' || c == '"') && !*in_quote)
+		*in_quote = c;
+	return (*in_quote != SGL);
+}
+
+static bool	scan_arg(char **arg, char ***env, t_quotetype *in_quote)
+{
+	uintmax_t	i;
+	intmax_t	n;
+
+	i = 0;
+	while ((*arg)[i])
+	{
+		if (track_quote((*arg)[i], in_quote) && (*arg)[i] == '$' && (*arg)[i + 1])
+		{
+			if (drop_dollar_quote(arg, i, *in_quote))
+				continue ;
+			n = handle_var(arg, i, *env);
+			if (n < 0)
+				return (!parsing_error(MALLOC, "", env));
+			i += (uintmax_t)n;
+			continue ;
+		}
+		i++;
+	}
+	return (true);
+}
+
+bool	expand(t_command *cmd, char ***env)
+{
+	char		**args;
+	t_quotetype	in_quote;
+
+	in_quote = NOT;
+	args = cmd->args;
+	while (*args)
+	{
+		if (!scan_arg(args, env, &in_quote))
+			return (false);
+		args++;
+	}
+	return (true);
+}
+/*intmax_t	handle_var(char **ar, uintmax_t ind, char **env)
 {
 	char		*evn;
 	char		*eov;
@@ -107,7 +214,7 @@ intmax_t	handle_var(char **ar, uintmax_t ind, char **env)
 	ft_memcpy(&(*ar)[ind], var, ft_strlen(var));
 	free(evn);
 	return (inserted);
-}
+}*/
 
 // @doc expand
 // @kind func
@@ -115,7 +222,7 @@ intmax_t	handle_var(char **ar, uintmax_t ind, char **env)
 // @param cmd: [[t_command]] *, The targeted command.
 // @param env: char **, The environment.
 // @returns bool, Exit status.
-bool	expand(t_command *cmd, char ***env)
+/*bool	expand(t_command *cmd, char ***env)
 {
 	char		**args;
 	uintmax_t	i;
@@ -146,7 +253,7 @@ bool	expand(t_command *cmd, char ***env)
 		args++;
 	}
 	return (true);
-}
+}*/
 
 // @doc expand
 // @kind func
