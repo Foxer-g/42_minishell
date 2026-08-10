@@ -16,16 +16,19 @@
 static bool	command_expand(t_command **cmd, char ***env)
 {
 	intmax_t	i;
-	bool		res;
 
 	i = 0;
 	while ((*cmd)[i].infile)
 	{
 		if (!expand(&((*cmd)[i]), env))
 			return (false);
-		res = strtrim_cmd_end(&((*cmd)[i]), env);
-		if (!res)
-			return (parsing_error(MALLOC, "", env));
+		if (!strtrim_cmd_end(&((*cmd)[i]), env))
+			return (false);
+		if (!remove_quotes(&((*cmd)[i])))
+			return (!parsing_error(MALLOC, "", env));
+		if (!cmddup_without_empty(&((*cmd)[i]), env))
+			return (false);
+		ft_printf("[DEBUG]: %i : '%s'\n", i, (*cmd)[i].path);
 		i++;
 	}
 	return (true);
