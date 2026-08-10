@@ -13,26 +13,6 @@
 #include "minishell.h"
 #include "parser.h"
 
-static bool	command_expand(t_command **cmd, char ***env)
-{
-	intmax_t	i;
-
-	i = 0;
-	while ((*cmd)[i].infile)
-	{
-		if (!expand(&((*cmd)[i]), env))
-			return (false);
-		if (!strtrim_cmd_end(&((*cmd)[i]), env))
-			return (false);
-		if (!remove_quotes(&((*cmd)[i])))
-			return (!parsing_error(MALLOC, "", env));
-		if (!cmddup_without_empty(&((*cmd)[i]), env))
-			return (false);
-		i++;
-	}
-	return (true);
-}
-
 static bool	redir_apply(t_command **cmd, char ***env)
 {
 	intmax_t	i;
@@ -58,6 +38,28 @@ static bool	redir_apply(t_command **cmd, char ***env)
 		i++;
 	}
 	ft_clear_filelist();
+	return (true);
+}
+
+static bool	command_expand(t_command **cmd, char ***env)
+{
+	intmax_t	i;
+
+	i = 0;
+	while ((*cmd)[i].infile)
+	{
+		if (!expand(&((*cmd)[i]), env))
+			return (false);
+		if (!strtrim_cmd_end(&((*cmd)[i]), env))
+			return (false);
+		if (!redir_apply(cmd, env))
+			return (false);
+		if (!remove_quotes(&((*cmd)[i])))
+			return (!parsing_error(MALLOC, "", env));
+		if (!cmddup_without_empty(&((*cmd)[i]), env))
+			return (false);
+		i++;
+	}
 	return (true);
 }
 
@@ -121,9 +123,6 @@ t_command	*scheduler(t_command *raw_command, char ***env)
 	bool		tmp;
 
 	tmp = command_expand(&raw_command, env);
-	if (!tmp)
-		return (NULL);
-	tmp = redir_apply(&raw_command, env);
 	if (!tmp)
 		return (NULL);
 	res = piping(raw_command, env);
