@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 #include "parser.h"
+#define RMV_QT remove_quotes
 
 static bool	redir_apply(t_command **cmd, char ***env)
 {
@@ -45,8 +46,8 @@ static bool	command_expand(t_command **cmd, char ***env)
 {
 	intmax_t	i;
 
-	i = 0;
-	while ((*cmd)[i].infile)
+	i = -1;
+	while ((*cmd)[++i].infile)
 	{
 		if (!expand(&((*cmd)[i]), env))
 			return (false);
@@ -54,15 +55,13 @@ static bool	command_expand(t_command **cmd, char ***env)
 			return (false);
 		if (!redir_apply(cmd, env))
 			return (false);
-		if (!remove_quotes(&((*cmd)[i]), true)
-			&& !remove_quotes(&((*cmd)[i]), false))
+		if (!RMV_QT(&((*cmd)[i]), true) && !RMV_QT(&((*cmd)[i]), false))
 			return (!parsing_error(MALLOC, "", env));
-		if ((*cmd)[i].args[1][0])
+		if ((*cmd)[i].args[0][0])
 		{
 			if (!cmddup_without_empty(&((*cmd)[i]), env))
 				return (false);
 		}
-		i++;
 	}
 	return (true);
 }
