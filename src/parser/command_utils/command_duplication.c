@@ -109,9 +109,40 @@ char	**cmddup_without_redir(t_command cmd, t_redir *r, char ***env)
 		{
 			res[j] = ft_strdup(cmd.args[i]);
 			if (!res[j++])
-				return (ft_free_nt_tab(res, j),
-					(void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+			{
+				ft_free_nt_tab(res, j);
+				return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+			}
 		}
 	}
 	return (res);
+}
+
+bool	cmddup_without_empty(t_command *cmd, char ***env)
+{
+	char		**res;
+	intmax_t	i[2];
+
+	res = ft_calloc(args_len(*cmd) + 1, sizeof(char *));
+	if (!res)
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+	ft_memset(i, -1, sizeof(i));
+	while ((*cmd).args[++i[0]])
+	{
+		if ((*cmd).args[i[0]][0])
+		{
+			res[++i[1]] = ft_strdup((*cmd).args[i[0]]);
+			if (!res[i[1]])
+				ft_free_nt_tab(res, i[1]);
+			if (!res[i[1]])
+				return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+		}
+	}
+	if (!command_exec_set(cmd, res, ft_nt_tablen((void *) res)))
+	{
+		ft_free_nt_tab(res, ft_nt_tablen((void *) res));
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+	}
+	ft_free_nt_tab(res, ft_nt_tablen((void *) res));
+	return (true);
 }

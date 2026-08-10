@@ -94,6 +94,7 @@ char	*prompt(char **env)
 	str_prompt = ft_extend(str_prompt, PROMPT_B);
 	str_prompt = ft_extend(str_prompt, path);
 	str_prompt = ft_extend(str_prompt, PROMPT_C);
+	free(path);
 	if (isatty(STDIN_FILENO))
 		out = readline(str_prompt);
 	else
