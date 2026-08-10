@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/10 03:23:02 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/10 07:03:36 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@
 // @desc Bloated representation of a command.
 typedef struct s_command
 {
-	char	*path;
 	char	**args;
+	char	*path;
 	pid_t	pid;
 	t_ffile	infd;
 	t_ffile	outfd;
@@ -81,5 +81,5 @@ void		sig_parent(void);
 void		sig_child(void);
 
 void		test_print(t_command *input);
-bool		remove_quotes(t_command *cmd);
+bool		remove_quotes(t_command *cmd, bool mode);
 #endif

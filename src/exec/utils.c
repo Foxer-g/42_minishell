@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/06 08:56:36 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/10 03:21:33 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/10 07:02:16 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,42 +14,60 @@
 #include "minishell.h"
 #define LEN ft_strlen
 
-bool	remove_quotes(t_command *cmd)
+static void	remove_quote_string(char *string, uintmax_t i[2], char *dst)
 {
-	char		*src;
-	char		*dst;
-	t_quotetype	quote;
+	t_quotetype quote;
+
+	quote = 0;
+	while (string[i[0]])
+	{
+		if (quote)
+		{
+			if (string[i[0]] == ((char)quote))
+				quote = 0;
+			else
+				dst[i[1]++] = string[i[0]];
+		}
+		else if (string[i[0]] == SGL || string[i[0]] == DBL)
+			quote = string[i[0]];
+		else
+			dst[i[1]++] = string[i[0]];
+		i[0]++;
+	}
+}
+
+static void helperTheMeeCooY(char **s, char *d)
+{
 	uintmax_t	i[2];
+
+	ft_bzero(i, sizeof(i));
+	remove_quote_string(*s, i, d);
+	free(*s);
+	*s = d;
+}
+
+bool	remove_quotes(t_command *cmd, bool mode)
+{
+	char		*dst;
 	char		**args;
 
-	args = cmd->args;
-	while (*args)
+	if (mode)
 	{
-		src = *args;
-		dst = ft_calloc(ft_strlen(src) + 1, 1);
-		if (!dst)
-			return (false);
-		ft_bzero(i, sizeof(i));
-		quote = 0;
-		while (src[i[0]])
+		args = cmd->args;
+		while (*args)
 		{
-			if (quote)
-			{
-				if (src[i[0]] == ((char)quote))
-					quote = 0;
-				else
-					dst[i[1]++] = src[i[0]];
-			}
-			else if (src[i[0]] == SGL || src[i[0]] == DBL)
-				quote = src[i[0]];
-			else
-				dst[i[1]++] = src[i[0]];
-			i[0]++;
+			dst = ft_calloc(ft_strlen(*args) + 1, sizeof(char));
+			if (!dst)
+				return (false);
+			helperTheMeeCooY(args, dst);
+			args++;
 		}
-		free(*args);
-		*args = dst;
-		args++;
+		return (true);
 	}
+	dst = ft_calloc(ft_strlen(cmd->infile), sizeof(char));
+	helperTheMeeCooY(&cmd->infile, dst);
+	dst = ft_calloc(ft_strlen(cmd->outfile), sizeof(char));
+	helperTheMeeCooY(&cmd->outfile, dst);
 	return (true);
 }
 

@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/06/09 05:38:13 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/09 06:34:45 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/10 03:33:30 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,18 @@ int	minishell_exit(t_command cmd, char ***ev)
 	{
 		ft_dprintf(2, "minishell: exit: %s: numeric argument required\n",
 			cmd.args[1]);
-		return (-3);
+		exit_code = 2;
 	}
-	if (ac > 2)
+	else if (ac > 2)
 	{
 		ft_dprintf(2, "minishell: exit: too many arguments\n");
-		return (2);
+		exit_code = 2;
 	}
-	exit_code = ((exit_code % 256) + 256) % 256;
-	return (-(exit_code + 1));
+	else
+	{
+		exit_code = ((exit_code % 256) + 256) % 256;
+		if (cmd.outpipe_end == -1 && cmd.infd == STDIN_FILENO)
+			exit_code = -(exit_code + 1);
+	}
+	return (exit_code);
 }

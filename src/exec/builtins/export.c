@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 04:54:12 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/09 07:19:55 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/10 03:10:09 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	export(t_command cmd, char ***env)
 		else if (is_valid_name(var))
 			ft_set_env_no_val(var, env);
 		else
-			ft_dprintf(2, "minishell: export: %s: not a valid identifier", var);
+			ft_dprintf(2, "minishell: export: %s: not a valid identifier\n", var);
 		free(var);
 	}
 	return (exit);
