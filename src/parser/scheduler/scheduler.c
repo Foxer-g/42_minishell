@@ -28,7 +28,6 @@ static bool	command_expand(t_command **cmd, char ***env)
 			return (!parsing_error(MALLOC, "", env));
 		if (!cmddup_without_empty(&((*cmd)[i]), env))
 			return (false);
-		ft_printf("[DEBUG]: %i : '%s'\n", i, (*cmd)[i].path);
 		i++;
 	}
 	return (true);
