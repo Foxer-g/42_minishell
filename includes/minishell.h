@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/08 21:31:31 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/10 03:23:02 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,4 +81,5 @@ void		sig_parent(void);
 void		sig_child(void);
 
 void		test_print(t_command *input);
+bool		remove_quotes(t_command *cmd);
 #endif
