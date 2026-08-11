@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/08 04:23:12 by f0xer             #+#    #+#             */
-/*   Updated: 2026/05/09 16:52:13 by f0xer            ###   ########.fr       */
+/*   Updated: 2026/08/11 22:51:23 by toespino         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,9 @@ int64_t	get_token_len(char *input, int64_t start)
 		i++;
 		if (input[i - 1] == input[i] && input[i])
 			i++;
+		while (input[i] == ' ')
+			i++;
+		return (i - start);
 	}
 	else if (ft_strchr("$*", input[i]) || iscmd_chr(input[i]))
 	{
@@ -69,6 +72,8 @@ int64_t	get_token_len(char *input, int64_t start)
 			i++;
 	}
 	else
+		i++;
+	while (input[i] == ' ')
 		i++;
 	return (i - start);
 }

@@ -6,7 +6,7 @@
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/07 23:50:13 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/07 23:50:14 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/11 22:49:17 by toespino         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ bool	redir_apply(t_command **cmd, char ***env)
 			return (!parsing_error(MALLOC, "", env));
 		if (!command_redir_set(&(*cmd)[i], r, env))
 			return (!free_redir(r));
-		tmp = cmddup_without_redir((*cmd)[i], env);
+		tmp = cmddup_without_redir((*cmd)[i]);
 		if (!tmp)
 			return (!free_redir(r));
 		if (!command_exec_set(&(*cmd)[i], tmp, ft_nt_tablen((void *)tmp)))
