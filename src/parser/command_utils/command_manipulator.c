@@ -17,31 +17,26 @@ bool	command_exec_set(t_command *command, char **cmd, uint64_t len)
 {
 	uint64_t	i;
 
-	if (!cmd)
-		return (true);
 	free(command->path);
 	command->path = NULL;
-	if (!len)
-	{
-		if (command->args)
-			ft_free_nt_tab(command->args, ft_nt_tablen((void *)command->args));
-		command->args = NULL;
-		return (true);
-	}
-	command->path = ft_strdup(cmd[0]);
-	if (!command->path)
-		return (false);
 	if (command->args)
-		ft_free_nt_tab(command->args, ft_nt_tablen((void *)command->args));
+		ft_free_nt_tab(command->args,
+			ft_nt_tablen((void *)command->args));
 	command->args = ft_calloc(len + 1, sizeof(char *));
 	if (!command->args)
+		return (false);
+	if (!len || !cmd)
+		return (true);
+	command->path = ft_strdup(cmd[0]);
+	if (!command->path)
 		return (false);
 	i = 0;
 	while (i < len && cmd[i])
 	{
 		command->args[i] = ft_strdup(cmd[i]);
-		if (!command->args[i++])
-			return (ft_free_nt_tab(command->args, i - 1), false);
+		if (!command->args[i])
+			return (ft_free_nt_tab(command->args, i), false);
+		i++;
 	}
 	return (true);
 }
