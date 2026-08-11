@@ -17,9 +17,9 @@ bool	command_redir_set(t_command *cmd, t_redir *r, char ***env)
 {
 	intmax_t	i;
 
-	i = 0;
 	if (r[0].index[0] != -1)
 	{
+		i = 0;
 		while (r[0].index[i + 1] != -1)
 			i++;
 		free(cmd->infile);
@@ -27,18 +27,18 @@ bool	command_redir_set(t_command *cmd, t_redir *r, char ***env)
 		if (!cmd->infile)
 			return (!parsing_error(MALLOC, "", env));
 	}
-	if (r[1].index[0] != -1)
-	{
-		if (!remove_quotes((void *) r, true))
-			return (!parsing_error(MALLOC, "", env));
-		while (r[1].index[i] != -1)
-			ft_ffopen(r[1].file[i++], "w");
-		free(cmd->outfile);
-		cmd->outfile = ft_strdup(r[1].file[i - 1]);
-		if (!cmd->outfile)
-			return (!parsing_error(MALLOC, "", env));
-		cmd->append = (r[1].type == APPEND);
-	}
+	if (r[1].index[0] == -1)
+		return (true);
+	if (!remove_quotes((t_command *) r, true))
+		return (!parsing_error(MALLOC, "", env));
+	i = 0;
+	while (r[1].file[i])
+		ft_ffopen(r[1].file[i++], "w");
+	free(cmd->outfile);
+	cmd->outfile = ft_strdup(r[1].file[i - 1]);
+	if (!cmd->outfile)
+		return (!parsing_error(MALLOC, "", env));
+	cmd->append = r[1].type == APPEND;
 	return (true);
 }
 
@@ -57,27 +57,27 @@ int32_t	is_redir(char c1, char c2)
 	return (0);
 }
 
-static bool	fill_redir(t_redir *r, t_command cmd)
+static bool	fill_redir(t_redir *r, t_command c, char ***env)
 {
 	intmax_t	i;
 	intmax_t	n[2];
-	int32_t		type;
-	int32_t		pos;
+	int32_t		t;
 
 	i = 0;
 	ft_bzero(n, sizeof(n));
-	while (cmd.args[i])
+	while (c.args[i])
 	{
-		type = is_redir(cmd.args[i][0], cmd.args[i][1]);
-		if (type)
+		t = is_redir(c.args[i][0], c.args[i][1]);
+		if (t)
 		{
-			pos = type != I_REDIR;
-			r[pos].type = type;
-			r[pos].index[n[pos]] = i;
-			r[pos].index[n[pos] + 1] = -1;
-			r[pos].file[n[pos]] = cmd.args[i + 1];
-			r[pos].file[n[pos] + 1] = NULL;
-			n[pos]++;
+			r[t != I_REDIR].type = t;
+			r[t != I_REDIR].index[n[t != I_REDIR]] = i;
+			r[t != I_REDIR].index[n[t != I_REDIR] + 1] = -1;
+			r[t != I_REDIR].file[n[t != I_REDIR]] = ft_strdup(c.args[i + 1]);
+			if (!r[t != I_REDIR].file[n[t != I_REDIR]])
+				return (!parsing_error(MALLOC, "", env));
+			r[t != I_REDIR].file[n[t != I_REDIR] + 1] = NULL;
+			n[t != I_REDIR]++;
 			i += 2;
 		}
 		else
@@ -94,12 +94,12 @@ t_redir	*find_redir(t_command c, char ***env)
 	n = args_len(c) + 1;
 	r = redir_calloc(n, env);
 	if (!r)
-		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+		return (NULL);
 	n = 0;
 	while (c.args[n])
 	{
-		if (is_redir(c.args[n][0], c.args[n][1]) && (!c.args[n + 1]
-			|| *c.args[n + 1] == '|'))
+		if (is_redir(c.args[n][0], c.args[n][1])
+			&& (!c.args[n + 1] || *c.args[n + 1] == '|'))
 		{
 			free_redir(r);
 			parsing_error(PARSING, c.args[n], env);
@@ -107,6 +107,10 @@ t_redir	*find_redir(t_command c, char ***env)
 		}
 		n++;
 	}
-	fill_redir(r, c);
+	if (!fill_redir(r, c, env))
+	{
+		free_redir(r);
+		return (NULL);
+	}
 	return (r);
 }

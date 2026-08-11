@@ -120,7 +120,7 @@ t_redir		*find_redir(t_command cmd, char ***env);
 int32_t		is_redir(char c1, char c2);
 char		**cmddup_without_redir(t_command cmd, char ***env);
 
-void		free_redir(t_redir *redir);
+bool		free_redir(t_redir *redir);
 t_redir		*redir_calloc(intmax_t n, char ***env);
 
 intmax_t	*find_pipe(t_command *cmd, char ***env);

@@ -14,31 +14,31 @@
 #include "parser.h"
 #define RMV_QT remove_quotes
 
-static bool	redir_apply(t_command **cmd, char ***env)
+bool	redir_apply(t_command **cmd, char ***env)
 {
-	intmax_t	i;
+	t_redir		*r;
 	char		**tmp;
-	t_redir		*red;
+	intmax_t	i;
 
-	i = 0;
-	while ((*cmd)[i].path)
+	i = -1;
+	while ((*cmd)[++i].infile)
 	{
-		red = find_redir((*cmd)[i], env);
-		if (!red)
-			return (false);
-		tmp = cmddup_without_redir((*cmd)[i], env);
-		if (!tmp || !command_redir_set(&(*cmd)[i], red, env))
-		{
-			free_redir(red);
-			ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
+		r = find_redir((*cmd)[i], env);
+		if (!r)
 			return (!parsing_error(MALLOC, "", env));
+		if (!command_redir_set(&(*cmd)[i], r, env))
+			return (!free_redir(r));
+		tmp = cmddup_without_redir((*cmd)[i], env);
+		if (!tmp)
+			return (!free_redir(r));
+		if (!command_exec_set(&(*cmd)[i], tmp, ft_nt_tablen((void *)tmp)))
+		{
+			ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
+			return (!free_redir(r));
 		}
-		command_exec_set(&(*cmd)[i], tmp, ft_nt_tablen((void *)tmp));
 		ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
-		free_redir(red);
-		i++;
+		free_redir(r);
 	}
-	ft_clear_filelist();
 	return (true);
 }
 
@@ -49,16 +49,17 @@ static bool	command_expand(t_command **cmd, char ***env)
 	i = -1;
 	while ((*cmd)[++i].infile)
 	{
-		if (!expand(&((*cmd)[i]), env))
+		if (!expand(&(*cmd)[i], env))
 			return (false);
-		if (!strtrim_cmd_end(&((*cmd)[i]), env))
+		if (!strtrim_cmd_end(&(*cmd)[i], env))
 			return (false);
 		if (!redir_apply(cmd, env))
 			return (false);
-		if (!RMV_QT(&((*cmd)[i]), true) && !RMV_QT(&((*cmd)[i]), false))
+		if (!RMV_QT(&(*cmd)[i], true) && !RMV_QT(&(*cmd)[i], false))
 			return (!parsing_error(MALLOC, "", env));
-		if (!cmddup_without_empty(&((*cmd)[i]), env))
-			return (false);
+		if ((*cmd)[i].args && (*cmd)[i].args[0] && (*cmd)[i].args[0][0])
+			if (!cmddup_without_empty(&(*cmd)[i], env))
+				return (false);
 	}
 	return (true);
 }
@@ -67,8 +68,7 @@ static t_command	*piping(t_command *cmd, char ***env)
 {
 	const intmax_t	*pipes = find_pipe(cmd, env);
 	t_command		*res;
-	intmax_t		i;
-	intmax_t		j;
+	intmax_t		i[2];
 
 	if (!pipes)
 		return (full_cmd_dup(cmd, env));
@@ -82,13 +82,15 @@ static t_command	*piping(t_command *cmd, char ***env)
 		free((void *)pipes);
 		return (NULL);
 	}
-	i = 0;
-	j = 0;
-	while (cmd[i].path)
-		if (cmd[i++].path[0] != '|')
-			res[j++] = cmd_dup(cmd[i - 1], env);
+	ft_bzero(i, sizeof(i));
+	while (cmd[i[0]].path || cmd[i[0]].args)
+	{
+		if (cmd[i[0]].path && cmd[i[0]].path[0] != '|')
+			res[i[1]++] = cmd_dup(cmd[i[0]], env);
+		i[0]++;
+	}
 	free((void *)pipes);
-	return (is_error(res, j, env));
+	return (is_error(res, i[1], env));
 }
 
 static bool	heredocs_handler(t_command **cmd, char ***env)

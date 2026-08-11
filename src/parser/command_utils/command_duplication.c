@@ -8,25 +8,51 @@
 // @param env: char ***, Environement variables.
 // @return [[t_command]], Duplicated command.
 
+static bool	cmd_dup_info(t_command *res, t_command cmd)
+{
+	res->path = NULL;
+	if (cmd.path)
+		res->path = ft_strdup(cmd.path);
+	res->infd = cmd.infd;
+	res->outfd = cmd.outfd;
+	res->outpipe_end = cmd.outpipe_end;
+	res->hd_pipe = cmd.hd_pipe;
+	res->append = cmd.append;
+	res->builtin = cmd.builtin;
+	free(res->infile);
+	res->infile = NULL;
+	if (cmd.infile)
+		res->infile = ft_strdup(cmd.infile);
+	free(res->outfile);
+	res->outfile = NULL;
+	if (cmd.outfile)
+		res->outfile = ft_strdup(cmd.outfile);
+	if ((cmd.path && !res->path) || (cmd.infile && !res->infile))
+		return (false);
+	if (cmd.outfile && !res->outfile)
+		return (false);
+	return (true);
+}
+
 t_command	cmd_dup(t_command cmd, char ***env)
 {
 	t_command	res;
+	uint64_t	i;
 
 	res = init_command(env);
-	command_exec_set(&res, cmd.args, args_len(cmd));
-	free(res.infile);
-	free(res.outfile);
-	res.infile = ft_strdup(cmd.infile);
-	if (!res.infile)
-		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
-	res.outfile = ft_strdup(cmd.outfile);
-	if (!res.outfile)
-		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
-	res.append = cmd.append;
-	if (!res.infile || !res.outfile)
+	if (!res.infile || !cmd_dup_info(&res, cmd))
+		return ((t_command){0});
+	if (!cmd.args)
+		return (res);
+	res.args = ft_calloc(args_len(cmd) + 1, sizeof(char *));
+	if (!res.args)
+		return ((t_command){0});
+	i = 0;
+	while (cmd.args[i])
 	{
-		free_command(&res);
-		return ((t_command){.append = !parsing_error(MALLOC, "", env)});
+		res.args[i] = ft_strdup(cmd.args[i]);
+		if (!res.args[i++])
+			return ((t_command){0});
 	}
 	return (res);
 }
@@ -100,23 +126,14 @@ char	**cmddup_without_redir(t_command cmd, char ***env)
 	return (res);
 }
 
-static bool	add_non_empty(char **res, char *arg, intmax_t *j, char ***env)
-{
-	if (!arg || !arg[0])
-		return (true);
-	res[*j] = ft_strdup(arg);
-	if (!res[*j])
-		return (!parsing_error(MALLOC, "", env));
-	(*j)++;
-	return (true);
-}
-
 bool	cmddup_without_empty(t_command *cmd, char ***env)
 {
 	char		**res;
 	intmax_t	i;
 	intmax_t	j;
 
+	if (!cmd->args)
+		return (true);
 	res = ft_calloc(args_len(*cmd) + 1, sizeof(char *));
 	if (!res)
 		return (!parsing_error(MALLOC, "", env));
@@ -124,17 +141,16 @@ bool	cmddup_without_empty(t_command *cmd, char ***env)
 	j = 0;
 	while (cmd->args[++i])
 	{
-		if (!add_non_empty(res, cmd->args[i], &j, env))
+		if (!cmd->args[i][0])
+			continue ;
+		res[j] = ft_strdup(cmd->args[i]);
+		if (!res[j++])
 		{
 			ft_free_nt_tab(res, j);
-			return (false);
+			return (!parsing_error(MALLOC, "", env));
 		}
 	}
-	if (j && !command_exec_set(cmd, res, j))
-	{
-		ft_free_nt_tab(res, j);
-		return (false);
-	}
-	ft_free_nt_tab(res, j);
-	return (true);
+	if (!command_exec_set(cmd, res, j))
+		return (ft_free_nt_tab(res, j));
+	return (!ft_free_nt_tab(res, j));
 }

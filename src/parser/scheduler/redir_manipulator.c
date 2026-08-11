@@ -1,13 +1,24 @@
 #include "minishell.h"
 #include "parser.h"
 
-void	free_redir(t_redir *redir)
+bool	free_redir(t_redir *redir)
 {
+	intmax_t	i;
+
+	if (!redir)
+		return (false);
+	i = 0;
+	while (redir[0].file && redir[0].file[i])
+		free(redir[0].file[i++]);
+	i = 0;
+	while (redir[1].file && redir[1].file[i])
+		free(redir[1].file[i++]);
 	free(redir[0].index);
 	free(redir[1].index);
 	free(redir[0].file);
 	free(redir[1].file);
 	free(redir);
+	return (true);
 }
 
 t_redir	*redir_calloc(intmax_t n, char ***env)

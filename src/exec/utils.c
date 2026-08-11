@@ -51,6 +51,8 @@ bool	remove_quotes(t_command *cmd, bool mode)
 	char		*dst;
 	char		**args;
 
+	if (!cmd->args)
+		return (true);
 	if (mode)
 	{
 		args = cmd->args;
@@ -64,9 +66,9 @@ bool	remove_quotes(t_command *cmd, bool mode)
 		}
 		return (true);
 	}
-	dst = ft_calloc(ft_strlen(cmd->infile), sizeof(char));
+	dst = ft_calloc(ft_strlen(cmd->infile) + 1, sizeof(char));
 	helperTheMeeCooY(&cmd->infile, dst);
-	dst = ft_calloc(ft_strlen(cmd->outfile), sizeof(char));
+	dst = ft_calloc(ft_strlen(cmd->outfile) + 1, sizeof(char));
 	helperTheMeeCooY(&cmd->outfile, dst);
 	return (true);
 }

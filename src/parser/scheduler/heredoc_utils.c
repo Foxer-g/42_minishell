@@ -103,7 +103,7 @@ intmax_t	*find_heredoc(t_command *c, char ***env)
 
 	res = ft_calloc(cmd_len(c) + 1, sizeof(intmax_t));
 	if (!res)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 	i[0] = -1;
 	while (c[++i[0]].args)
 	{
@@ -115,8 +115,7 @@ intmax_t	*find_heredoc(t_command *c, char ***env)
 				&& c[i[0]].args[i[1]][1] == '<')
 			{
 				if (res[i[0]] != -1)
-					return (heredoc_error(res,
-						c[i[0]].args[i[1]], env));
+					return (heredoc_error(res, c[i[0]].args[i[1]], env));
 				res[i[0]] = i[1];
 			}
 		}
