@@ -6,7 +6,7 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/10 04:42:35 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/11 07:01:01 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,6 @@ static int8_t	execution_pipeline(t_command *cmd, t_command *o, char ***env)
 		cmd->outfd = ft_ffopen(cmd->outfile, "w");
 	else if (ft_strcmp(cmd->outfile, "stdout"))
 		cmd->outfd = ft_ffopen(cmd->outfile, "a");
-	if (cmd->infd < 0 || cmd->outfd < 0)
-		return (false);
 	status = exec_single(cmd, o, env);
 	return (status);
 }

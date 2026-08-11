@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/08 19:29:23 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/11 04:18:05 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/11 06:55:17 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,11 @@ bool	exec_single(t_command *command, t_command *o, char ***env)
 			exit(pid);
 		}
 		else
+		{
+			if (command->infd < 0)
+				exit(1);
 			execute(command, o, *env);
+		}
 	}
 	else if (pid < 0)
 		return (false);
