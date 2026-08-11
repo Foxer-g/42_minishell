@@ -124,11 +124,11 @@ t_command	*scheduler(t_command *raw_command, char ***env)
 	t_command	*res;
 	bool		tmp;
 
-	tmp = command_expand(&raw_command, env);
-	if (!tmp)
-		return (NULL);
 	res = piping(raw_command, env);
 	if (!res)
+		return (NULL);
+	tmp = command_expand(&res, env);
+	if (!tmp)
 		return (NULL);
 	tmp = heredocs_handler(&res, env);
 	if (!tmp)
