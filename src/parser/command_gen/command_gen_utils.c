@@ -6,7 +6,7 @@
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/07 23:49:46 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/10 00:13:38 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/11 00:53:30 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,13 +73,19 @@ static bool	ends_with_space(const char *s)
 	return (len > 0 && s[len - 1] == ' ');
 }
 
+static bool	gluable(t_token_type type)
+{
+	return (type == COMMAND || type == QUOTE || type == DQUOTE || type == ENV_DESC);
+}
+
 static bool	cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
 {
 	char			*tmp;
 	t_token_type	res_type;
 	bool			glue;
 
-	glue = (i[1] > 0 && i[0] > 0 && !ends_with_space(o[i[0] - 1].content));
+	glue = (i[1] > 0 && i[0] > 0 && !ends_with_space(o[i[0] - 1].content)
+		&& gluable(o[i[0]].type) && gluable(res[i[1] - 1].type));
 	tmp = ft_strdup(o[i[0]].content);
 	if (!tmp)
 		return (!parsing_error(MALLOC, "", env));

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_handler.c                                      :+:      :+:    :+:   */
+/*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/08 19:29:23 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/08 23:44:55 by rboutelo         ###   ########.fr       */
+/*   Updated: 2026/08/11 04:18:05 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int32_t	safe_exec_setup(t_command *cmd)
 
 	if (cmd->outfd == STDOUT_FILENO && cmd->infd == STDIN_FILENO)
 		return (0);
-	failed = -1;
+	failed = 0;
 	if (cmd->infd != STDIN_FILENO)
 		failed = dup2(cmd->infd, STDIN_FILENO);
 	if (failed < 0)
@@ -134,25 +134,6 @@ void	execute(t_command *cmd, t_command *o, char **env)
 	exit(exit_code[failed]);
 }
 
-/*
-Relic of the old code, indexed using the third character to differentiate
-builtins.
-t_cmd_fun	get_func(enum e_builtin builtin)
-{
-	const t_cmd_fun funcs[] = {
-	[CD] = cd,
-	[PWD] = pwd,
-	[ECHO] = echo,
-	[EXIT] = minishell_exit,
-	[EXPORT] = export,
-	[UNSET] = unset,
-	[ENV] = minishell_env,
-	};
-
-	return (funcs[builtin]);
-}
-*/
-
 static void	cleanup(t_command *command, pid_t pid)
 {
 	command->pid = pid;
@@ -172,6 +153,8 @@ t_cmd_fun	get_builtin(t_command *cmd)
 		minishell_exit, export, pwd, unset, NULL};
 	uint8_t			i;
 
+	if (!cmd->path)
+		return (NULL);
 	i = -1;
 	while (blts[++i])
 	{
@@ -196,6 +179,13 @@ bool	exec_single(t_command *command, t_command *o, char ***env)
 	if (builtin && !has_pipe(o))
 	{
 		pid = builtin(*command, env);
+		command->builtin = true;
+		cleanup(command, pid);
+		return (true);
+	}
+	else if (!command->path || !*command->path)
+	{
+		pid = 0;
 		command->builtin = true;
 		cleanup(command, pid);
 		return (true);
