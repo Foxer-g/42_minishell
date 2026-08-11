@@ -13,30 +13,13 @@
 #include "minishell.h"
 #include "parser.h"
 
-static bool	redir_remove_quotes(t_redir *r)
-{
-	intmax_t	i;
-	char		*dst;
-
-	i = 0;
-	while (r[1].file[i])
-	{
-		dst = ft_calloc(ft_strlen(r[1].file[i]) + 1, sizeof(char));
-		if (!dst)
-			return (false);
-		remove_quotes_inplace(&r[1].file[i], dst);
-		i++;
-	}
-	return (true);
-}
-
 bool	command_redir_set(t_command *cmd, t_redir *r, char ***env)
 {
 	intmax_t	i;
 
+	i = 0;
 	if (r[0].index[0] != -1)
 	{
-		i = 0;
 		while (r[0].index[i + 1] != -1)
 			i++;
 		free(cmd->infile);
@@ -45,15 +28,24 @@ bool	command_redir_set(t_command *cmd, t_redir *r, char ***env)
 			return (!parsing_error(MALLOC, "", env));
 	}
 	if (r[1].index[0] == -1)
+	{
+		if (!remove_quotes(cmd, false))
+			return (!parsing_error(MALLOC, "", env));
 		return (true);
-	if (!redir_remove_quotes(r))
+	}
+	if (!remove_quotes((t_command *)r, true))
 		return (!parsing_error(MALLOC, "", env));
 	i = 0;
 	while (r[1].file[i])
-		ft_ffopen(r[1].file[i++], "w");
+	{
+		ft_ffopen(r[1].file[i], "w");
+		i++;
+	}
 	free(cmd->outfile);
 	cmd->outfile = ft_strdup(r[1].file[i - 1]);
 	if (!cmd->outfile)
+		return (!parsing_error(MALLOC, "", env));
+	if (!remove_quotes(cmd, false))
 		return (!parsing_error(MALLOC, "", env));
 	cmd->append = r[1].type == APPEND;
 	return (true);

@@ -104,7 +104,6 @@ char	*prompt(char **env)
 	return (out);
 }
 
-/*
 void	test_print(t_command *input)
 {
 	intmax_t	i;
@@ -131,4 +130,3 @@ void	test_print(t_command *input)
 		i++;
 	}
 }
-*/
