@@ -6,7 +6,7 @@
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/07 23:50:13 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/11 22:49:17 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/11 23:05:09 by toespino         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ bool	redir_apply(t_command **cmd, char ***env)
 		ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
 		free_redir(r);
 	}
+	ft_clear_filelist();
 	return (true);
 }
 
