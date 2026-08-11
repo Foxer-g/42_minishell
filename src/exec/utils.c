@@ -36,7 +36,7 @@ static void	remove_quote_string(char *string, uintmax_t i[2], char *dst)
 	}
 }
 
-static void helperTheMeeCooY(char **s, char *d)
+void remove_quotes_inplace(char **s, char *d)
 {
 	uintmax_t	i[2];
 
@@ -61,15 +61,15 @@ bool	remove_quotes(t_command *cmd, bool mode)
 			dst = ft_calloc(ft_strlen(*args) + 1, sizeof(char));
 			if (!dst)
 				return (false);
-			helperTheMeeCooY(args, dst);
+			remove_quotes_inplace(args, dst);
 			args++;
 		}
 		return (true);
 	}
 	dst = ft_calloc(ft_strlen(cmd->infile) + 1, sizeof(char));
-	helperTheMeeCooY(&cmd->infile, dst);
+	remove_quotes_inplace(&cmd->infile, dst);
 	dst = ft_calloc(ft_strlen(cmd->outfile) + 1, sizeof(char));
-	helperTheMeeCooY(&cmd->outfile, dst);
+	remove_quotes_inplace(&cmd->outfile, dst);
 	return (true);
 }
 

@@ -17,4 +17,5 @@
 typedef struct s_command	t_command;
 
 int32_t	entrypoint(t_command *cmds, char ***env);
+void 	remove_quotes_inplace(char **s, char *d);
 #endif // EXEC_H
