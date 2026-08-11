@@ -40,7 +40,6 @@ int32_t	minishell_action(char *input, char ***env)
 		free(input);
 		return (2);
 	}
-	test_print(parsed_input);
 	res = entrypoint(parsed_input, env);
 	free_command(parsed_input);
 	free(input);

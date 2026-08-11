@@ -98,7 +98,7 @@ t_command	*full_cmd_dup(t_command *src, char ***env)
 // @param env: char ***, Environement variables.
 // @return [[t_command]] *, Duplicated commands.
 
-char	**cmddup_without_redir(t_command cmd, char ***env)
+char	**cmddup_without_redir(t_command cmd)
 {
 	char		**res;
 	intmax_t	i;
@@ -106,22 +106,29 @@ char	**cmddup_without_redir(t_command cmd, char ***env)
 
 	res = ft_calloc(args_len(cmd) + 1, sizeof(char *));
 	if (!res)
-		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
-	i = -1;
+		return (NULL);
+	i = 0;
 	j = 0;
-	while (cmd.args[++i])
+	while (cmd.args[i])
 	{
-		if (is_redir(cmd.args[i][0], cmd.args[i][1]))
+		if (!cmd.args[i][0])
 		{
 			i++;
 			continue ;
 		}
+		if (is_redir(cmd.args[i][0], cmd.args[i][1]))
+		{
+			i += 2;
+			continue ;
+		}
 		res[j] = ft_strdup(cmd.args[i]);
-		if (!res[j++])
+		if (!res[j])
 		{
 			ft_free_nt_tab(res, j);
-			return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+			return (NULL);
 		}
+		j++;
+		i++;
 	}
 	return (res);
 }

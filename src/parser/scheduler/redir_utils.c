@@ -76,6 +76,11 @@ static bool	fill_redir(t_redir *r, t_command c, char ***env)
 	ft_bzero(n, sizeof(n));
 	while (c.args[i])
 	{
+		if (!c.args[i][0])
+		{
+			i++;
+			continue ;
+		}
 		t = is_redir(c.args[i][0], c.args[i][1]);
 		if (t)
 		{
@@ -107,7 +112,7 @@ t_redir	*find_redir(t_command c, char ***env)
 	n = 0;
 	while (c.args[n])
 	{
-		if (is_redir(c.args[n][0], c.args[n][1])
+		if (c.args[n][0] && is_redir(c.args[n][0], c.args[n][1])
 			&& (!c.args[n + 1] || *c.args[n + 1] == '|'))
 		{
 			free_redir(r);
