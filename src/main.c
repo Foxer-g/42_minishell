@@ -82,6 +82,8 @@ static int32_t	main_exit(char **env, int32_t res)
 			res = 130;
 		g_sig_handle = 0;
 		res = main_loop(input, &env, res);
+		if (res < 0)
+			break ;
 		input = prompt(env);
 	}
 	if (g_sig_handle == SIGINT)
