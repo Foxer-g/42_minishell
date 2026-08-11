@@ -13,6 +13,21 @@
 
 #include "minishell.h"
 
+void	sig_init(void)
+{
+	struct sigaction	action;
+
+	ft_bzero(&action, sizeof(action));
+	sigemptyset(&action.sa_mask);
+	action.sa_sigaction = sig_handle;
+	action.sa_flags = SA_SIGINFO;
+	sigaction(SIGINT, &action, NULL);
+	action.sa_handler = SIG_IGN;
+	action.sa_flags = 0;
+	sigaction(SIGQUIT, &action, NULL);
+	rl_catch_signals = 0;
+}
+
 bool	has_pipe(t_command *cmds)
 {
 	uintmax_t	len;
