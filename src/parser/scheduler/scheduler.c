@@ -14,6 +14,33 @@
 #include "parser.h"
 #define RMV_QT remove_quotes
 
+static bool	heredocs_handler(t_command **cmd, char ***env)
+{
+	const intmax_t	*heredocs;
+	intmax_t		i;
+
+	heredocs = find_heredoc(*cmd, env);
+	if (!heredocs)
+		return (false);
+	if (!is_valid_heredocs(heredocs, *cmd))
+		return (!parsing_error(INV_HEREDOC, "<<", env));
+	i = 0;
+	while ((*cmd)[i].infile)
+	{
+		if (heredocs[i] != -1)
+		{
+			if (!cmd_set_hd(&(*cmd)[i], heredocs[i], env))
+			{
+				free((void *)heredocs);
+				return (false);
+			}
+		}
+		i++;
+	}
+	free((void *)heredocs);
+	return (true);
+}
+
 bool	redir_apply(t_command **cmd, char ***env)
 {
 	t_redir		*r;
@@ -42,6 +69,22 @@ bool	redir_apply(t_command **cmd, char ***env)
 	return (true);
 }
 
+static bool	command_finalize(t_command **cmd, char ***env)
+{
+	intmax_t	i;
+
+	i = -1;
+	while ((*cmd)[++i].infile)
+	{
+		if (!RMV_QT(&(*cmd)[i], true)
+			&& !RMV_QT(&(*cmd)[i], false))
+			return (!parsing_error(MALLOC, "", env));
+		if (!cmddup_without_empty(&(*cmd)[i], env))
+			return (false);
+	}
+	return (true);
+}
+
 static bool	command_expand(t_command **cmd, char ***env)
 {
 	intmax_t	i;
@@ -53,11 +96,13 @@ static bool	command_expand(t_command **cmd, char ***env)
 			return (false);
 		if (!strtrim_cmd_end(&(*cmd)[i], env))
 			return (false);
+	}
+	if (!heredocs_handler(cmd, env))
+		return (false);
+	i = -1;
+	while ((*cmd)[++i].infile)
+	{
 		if (!redir_apply(cmd, env))
-			return (false);
-		if (!RMV_QT(&(*cmd)[i], true) && !RMV_QT(&(*cmd)[i], false))
-			return (!parsing_error(MALLOC, "", env));
-		if (!cmddup_without_empty(&(*cmd)[i], env))
 			return (false);
 	}
 	return (true);
@@ -65,72 +110,50 @@ static bool	command_expand(t_command **cmd, char ***env)
 
 static t_command	*piping(t_command *cmd, char ***env)
 {
-	const intmax_t	*pipes = find_pipe(cmd, env);
+	const intmax_t	*pipes;
 	t_command		*res;
-	intmax_t		i[2];
+	intmax_t		i;
+	intmax_t		j;
 
+	pipes = find_pipe(cmd, env);
 	if (!pipes)
 		return (full_cmd_dup(cmd, env));
 	if (pipes == (void *)-1)
-		return ((void *)((uintptr_t) !parsing_error(INV_PIPES, "|", env)));
+		return ((void *)((uintptr_t)!parsing_error(INV_PIPES, "|", env)));
 	res = ft_calloc(cmd_len(cmd) / 2 + 2, sizeof(t_command));
-	if (!is_valid_pipes(pipes, env) || !res)
+	if (!res)
 	{
-		if (!res)
-			parsing_error(MALLOC, "scheduler.c : piping : res", env);
 		free((void *)pipes);
+		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
+	}
+	if (!is_valid_pipes(pipes, env))
+	{
+		free((void *)pipes);
+		free_command(res);
 		return (NULL);
 	}
-	ft_bzero(i, sizeof(i));
-	while (cmd[i[0]].path || cmd[i[0]].args)
-	{
-		if (cmd[i[0]].path && cmd[i[0]].path[0] != '|')
-			res[i[1]++] = cmd_dup(cmd[i[0]], env);
-		i[0]++;
-	}
-	free((void *)pipes);
-	return (is_error(res, i[1], env));
-}
-
-static bool	heredocs_handler(t_command **cmd, char ***env)
-{
-	const intmax_t	*heredocs = find_heredoc(*cmd, env);
-	intmax_t		i;
-
-	if (!heredocs)
-		return (false);
 	i = 0;
-	if (!is_valid_heredocs(heredocs, *cmd))
-		return (!parsing_error(INV_HEREDOC, "<<", env));
-	while ((*cmd)[i].args)
+	j = 0;
+	while (cmd[i].path || cmd[i].args)
 	{
-		if (heredocs[i] != -1)
-		{
-			if (!cmd_set_hd(&(*cmd)[i], heredocs[i], env))
-			{
-				free((void *)heredocs);
-				return (false);
-			}
-		}
+		if (!cmd[i].path || cmd[i].path[0] != '|')
+			res[j++] = cmd_dup(cmd[i], env);
 		i++;
 	}
-	free((void *) heredocs);
-	return (true);
+	free((void *)pipes);
+	return (is_error(res, j, env));
 }
 
 t_command	*scheduler(t_command *raw_command, char ***env)
 {
 	t_command	*res;
-	bool		tmp;
 
+	if (!command_expand(&raw_command, env))
+		return (NULL);
 	res = piping(raw_command, env);
 	if (!res)
 		return (NULL);
-	tmp = command_expand(&res, env);
-	if (!tmp)
-		return (NULL);
-	tmp = heredocs_handler(&res, env);
-	if (!tmp)
+	if (!command_finalize(&res, env))
 	{
 		free_command(res);
 		return (NULL);

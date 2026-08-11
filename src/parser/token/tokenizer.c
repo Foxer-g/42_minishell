@@ -70,8 +70,6 @@ int64_t	get_token_len(char *input, int64_t start)
 	}
 	else
 		i++;
-	while (input[i] == ' ')
-		i++;
 	return (i - start);
 }
 
