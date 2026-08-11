@@ -6,7 +6,7 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/11 07:01:01 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 01:09:47 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,28 @@ static bool	setup_pipe(t_command *cmds)
 	return (true);
 }
 
+static int32_t	wait_forks(t_command **cmdsc, char ***env)
+{
+	int32_t	status;
+
+	status = 0;
+	while ((*cmdsc)->infile)
+	{
+		if (!(*cmdsc)[0].builtin)
+		{
+			waitpid((*cmdsc)[0].pid, &status, 0);
+			ft_set_exit_code(ft_get_exit_code_from_status(status), env);
+		}
+		else
+		{
+			status = (*cmdsc)[0].pid;
+			ft_set_exit_code(status, env);
+		}
+		(*cmdsc)++;
+	}
+	return (status);
+}
+
 // @doc entrypoint
 // @kind func
 // @desc The main entrypoint of the execution pipeline.
@@ -104,21 +126,7 @@ int32_t	entrypoint(t_command *cmds, char ***env)
 		return (-256);
 	while (cmds->infile)
 		execution_pipeline(cmds++, cmdsc, env);
-	status = 0;
-	while (cmdsc->infile)
-	{
-		if (!cmdsc[0].builtin)
-		{
-			waitpid(cmdsc[0].pid, &status, 0);
-			ft_set_exit_code(ft_get_exit_code_from_status(status), env);
-		}
-		else
-		{
-			status = cmdsc[0].pid;
-			ft_set_exit_code(status, env);
-		}
-		cmdsc++;
-	}
+	status = wait_forks(&cmdsc, env);
 	sig_init();
 	if ((cmdsc - 1)->builtin)
 		return (status);

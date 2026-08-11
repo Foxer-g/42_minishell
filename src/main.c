@@ -6,7 +6,7 @@
 /*   By: rboutelo  rboutelo@student.42angouleme.fr       ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/07 23:46:31 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/09 22:57:07 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 01:38:44 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,11 +96,19 @@ static int32_t	main_exit(char **env, int32_t res)
 
 int32_t	main(int32_t ac, char **av, const char **aenv)
 {
-	char		**env;
+	char	**env;
+	char	pathbuf[PATH_MAX];
 
 	sig_init();
 	env = ft_copy_env(aenv);
 	ft_set_exit_code(0, &env);
+	if (!ft_get_env("USER", env))
+		ft_set_env("USER", &env, ft_strdup(""));
+	if (!ft_get_env("PWD", env))
+	{
+		getcwd(pathbuf, PATH_MAX);
+		ft_set_env("PWD", &env, ft_strdup(""));
+	}
 	rl_outstream = stderr;
 	if (!isatty(STDIN_FILENO))
 		rl_prep_term_function = 0;

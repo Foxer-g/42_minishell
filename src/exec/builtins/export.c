@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 04:54:12 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/10 03:10:09 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 01:00:12 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,12 @@ bool	is_valid_name(char *name)
 
 int	export(t_command cmd, char ***env)
 {
-	const uintmax_t	ac = ft_nt_tablen((void*)cmd.args);
 	char			*var;
 	uintmax_t		eq_pos;
 	int32_t			exit;
 
 	exit = 0;
-	if (ac == 1)
+	if (ft_nt_tablen((void *)cmd.args) == 1)
 	{
 		display_env_as_bash(cmd.outfd, env);
 		return (0);
@@ -70,11 +69,12 @@ int	export(t_command cmd, char ***env)
 		var = ft_strndup(*cmd.args, ft_strlen_until(*cmd.args, '='));
 		exit |= !is_valid_name(var);
 		if ((*cmd.args)[eq_pos] == '=' && is_valid_name(var))
-			ft_set_env(var, env, *cmd.args + ft_strlen_until(*cmd.args, '=') + 1);
+			ft_set_env(var, env, *cmd.args
+				+ ft_strlen_until(*cmd.args, '=') + 1);
 		else if (is_valid_name(var))
 			ft_set_env_no_val(var, env);
 		else
-			ft_dprintf(2, "minishell: export: %s: not a valid identifier\n", var);
+			ft_dprintf(2, "export: %s: not a valid identifier\n", var);
 		free(var);
 	}
 	return (exit);

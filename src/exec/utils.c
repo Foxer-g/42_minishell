@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/06 08:56:36 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/10 07:02:16 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 01:18:33 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 static void	remove_quote_string(char *string, uintmax_t i[2], char *dst)
 {
-	t_quotetype quote;
+	t_quotetype	quote;
 
 	quote = 0;
 	while (string[i[0]])
@@ -36,7 +36,7 @@ static void	remove_quote_string(char *string, uintmax_t i[2], char *dst)
 	}
 }
 
-void remove_quotes_inplace(char **s, char *d)
+void	remove_quotes_inplace(char **s, char *d)
 {
 	uintmax_t	i[2];
 
@@ -172,7 +172,8 @@ static bool	scan_arg(char **arg, char ***env, t_quotetype *in_quote)
 	i = 0;
 	while ((*arg)[i])
 	{
-		if (track_quote((*arg)[i], in_quote) && (*arg)[i] == '$' && (*arg)[i + 1])
+		if (track_quote((*arg)[i], in_quote)
+			&& (*arg)[i] == '$' && (*arg)[i + 1])
 		{
 			if (drop_dollar_quote(arg, i, *in_quote))
 				continue ;

@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 01:04:01 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/08 20:58:31 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 01:26:22 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	minishell_env(t_command cmd, char ***ev)
 	if (ac != 1)
 	{
 		ft_dprintf(STDERR_FILENO, "env: expected 0 arguments (args unsupported"
-			" in minishell); got %lu\n", ac - 1);
+			" in minishell)\n");
 		return (1);
 	}
 	i = 0;

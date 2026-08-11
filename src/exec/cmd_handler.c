@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/08 19:29:23 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/11 06:55:17 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 01:17:47 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,35 @@ t_cmd_fun	get_builtin(t_command *cmd)
 	return (NULL);
 }
 
+static void	proceed_to_fork(t_command *command,
+	t_cmd_fun builtin, char ***env, t_command *o)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (!pid)
+	{
+		if (builtin && has_pipe(o))
+		{
+			sig_child();
+			pid = builtin(*command, env);
+			ft_free_nt_tab(*env, ft_nt_tablen((void *)env));
+			fail_free(command, NULL, o);
+			ft_clear_filelist();
+			exit(pid);
+		}
+		else
+		{
+			if (command->infd < 0)
+				exit(1);
+			execute(command, o, *env);
+		}
+	}
+	else if (pid < 0)
+		return ;
+	cleanup(command, pid);
+}
+
 // @doc exec_single
 // @kind func
 // @desc Execute a single command/handles builtins.
@@ -191,27 +220,6 @@ bool	exec_single(t_command *command, t_command *o, char ***env)
 		return (true);
 	}
 	sig_parent();
-	pid = fork();
-	if (!pid)
-	{
-		if (builtin && has_pipe(o))
-		{
-			sig_child();
-			pid = builtin(*command, env);
-			ft_free_nt_tab(*env, ft_nt_tablen((void *)env));
-			fail_free(command, NULL, o);
-			ft_clear_filelist();
-			exit(pid);
-		}
-		else
-		{
-			if (command->infd < 0)
-				exit(1);
-			execute(command, o, *env);
-		}
-	}
-	else if (pid < 0)
-		return (false);
-	cleanup(command, pid);
+	proceed_to_fork(command, builtin, env, o);
 	return (false);
 }
