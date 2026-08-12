@@ -15,31 +15,26 @@
 
 intmax_t	*find_pipe(t_command *cmd, char ***env)
 {
-	intmax_t	i;
-	intmax_t	nb;
+	intmax_t	i[2];
 	intmax_t	*res;
 
-	i = 0;
-	nb = 0;
-	while (cmd[i].infile)
+	ft_bzero(i, sizeof(i));
+	while (cmd[i[0]].infile)
 	{
-		if (cmd[i].path && cmd[i].path[0] == '|')
-			nb++;
-		i++;
+		if (cmd[i[0]].path && cmd[i[0]].path[0] == '|')
+			i[1]++;
+		i[0]++;
 	}
-	if (!nb)
+	if (!i[1])
 		return (NULL);
-	res = ft_calloc(nb + 2, sizeof(intmax_t));
+	res = ft_calloc(i[1] + 2, sizeof(intmax_t));
 	if (!res)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
-	i = 0;
-	while (cmd[i].infile)
-	{
-		if (cmd[i].path && cmd[i].path[0] == '|')
-			res[++res[0]] = i;
-		i++;
-	}
-	if (res[res[0]] == i - 1)
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+	i[0] = -1;
+	while (cmd[++i[0]].infile)
+		if (cmd[i[0]].path && cmd[i[0]].path[0] == '|')
+			res[++res[0]] = i[0];
+	if (res[res[0]] == i[0] - 1)
 	{
 		free(res);
 		return ((void *)-1);

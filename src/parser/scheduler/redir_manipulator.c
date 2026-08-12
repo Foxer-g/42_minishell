@@ -41,3 +41,38 @@ t_redir	*redir_calloc(intmax_t n, char ***env)
 	res[1].index[0] = -1;
 	return (res);
 }
+
+bool	set_infile(t_command *cmd, t_redir *r, char ***env)
+{
+	intmax_t	i;
+
+	if (r[0].index[0] == -1)
+		return (true);
+	i = 0;
+	while (r[0].index[i + 1] != -1)
+		i++;
+	free(cmd->infile);
+	cmd->infile = ft_strdup(r[0].file[i]);
+	if (!cmd->infile)
+		return (!parsing_error(MALLOC, "", env));
+	return (true);
+}
+
+bool	set_outfile(t_command *cmd, t_redir *r, char ***env)
+{
+	intmax_t	i;
+
+	if (r[1].index[0] == -1)
+		return (true);
+	if (!remove_quotes((t_command *)r, true))
+		return (!parsing_error(MALLOC, "", env));
+	i = 0;
+	while (r[1].file[i])
+		ft_ffopen(r[1].file[i++], "w");
+	free(cmd->outfile);
+	cmd->outfile = ft_strdup(r[1].file[i - 1]);
+	if (!cmd->outfile)
+		return (!parsing_error(MALLOC, "", env));
+	cmd->append = r[1].type == APPEND;
+	return (true);
+}

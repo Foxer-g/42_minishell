@@ -101,34 +101,28 @@ t_command	*full_cmd_dup(t_command *src, char ***env)
 char	**cmddup_without_redir(t_command cmd)
 {
 	char		**res;
-	intmax_t	i;
-	intmax_t	j;
+	intmax_t	i[2];
 
 	res = ft_calloc(args_len(cmd) + 1, sizeof(char *));
 	if (!res)
 		return (NULL);
-	i = 0;
-	j = 0;
-	while (cmd.args[i])
+	i[0] = 0;
+	i[1] = 0;
+	while (cmd.args[i[0]])
 	{
-		if (!cmd.args[i][0])
+		if (!cmd.args[i[0]][0])
 		{
-			i++;
+			i[0]++;
 			continue ;
 		}
-		if (is_redir(cmd.args[i][0], cmd.args[i][1]))
+		if (is_redir(cmd.args[i[0]][0], cmd.args[i[0]][1]))
 		{
-			i += 2;
+			i[0] += 2;
 			continue ;
 		}
-		res[j] = ft_strdup(cmd.args[i]);
-		if (!res[j])
-		{
-			ft_free_nt_tab(res, j);
-			return (NULL);
-		}
-		j++;
-		i++;
+		res[i[1]++] = ft_strdup(cmd.args[i[0]++]);
+		if (!res[i[1] - 1])
+			return (ft_free_nt_tab(res, i[1]));
 	}
 	return (res);
 }

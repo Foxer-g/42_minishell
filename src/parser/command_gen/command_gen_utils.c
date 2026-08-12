@@ -6,34 +6,12 @@
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/07 23:49:46 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/12 05:45:56 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 05:54:10 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "parser.h"
-
-// @doc count_space
-// @kind func
-// @desc Count spaces in a string.
-// @param str: char *, String to process.
-// @return intmax_t, Spaces count.
-
-intmax_t	count_space(char *str)
-{
-	intmax_t	i;
-	intmax_t	res;
-
-	i = 0;
-	res = 0;
-	while (str[i])
-	{
-		if (str[i] == ' ')
-			res++;
-		i++;
-	}
-	return (res);
-}
 
 // @doc tkn_to_tab
 // @kind func
@@ -73,9 +51,9 @@ static bool	ends_with_space(const char *s)
 	return (len > 0 && s[len - 1] == ' ');
 }
 
-static bool	gluable(t_token_type type)
+static bool	gluable(t_token_type t)
 {
-	return (type == COMMAND || type == QUOTE || type == DQUOTE || type == ENV_DESC);
+	return (t == COMMAND || t == QUOTE || t == DQUOTE || t == ENV_DESC);
 }
 
 static char	*resolve_quote_content(intmax_t i[3], t_token *o, t_token_type *res_type)

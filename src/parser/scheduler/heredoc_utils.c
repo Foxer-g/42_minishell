@@ -1,24 +1,6 @@
 #include "minishell.h"
 #include "parser.h"
 
-bool	is_valid_heredocs(const intmax_t *heredocs, t_command *cmd)
-{
-	intmax_t	i;
-	intmax_t	j;
-
-	i = 0;
-	while (cmd[i].infile)
-	{
-		j = heredocs[i];
-		if (j != -1 && (!cmd[i].args[j + 1]
-				|| is_redir(cmd[i].args[j + 1][0],
-				cmd[i].args[j + 1][1])))
-			return (false);
-		i++;
-	}
-	return (true);
-}
-
 static bool	fill_args_without_hd(char **res, t_command cmd,
 		intmax_t index, char ***env)
 {
@@ -102,7 +84,7 @@ intmax_t	*find_heredoc(t_command *c, char ***env)
 
 	res = ft_calloc(cmd_len(c) + 1, sizeof(intmax_t));
 	if (!res)
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 	i[0] = -1;
 	while (c[++i[0]].infile)
 	{
@@ -112,12 +94,10 @@ intmax_t	*find_heredoc(t_command *c, char ***env)
 		i[1] = -1;
 		while (c[i[0]].args[++i[1]])
 		{
-			if (c[i[0]].args[i[1]][0] == '<'
-				&& c[i[0]].args[i[1]][1] == '<')
+			if (c[i[0]].args[i[1]][0] == '<' && c[i[0]].args[i[1]][1] == '<')
 			{
 				if (res[i[0]] != -1)
-					return (heredoc_error(res,
-							c[i[0]].args[i[1]], env));
+					return (heredoc_error(res, c[i[0]].args[i[1]], env));
 				res[i[0]] = i[1];
 			}
 		}

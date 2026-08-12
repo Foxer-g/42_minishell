@@ -12,7 +12,6 @@
 
 #include "minishell.h"
 #include "parser.h"
-#define RMV_QT remove_quotes
 
 static bool	heredocs_handler(t_command **cmd, char ***env)
 {
@@ -70,22 +69,6 @@ bool	redir_apply(t_command **cmd, char ***env)
 	return (true);
 }
 
-static bool	command_finalize(t_command **cmd, char ***env)
-{
-	intmax_t	i;
-
-	i = -1;
-	while ((*cmd)[++i].infile)
-	{
-		if (!RMV_QT(&(*cmd)[i], true)
-			&& !RMV_QT(&(*cmd)[i], false))
-			return (!parsing_error(MALLOC, "", env));
-		if (!cmddup_without_empty(&(*cmd)[i], env))
-			return (false);
-	}
-	return (true);
-}
-
 static bool	command_expand(t_command **cmd, char ***env)
 {
 	intmax_t	i;
@@ -111,38 +94,30 @@ static bool	command_expand(t_command **cmd, char ***env)
 
 static t_command	*piping(t_command *cmd, char ***env)
 {
-	const intmax_t	*pipes;
+	const intmax_t	*pipes = find_pipe(cmd, env);
 	t_command		*res;
-	intmax_t		i;
-	intmax_t		j;
+	intmax_t		i[2];
 
-	pipes = find_pipe(cmd, env);
 	if (!pipes)
 		return (full_cmd_dup(cmd, env));
 	if (pipes == (void *)-1)
-		return ((void *)((uintptr_t)!parsing_error(INV_PIPES, "|", env)));
+		return ((void *)((uintptr_t) !parsing_error(INV_PIPES, "|", env)));
 	res = ft_calloc(cmd_len(cmd) / 2 + 2, sizeof(t_command));
+	if (!res || !is_valid_pipes(pipes, env))
+		free((void *)pipes);
 	if (!res)
-	{
-		free((void *)pipes);
-		return ((void *)((uintptr_t)!parsing_error(MALLOC, "", env)));
-	}
+		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 	if (!is_valid_pipes(pipes, env))
+		return ((void *)((uintptr_t) free_command(res)));
+	ft_bzero(i, sizeof(i));
+	while (cmd[i[0]].path || cmd[i[0]].args)
 	{
-		free((void *)pipes);
-		free_command(res);
-		return (NULL);
-	}
-	i = 0;
-	j = 0;
-	while (cmd[i].path || cmd[i].args)
-	{
-		if (!cmd[i].path || cmd[i].path[0] != '|')
-			res[j++] = cmd_dup(cmd[i], env);
-		i++;
+		if (!cmd[i[0]].path || cmd[i[0]].path[0] != '|')
+			res[i[1]++] = cmd_dup(cmd[i[0]], env);
+		i[0]++;
 	}
 	free((void *)pipes);
-	return (is_error(res, j, env));
+	return (is_error(res, i[1], env));
 }
 
 t_command	*scheduler(t_command *raw_command, char ***env)
