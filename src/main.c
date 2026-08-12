@@ -64,7 +64,10 @@ static int32_t	main_exit(char **env, int32_t res)
 	while (input && res >= 0)
 	{
 		if (g_sig_handle == SIGINT)
+		{
+			ft_set_exit_code(130, &env);
 			res = 130;
+		}
 		g_sig_handle = 0;
 		res = main_loop(input, &env, res);
 		if (res < 0)
