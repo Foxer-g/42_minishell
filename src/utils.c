@@ -6,26 +6,11 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 07:31:09 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/12 04:07:34 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/12 04:24:32 by toespino         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	sig_init(void)
-{
-	struct sigaction	action;
-
-	ft_bzero(&action, sizeof(action));
-	sigemptyset(&action.sa_mask);
-	action.sa_sigaction = sig_handle;
-	action.sa_flags = SA_SIGINFO;
-	sigaction(SIGINT, &action, NULL);
-	action.sa_handler = SIG_IGN;
-	action.sa_flags = 0;
-	sigaction(SIGQUIT, &action, NULL);
-	rl_catch_signals = 0;
-}
 
 bool	has_pipe(t_command *cmds)
 {
@@ -38,28 +23,6 @@ bool	has_pipe(t_command *cmds)
 		cmds++;
 	}
 	return (len > 1);
-}
-
-void	sig_parent(void)
-{
-	struct sigaction	action;
-
-	ft_bzero(&action, sizeof(action));
-	sigemptyset(&action.sa_mask);
-	action.sa_handler = SIG_IGN;
-	sigaction(SIGINT, &action, NULL);
-	sigaction(SIGQUIT, &action, NULL);
-}
-
-void	sig_child(void)
-{
-	struct sigaction	action;
-
-	ft_bzero(&action, sizeof(action));
-	sigemptyset(&action.sa_mask);
-	action.sa_handler = SIG_DFL;
-	sigaction(SIGINT, &action, NULL);
-	sigaction(SIGQUIT, &action, NULL);
 }
 
 char	*join_tab(char **tab)
@@ -79,20 +42,6 @@ char	*join_tab(char **tab)
 		i++;
 	}
 	return (res);
-}
-
-void	sig_handle(int32_t signal, siginfo_t *info, void *context)
-{
-	(void)info;
-	(void)context;
-	if (signal == SIGINT)
-	{
-		g_sig_handle = SIGINT;
-		write(STDOUT_FILENO, "^C\n", 3);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-	}
 }
 
 char	*prompt(char **env)
