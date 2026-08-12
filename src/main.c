@@ -14,7 +14,7 @@
 
 volatile sig_atomic_t	g_sig_handle = 0;
 
-int32_t	minishell_action(char *input, char ***env)
+static int32_t	minishell_action(char *input, char ***env)
 {
 	t_command	*parsed_input;
 	int32_t		res;
