@@ -13,36 +13,6 @@
 #include "minishell.h"
 #include "parser.h"
 
-// @doc tkn_to_tab
-// @kind func
-// @desc Duplicate token array content as a string array.
-// @param tkns: [[t_token]] *, Token array to get content from.
-// @param i: intmax_t, index to start from.
-// @param len: intmax_t, Len to apply the dup.
-// @param env: char ***, Environement variables.
-// @return char **, String array copied from token array.
-
-char	**tkn_to_tab(t_token *tkns, intmax_t i, intmax_t len, char ***env)
-{
-	intmax_t	k;
-	intmax_t	end;
-	char		**res;
-
-	k = 0;
-	end = i + len;
-	res = ft_calloc(len + 1, sizeof(char *));
-	if (!res)
-		return ((void *)((uintptr_t)parsing_error(MALLOC, "", env)));
-	while (i < end)
-	{
-		res[k] = ft_strdup(tkns[i++].content);
-		if (!res[k])
-			return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
-		k++;
-	}
-	return (res);
-}
-
 static bool	ends_with_space(const char *s)
 {
 	size_t	len;
@@ -56,7 +26,8 @@ static bool	gluable(t_token_type t)
 	return (t == COMMAND || t == QUOTE || t == DQUOTE || t == ENV_DESC);
 }
 
-static char	*resolve_quote_content(intmax_t i[3], t_token *o, t_token_type *res_type)
+static char	*resolve_quote_content(intmax_t i[3], t_token *o,
+	t_token_type *res_type)
 {
 	char	*tmp;
 
@@ -78,14 +49,15 @@ static char	*resolve_quote_content(intmax_t i[3], t_token *o, t_token_type *res_
 	return (tmp);
 }
 
-static bool	append_quote_token(intmax_t i[3], t_token *o, t_token *res, char ***env)
+static bool	append_quote_token(intmax_t i[3], t_token *o, t_token *res,
+	char ***env)
 {
 	char			*tmp;
 	t_token_type	res_type;
 	bool			glue;
 
 	glue = (i[1] > 0 && i[0] > 0 && !ends_with_space(o[i[0] - 1].content)
-		&& gluable(o[i[0]].type) && gluable(res[i[1] - 1].type));
+			&& gluable(o[i[0]].type) && gluable(res[i[1] - 1].type));
 	tmp = resolve_quote_content(i, o, &res_type);
 	if (!tmp)
 		return (!parsing_error(MALLOC, "", env));

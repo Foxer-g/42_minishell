@@ -58,3 +58,33 @@ bool	is_valid_pipes(const intmax_t *pipes, char ***env)
 	}
 	return (true);
 }
+
+// @doc tkn_to_tab
+// @kind func
+// @desc Duplicate token array content as a string array.
+// @param tkns: [[t_token]] *, Token array to get content from.
+// @param i: intmax_t, index to start from.
+// @param len: intmax_t, Len to apply the dup.
+// @param env: char ***, Environement variables.
+// @return char **, String array copied from token array.
+
+char	**tkn_to_tab(t_token *tkns, intmax_t i, intmax_t len, char ***env)
+{
+	intmax_t	k;
+	intmax_t	end;
+	char		**res;
+
+	k = 0;
+	end = i + len;
+	res = ft_calloc(len + 1, sizeof(char *));
+	if (!res)
+		return ((void *)((uintptr_t)parsing_error(MALLOC, "", env)));
+	while (i < end)
+	{
+		res[k] = ft_strdup(tkns[i++].content);
+		if (!res[k])
+			return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+		k++;
+	}
+	return (res);
+}
