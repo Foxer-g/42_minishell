@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/18 23:07:35 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/05 23:13:07 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 06:20:22 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,5 +17,5 @@
 typedef struct s_command	t_command;
 
 int32_t	entrypoint(t_command *cmds, char ***env);
-void 	remove_quotes_inplace(char **s, char *d);
+void	remove_quotes_inplace(char **s, char *d);
 #endif // EXEC_H

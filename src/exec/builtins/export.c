@@ -6,13 +6,13 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 04:54:12 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/12 01:00:12 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 07:00:44 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	display_env_as_bash(t_ffile fd, char ***env)
+int32_t	display_env_as_bash(t_ffile fd, char ***env)
 {
 	char *const	*aenv = *env;
 	char		*var_name;
@@ -35,6 +35,7 @@ void	display_env_as_bash(t_ffile fd, char ***env)
 		free(var_name);
 		aenv++;
 	}
+	return (0);
 }
 
 bool	is_valid_name_char(int32_t val)
@@ -57,12 +58,11 @@ int	export(t_command cmd, char ***env)
 	uintmax_t		eq_pos;
 	int32_t			exit;
 
+	if (cmd.infd < 0 || cmd.outfd < 0)
+		return (1);
 	exit = 0;
 	if (ft_nt_tablen((void *)cmd.args) == 1)
-	{
-		display_env_as_bash(cmd.outfd, env);
-		return (0);
-	}
+		return (display_env_as_bash(cmd.outfd, env));
 	while (*++cmd.args)
 	{
 		eq_pos = ft_strlen_until(*cmd.args, '=');

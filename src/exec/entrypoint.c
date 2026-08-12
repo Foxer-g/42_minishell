@@ -6,7 +6,7 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/12 01:09:47 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 07:27:19 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,20 @@ static int8_t	execution_pipeline(t_command *cmd, t_command *o, char ***env)
 	if (!ft_strcmp(cmd->infile, "<<"))
 		setup_here_doc(cmd, here_doc_pipe, &pipe_used);
 	else if (ft_strcmp(cmd->infile, "stdin"))
+	{
+		if (cmd->infd != STDIN_FILENO)
+			ft_ffclose(&cmd->infd);
 		cmd->infd = ft_ffopen(cmd->infile, "r");
-	if (ft_strcmp(cmd->outfile, "stdout") && !cmd->append)
-		cmd->outfd = ft_ffopen(cmd->outfile, "w");
-	else if (ft_strcmp(cmd->outfile, "stdout"))
-		cmd->outfd = ft_ffopen(cmd->outfile, "a");
+	}
+	if (ft_strcmp(cmd->outfile, "stdout"))
+	{
+		if (cmd->infd != STDIN_FILENO)
+			ft_ffclose(&cmd->outfd);
+		if (!cmd->append)
+			cmd->outfd = ft_ffopen(cmd->outfile, "w");
+		else
+			cmd->outfd = ft_ffopen(cmd->outfile, "a");
+	}
 	status = exec_single(cmd, o, env);
 	return (status);
 }
@@ -80,7 +89,7 @@ static bool	setup_pipe(t_command *cmds)
 			perror("pipe");
 			return (false);
 		}
-		first->outfd = wpipe[WE];
+		first->outfd = ft_to_ffile(wpipe[WE]);
 		first->outpipe_end = wpipe[RE];
 		(first + 1)->infd = wpipe[RE];
 		first++;

@@ -1,24 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rboutelo <rboutelo@student.42angouleme.f>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/08 19:29:23 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/12 01:17:47 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
-/*                                                                            */
-/* ************************************************************************** */
-
-/* ************************************************************************** */
-/*                                                                            */
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
 /*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/08 23:29:50 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 07:16:08 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,16 +73,8 @@ static void	exec_here_doc(t_command *cmd,
 		line = get_next_line(STDIN_FILENO);
 	}
 	free(line);
-	close(cmd->hd_pipe);
+	ft_ffclose(&cmd->hd_pipe);
 	get_next_line(-1);
-}
-
-void	fail_free(t_command *cmd, char *path, t_command *o)
-{
-	ft_ffclose(&cmd->outpipe_end);
-	free(path);
-	free_command(o);
-	ft_clear_filelist();
 }
 
 // @doc execute
@@ -134,36 +114,6 @@ void	execute(t_command *cmd, t_command *o, char **env)
 	exit(exit_code[failed]);
 }
 
-static void	cleanup(t_command *command, pid_t pid)
-{
-	command->pid = pid;
-	if (command->hd_pipe != 0)
-		ft_ffclose(&command->hd_pipe);
-	if (command->infd != STDIN_FILENO)
-		ft_ffclose(&command->infd);
-	if (command->outfd != STDOUT_FILENO)
-		ft_ffclose(&command->outfd);
-}
-
-t_cmd_fun	get_builtin(t_command *cmd)
-{
-	const char		*blts[] = {"cd", "echo", "env", "exit",
-		"export", "pwd", "unset", NULL};
-	const t_cmd_fun	funcs[] = {cd, echo, minishell_env,
-		minishell_exit, export, pwd, unset, NULL};
-	uint8_t			i;
-
-	if (!cmd->path)
-		return (NULL);
-	i = -1;
-	while (blts[++i])
-	{
-		if (!ft_strcmp(blts[i], cmd->path))
-			return ((void *)funcs[i]);
-	}
-	return (NULL);
-}
-
 static void	proceed_to_fork(t_command *command,
 	t_cmd_fun builtin, char ***env, t_command *o)
 {
@@ -183,7 +133,7 @@ static void	proceed_to_fork(t_command *command,
 		}
 		else
 		{
-			if (command->infd < 0)
+			if (command->infd < 0 || command->outfd < 0)
 				exit(1);
 			execute(command, o, *env);
 		}

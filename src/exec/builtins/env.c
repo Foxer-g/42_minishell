@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 01:04:01 by neumann           #+#    #+#             */
-/*   Updated: 2026/08/12 01:26:22 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 06:44:07 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	minishell_env(t_command cmd, char ***ev)
 	const uintmax_t	ac = ft_nt_tablen((void*)cmd.args);
 	uintmax_t		i;
 
+	if (cmd.infd < 0 || cmd.outfd < 0)
+		return (1);
 	if (ac != 1)
 	{
 		ft_dprintf(STDERR_FILENO, "env: expected 0 arguments (args unsupported"

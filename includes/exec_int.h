@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/05/19 17:30:32 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/10 03:22:46 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 06:26:23 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,21 @@ typedef enum e_quotetype
 }	t_quotetype;
 typedef int					(*t_cmd_fun)(t_command, char ***);
 
-int32_t	entrypoint(t_command *cmds, char ***env);
-bool	exec_single(t_command *command, t_command *o, char ***env);
+int32_t		entrypoint(t_command *cmds, char ***env);
+bool		exec_single(t_command *command, t_command *o, char ***env);
 
 /* ************ */
 /*   BUILTINS   */
 /* ************ */
-int		cd(t_command cmd, char ***env);
-int		echo(t_command cmd, char ***env);
-int		minishell_env(t_command cmd, char ***env);
-int		minishell_exit(t_command cmd, char ***env);
-int		export(t_command cmd, char ***env);
-int		pwd(t_command cmd, char ***env);
-int		unset(t_command cmd, char ***env);
+int			cd(t_command cmd, char ***env);
+int			echo(t_command cmd, char ***env);
+int			minishell_env(t_command cmd, char ***env);
+int			minishell_exit(t_command cmd, char ***env);
+int			export(t_command cmd, char ***env);
+int			pwd(t_command cmd, char ***env);
+int			unset(t_command cmd, char ***env);
+intmax_t	handle_var(char **ar, uintmax_t ind, char **env);
+void		cleanup(t_command *command, pid_t pid);
+t_cmd_fun	get_builtin(t_command *cmd);
+void		fail_free(t_command *cmd, char *path, t_command *o);
 #endif // EXEC_INT_H
