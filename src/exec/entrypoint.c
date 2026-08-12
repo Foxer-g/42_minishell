@@ -6,7 +6,7 @@
 /*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/12 07:27:19 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/12 08:46:02 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static int8_t	execution_pipeline(t_command *cmd, t_command *o, char ***env)
 	}
 	if (ft_strcmp(cmd->outfile, "stdout"))
 	{
-		if (cmd->infd != STDIN_FILENO)
+		if (cmd->outfd != STDOUT_FILENO)
 			ft_ffclose(&cmd->outfd);
 		if (!cmd->append)
 			cmd->outfd = ft_ffopen(cmd->outfile, "w");
@@ -90,7 +90,7 @@ static bool	setup_pipe(t_command *cmds)
 			return (false);
 		}
 		first->outfd = ft_to_ffile(wpipe[WE]);
-		first->outpipe_end = wpipe[RE];
+		first->outpipe_end = ft_to_ffile(wpipe[RE]);
 		(first + 1)->infd = wpipe[RE];
 		first++;
 	}
@@ -137,6 +137,7 @@ int32_t	entrypoint(t_command *cmds, char ***env)
 		execution_pipeline(cmds++, cmdsc, env);
 	status = wait_forks(&cmdsc, env);
 	sig_init();
+	ft_clear_filelist();
 	if ((cmdsc - 1)->builtin)
 		return (status);
 	return (ft_get_exit_code_from_status(status));
