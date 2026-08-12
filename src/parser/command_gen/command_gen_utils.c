@@ -13,28 +13,6 @@
 #include "minishell.h"
 #include "parser.h"
 
-// @doc count_space
-// @kind func
-// @desc Count spaces in a string.
-// @param str: char *, String to process.
-// @return intmax_t, Spaces count.
-
-intmax_t	count_space(char *str)
-{
-	intmax_t	i;
-	intmax_t	res;
-
-	i = 0;
-	res = 0;
-	while (str[i])
-	{
-		if (str[i] == ' ')
-			res++;
-		i++;
-	}
-	return (res);
-}
-
 // @doc tkn_to_tab
 // @kind func
 // @desc Duplicate token array content as a string array.
@@ -73,9 +51,9 @@ static bool	ends_with_space(const char *s)
 	return (len > 0 && s[len - 1] == ' ');
 }
 
-static bool	gluable(t_token_type type)
+static bool	gluable(t_token_type t)
 {
-	return (type == COMMAND || type == QUOTE || type == DQUOTE || type == ENV_DESC);
+	return (t == COMMAND || t == QUOTE || t == DQUOTE || t == ENV_DESC);
 }
 
 static bool	cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
@@ -85,7 +63,7 @@ static bool	cmpnd_qt_cntnt(intmax_t i[3], t_token *o, t_token *res, char ***env)
 	bool			glue;
 
 	glue = (i[1] > 0 && i[0] > 0 && !ends_with_space(o[i[0] - 1].content)
-		&& gluable(o[i[0]].type) && gluable(res[i[1] - 1].type));
+			&& gluable(o[i[0]].type) && gluable(res[i[1] - 1].type));
 	tmp = ft_strdup(o[i[0]].content);
 	if (!tmp)
 		return (!parsing_error(MALLOC, "", env));

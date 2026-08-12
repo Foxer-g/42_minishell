@@ -97,7 +97,7 @@ intmax_t	count_space(char *str);
 char		**tkn_to_tab(t_token *tkns, intmax_t i, intmax_t len, char ***env);
 bool		quote_join(t_token **tkns, char ***env);
 
-void		free_command(t_command *cmds);
+bool		free_command(t_command *cmds);
 t_command	init_command(char ***env);
 t_command	cmd_dup(t_command cmd, char ***env);
 bool		command_exec_set(t_command *command, char **cmd, uint64_t len);
@@ -115,6 +115,7 @@ intmax_t	*find_heredoc(t_command *cmd, char ***env);
 bool		is_valid_heredocs(const intmax_t *heredocs, t_command *cmd);
 t_command	*is_error(t_command *cmd, intmax_t len, char ***env);
 bool		cmddup_without_empty(t_command *cmd, char ***env);
+bool		command_finalize(t_command **cmd, char ***env);
 
 t_redir		*find_redir(t_command cmd, char ***env);
 int32_t		is_redir(char c1, char c2);
@@ -127,4 +128,6 @@ intmax_t	*find_pipe(t_command *cmd, char ***env);
 bool		is_valid_pipes(const intmax_t *pipes, char ***env);
 intmax_t	cmd_len(t_command *cmd);
 t_command	*full_cmd_dup(t_command *src, char ***env);
+bool		set_infile(t_command *cmd, t_redir *r, char ***env);
+bool		set_outfile(t_command *cmd, t_redir *r, char ***env);
 #endif

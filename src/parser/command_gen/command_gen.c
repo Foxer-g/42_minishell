@@ -48,8 +48,9 @@ static uint64_t	command_len(t_token *tkns)
 	while (tkns[i].content)
 	{
 		res++;
-		while (tkns[i++].type == PIPE)
+		if (tkns[i].type == PIPE)
 			res++;
+		i++;
 		while (tkns[i].content && tkns[i].type != PIPE)
 			i++;
 	}

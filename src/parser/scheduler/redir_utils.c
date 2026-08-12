@@ -15,39 +15,12 @@
 
 bool	command_redir_set(t_command *cmd, t_redir *r, char ***env)
 {
-	intmax_t	i;
-
-	i = 0;
-	if (r[0].index[0] != -1)
-	{
-		while (r[0].index[i + 1] != -1)
-			i++;
-		free(cmd->infile);
-		cmd->infile = ft_strdup(r[0].file[i]);
-		if (!cmd->infile)
-			return (!parsing_error(MALLOC, "", env));
-	}
-	if (r[1].index[0] == -1)
-	{
-		if (!remove_quotes(cmd, false))
-			return (!parsing_error(MALLOC, "", env));
-		return (true);
-	}
-	if (!remove_quotes((t_command *)r, true))
-		return (!parsing_error(MALLOC, "", env));
-	i = 0;
-	while (r[1].file[i])
-	{
-		ft_ffopen(r[1].file[i], "w");
-		i++;
-	}
-	free(cmd->outfile);
-	cmd->outfile = ft_strdup(r[1].file[i - 1]);
-	if (!cmd->outfile)
-		return (!parsing_error(MALLOC, "", env));
+	if (!set_infile(cmd, r, env))
+		return (false);
+	if (!set_outfile(cmd, r, env))
+		return (false);
 	if (!remove_quotes(cmd, false))
 		return (!parsing_error(MALLOC, "", env));
-	cmd->append = r[1].type == APPEND;
 	return (true);
 }
 
@@ -66,11 +39,28 @@ int32_t	is_redir(char c1, char c2)
 	return (0);
 }
 
+static bool	fill_one_element(t_redir *r, t_command c, intmax_t i, intmax_t *n)
+{
+	int32_t		t;
+	intmax_t	j;
+
+	t = is_redir(c.args[i][0], c.args[i][1]);
+	j = t != I_REDIR;
+	r[j].type = t;
+	r[j].index[n[j]] = i;
+	r[j].index[n[j] + 1] = -1;
+	r[j].file[n[j]] = ft_strdup(c.args[i + 1]);
+	if (!r[j].file[n[j]])
+		return (false);
+	r[j].file[n[j] + 1] = NULL;
+	n[j]++;
+	return (true);
+}
+
 static bool	fill_redir(t_redir *r, t_command c, char ***env)
 {
 	intmax_t	i;
 	intmax_t	n[2];
-	int32_t		t;
 
 	i = 0;
 	ft_bzero(n, sizeof(n));
@@ -81,17 +71,10 @@ static bool	fill_redir(t_redir *r, t_command c, char ***env)
 			i++;
 			continue ;
 		}
-		t = is_redir(c.args[i][0], c.args[i][1]);
-		if (t)
+		if (is_redir(c.args[i][0], c.args[i][1]))
 		{
-			r[t != I_REDIR].type = t;
-			r[t != I_REDIR].index[n[t != I_REDIR]] = i;
-			r[t != I_REDIR].index[n[t != I_REDIR] + 1] = -1;
-			r[t != I_REDIR].file[n[t != I_REDIR]] = ft_strdup(c.args[i + 1]);
-			if (!r[t != I_REDIR].file[n[t != I_REDIR]])
+			if (!fill_one_element(r, c, i, n))
 				return (!parsing_error(MALLOC, "", env));
-			r[t != I_REDIR].file[n[t != I_REDIR] + 1] = NULL;
-			n[t != I_REDIR]++;
 			i += 2;
 		}
 		else
