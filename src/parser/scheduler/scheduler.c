@@ -138,7 +138,7 @@ t_command	*scheduler(t_command *raw_command, char ***env)
 	i = 0;
 	while (res[i].infile)
 	{
-		if (!ft_strcmp("<<", res[i].infile))
+		if (!ft_strcmp("<<", res[i].infile) || res[i].args[1])
 		{
 			free(res[i].path);
 			res[i].path = ft_strdup(res[i].args[1]);
