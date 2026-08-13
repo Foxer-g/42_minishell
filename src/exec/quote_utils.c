@@ -6,28 +6,47 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/12 06:09:34 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/12 06:10:04 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/13 01:54:46 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define EXEC_SOURCE
 #include "minishell.h"
 
-static void	remove_quote_string(char *string, uintmax_t i[2], char *dst)
+/*static void	remove_quote_string(char *string, uintmax_t i[2], char *dst)
 {
 	t_quotetype	quote;
 
-	quote = 0;
+	quote = NOT;
 	while (string[i[0]])
 	{
 		if (quote)
 		{
 			if (string[i[0]] == ((char)quote))
-				quote = 0;
+				quote = NOT;
 			else
 				dst[i[1]++] = string[i[0]];
 		}
 		else if (string[i[0]] == SGL || string[i[0]] == DBL)
+			quote = string[i[0]];
+		else
+			dst[i[1]++] = string[i[0]];
+		i[0]++;
+	}
+}*/
+
+static void	remove_quote_string(char *string, uintmax_t i[2], char *dst)
+{
+	t_quotetype	quote;
+
+	quote = NOT;
+	while (string[i[0]])
+	{
+		if (quote && string[i[0]] == (char)quote)
+			quote = NOT;
+		else if (!quote && (string[i[0]] == SGL || string[i[0]] == DBL)
+			&& string[ft_strlen_until(&string[i[0] + 1],
+					string[i[0]]) + i[0] + 1])
 			quote = string[i[0]];
 		else
 			dst[i[1]++] = string[i[0]];
