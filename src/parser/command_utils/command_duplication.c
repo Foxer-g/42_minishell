@@ -118,23 +118,19 @@ char	**cmddup_without_redir(t_command cmd)
 	res = ft_calloc(args_len(cmd) + 1, sizeof(char *));
 	if (!res)
 		return (NULL);
-	i[0] = 0;
-	i[1] = 0;
+	ft_bzero(i, sizeof(i));
 	while (cmd.args[i[0]])
 	{
-		if (!cmd.args[i[0]][0])
-		{
-			i[0]++;
-			continue ;
-		}
 		if (is_redir(cmd.args[i[0]][0], cmd.args[i[0]][1]))
 		{
 			i[0] += 2;
 			continue ;
 		}
-		res[i[1]++] = ft_strdup(cmd.args[i[0]++]);
-		if (!res[i[1] - 1])
+		res[i[1]] = ft_strdup(cmd.args[i[0]]);
+		if (!res[i[1]])
 			return (ft_free_nt_tab(res, i[1]));
+		i[0]++;
+		i[1]++;
 	}
 	return (res);
 }

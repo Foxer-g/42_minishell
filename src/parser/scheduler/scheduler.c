@@ -70,29 +70,32 @@ bool	redir_apply(t_command **cmd, char ***env)
 }
 */
 
-bool    redir_apply(t_command *cmd, char ***env)
+bool	redir_apply(t_command *cmd, char ***env)
 {
-        t_redir *r;
-        char    **tmp;
+	t_redir	*r;
+	char	**tmp;
 
-        r = find_redir(*cmd, env);
-        if (!r)
-                return (false);
-        if (r[0].type == HEREDOC && !heredocs_handler(&cmd, env))
-                return (free_redir(r));
-        if (r[0].type != HEREDOC && !command_redir_set(cmd, r, env))
-                return (free_redir(r));
-        tmp = cmddup_without_redir(*cmd);
-        if (!tmp)
-                return (free_redir(r));
-        if (!command_exec_set(cmd, tmp, ft_nt_tablen((void *)tmp)))
-        {
-                ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
-                return (free_redir(r));
-        }
-        ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
-        free_redir(r);
-        return (true);
+	r = find_redir(*cmd, env);
+	if (!r)
+		return (false);
+	if (r[0].type == HEREDOC)
+	{
+		if (!heredocs_handler(&cmd, env))
+			return (free_redir(r));
+	}
+	else if (!command_redir_set(cmd, r, env))
+		return (free_redir(r));
+	tmp = cmddup_without_redir(*cmd);
+	if (!tmp)
+		return (free_redir(r));
+	if (!command_exec_set(cmd, tmp, ft_nt_tablen((void *)tmp)))
+	{
+		ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
+		return (free_redir(r));
+	}
+	ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
+	free_redir(r);
+	return (true);
 }
 
 static bool	command_expand(t_command **cmd, char ***env)
@@ -156,7 +159,7 @@ t_command	*scheduler(t_command *raw_command, char ***env)
 	if (!r)
 		return (NULL);
 	if (!command_finalize(&r, env))
-		return ((void *)((uintptr_t) free_command(r)));
+		return ((void *)((uintptr_t)free_command(r)));
 	i = -1;
 	while (r[++i].infile)
 	{

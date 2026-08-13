@@ -65,21 +65,18 @@ bool	cmd_set_hd(t_command *cmd, intmax_t index, char ***env)
 		return (false);
 	if (!tmp[1])
 	{
-		if (!command_exec_set(cmd, tmp, args_len(*cmd) - 2))
-			return (ft_free_nt_tab(tmp, args_len(*cmd)));
 		free(cmd->path);
 		cmd->path = NULL;
+		ft_free_nt_tab(cmd->args, args_len(*cmd));
+		cmd->args = tmp;
+		tmp = NULL;
 	}
 	else
 	{
 		if (!command_exec_set(cmd, tmp, args_len(*cmd) - 1))
 			return (ft_free_nt_tab(tmp, args_len(*cmd)));
-		free(cmd->path);
-		cmd->path = ft_strdup(tmp[1]);
-		if (!cmd->path)
-			return (ft_free_nt_tab(tmp, args_len(*cmd)));
+		ft_free_nt_tab(tmp, args_len(*cmd));
 	}
-	ft_free_nt_tab(tmp, args_len(*cmd));
 	free(cmd->infile);
 	cmd->infile = ft_strdup("<<");
 	return (cmd->infile != NULL);
