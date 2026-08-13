@@ -65,7 +65,7 @@ bool	cmd_set_hd(t_command *cmd, intmax_t index, char ***env)
 		return (false);
 	if (!tmp[1])
 	{
-		if (!command_exec_set(cmd, tmp, args_len(*cmd) - 2))
+		if (!command_exec_set(cmd, tmp, args_len(*cmd) - 1))
 			return (ft_free_nt_tab(tmp, args_len(*cmd)));
 		free(cmd->path);
 		cmd->path = NULL;
