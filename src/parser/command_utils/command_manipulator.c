@@ -47,8 +47,7 @@ bool	command_exec_set(t_command *command, char **cmd, uint64_t len)
 	free(command->path);
 	command->path = NULL;
 	if (command->args)
-		ft_free_nt_tab(command->args,
-			ft_nt_tablen((void *)command->args));
+		ft_free_nt_tab(command->args, ft_nt_tablen((void *)command->args));
 	command->args = ft_calloc(len + 1, sizeof(char *));
 	if (!command->args)
 		return (false);

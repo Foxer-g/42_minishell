@@ -15,24 +15,23 @@
 
 static bool	heredocs_handler(t_command **cmd, char ***env)
 {
-	const intmax_t	*heredocs;
+	const intmax_t	*heredocs = find_heredoc(*cmd, env);
 	intmax_t		i;
 
-	heredocs = find_heredoc(*cmd, env);
 	if (!heredocs)
 		return (false);
 	if (!is_valid_heredocs(heredocs, *cmd))
+	{
+		free((void *)heredocs);
 		return (!parsing_error(INV_HEREDOC, "<<", env));
+	}
 	i = 0;
 	while ((*cmd)[i].infile)
 	{
-		if (heredocs[i] != -1)
+		if (heredocs[i] != -1 && !cmd_set_hd(&(*cmd)[i], heredocs[i], env))
 		{
-			if (!cmd_set_hd(&(*cmd)[i], heredocs[i], env))
-			{
-				free((void *)heredocs);
-				return (false);
-			}
+			free((void *)heredocs);
+			return (false);
 		}
 		i++;
 	}
@@ -100,13 +99,14 @@ static t_command	*piping(t_command *cmd, char ***env)
 
 	if (!pipes)
 		return (full_cmd_dup(cmd, env));
-	if (pipes == (void *)-1)
+	if (pipes == (void *)-1 || !is_valid_pipes(pipes, env))
 		return ((void *)((uintptr_t) !parsing_error(INV_PIPES, "|", env)));
 	res = ft_calloc(cmd_len(cmd) / 2 + 2, sizeof(t_command));
-	if (!res || !is_valid_pipes(pipes, env))
-		free((void *)pipes);
 	if (!res)
+	{
+		free((void *)pipes);
 		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
+	}
 	if (!is_valid_pipes(pipes, env))
 		return ((void *)((uintptr_t) free_command(res)));
 	ft_bzero(i, sizeof(i));
@@ -123,6 +123,7 @@ static t_command	*piping(t_command *cmd, char ***env)
 t_command	*scheduler(t_command *raw_command, char ***env)
 {
 	t_command	*res;
+	intmax_t	i;
 
 	if (!command_expand(&raw_command, env))
 		return (NULL);
@@ -133,6 +134,16 @@ t_command	*scheduler(t_command *raw_command, char ***env)
 	{
 		free_command(res);
 		return (NULL);
+	}
+	i = 0;
+	while (res[i].infile)
+	{
+		if (!ft_strcmp("<<", res[i].infile))
+		{
+			free(res[i].path);
+			res[i].path = ft_strdup(res[i].args[1]);
+		}
+		i++;
 	}
 	return (res);
 }
