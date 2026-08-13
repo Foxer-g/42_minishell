@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/12 07:16:08 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/13 03:53:58 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ static void	proceed_to_fork(t_command *command,
 		{
 			sig_child();
 			pid = builtin(*command, env);
-			ft_free_nt_tab(*env, ft_nt_tablen((void *)env));
+			ft_free_nt_tab(*env, ft_nt_tablen((void *)*env));
 			fail_free(command, NULL, o);
 			ft_clear_filelist();
 			exit(pid);
@@ -157,6 +157,8 @@ bool	exec_single(t_command *command, t_command *o, char ***env)
 	builtin = get_builtin(command);
 	if (builtin && !has_pipe(o))
 	{
+		if (!ft_strcmp("<<", command->infile))
+			exec_here_doc(command, *command->args, *env);
 		pid = builtin(*command, env);
 		command->builtin = true;
 		cleanup(command, pid);

@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/06/09 05:17:46 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/12 06:45:32 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/13 02:17:06 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,11 @@
 
 int	pwd(t_command cmd, char ***env)
 {
+	char	*pwd;
+
 	if (cmd.infd < 0 || cmd.outfd < 0)
 		return (1);
-	ft_dprintf(cmd.outfd, "%s\n", ft_get_env("PWD", *env));
+	pwd = ft_get_env("PWD", *env);
+	ft_dprintf(cmd.outfd, "%s\n", pwd);
 	return (0);
 }
