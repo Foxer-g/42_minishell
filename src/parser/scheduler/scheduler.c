@@ -13,7 +13,7 @@
 #include "minishell.h"
 #include "parser.h"
 
-static bool	heredocs_handler(t_command **cmd, char ***env)
+bool	heredocs_handler(t_command **cmd, char ***env)
 {
 	const intmax_t	*heredocs = find_heredoc(*cmd, env);
 	intmax_t		i;
@@ -39,6 +39,7 @@ static bool	heredocs_handler(t_command **cmd, char ***env)
 	return (true);
 }
 
+/*
 bool	redir_apply(t_command **cmd, char ***env)
 {
 	t_redir		*r;
@@ -67,6 +68,32 @@ bool	redir_apply(t_command **cmd, char ***env)
 	ft_clear_filelist();
 	return (true);
 }
+*/
+
+bool    redir_apply(t_command *cmd, char ***env)
+{
+        t_redir *r;
+        char    **tmp;
+
+        r = find_redir(*cmd, env);
+        if (!r)
+                return (false);
+        if (r[0].type == HEREDOC && !heredocs_handler(&cmd, env))
+                return (free_redir(r));
+        if (r[0].type != HEREDOC && !command_redir_set(cmd, r, env))
+                return (free_redir(r));
+        tmp = cmddup_without_redir(*cmd);
+        if (!tmp)
+                return (free_redir(r));
+        if (!command_exec_set(cmd, tmp, ft_nt_tablen((void *)tmp)))
+        {
+                ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
+                return (free_redir(r));
+        }
+        ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
+        free_redir(r);
+        return (true);
+}
 
 static bool	command_expand(t_command **cmd, char ***env)
 {
@@ -80,12 +107,10 @@ static bool	command_expand(t_command **cmd, char ***env)
 		if (!strtrim_cmd_end(&(*cmd)[i], env))
 			return (false);
 	}
-	if (!heredocs_handler(cmd, env))
-		return (false);
 	i = -1;
 	while ((*cmd)[++i].infile)
 	{
-		if (!redir_apply(cmd, env))
+		if (!redir_apply(&(*cmd)[i], env))
 			return (false);
 	}
 	return (true);
@@ -122,26 +147,29 @@ static t_command	*piping(t_command *cmd, char ***env)
 
 t_command	*scheduler(t_command *raw_command, char ***env)
 {
-	t_command	*res;
+	t_command	*r;
 	intmax_t	i;
 
 	if (!command_expand(&raw_command, env))
 		return (NULL);
-	res = piping(raw_command, env);
-	if (!res)
+	r = piping(raw_command, env);
+	if (!r)
 		return (NULL);
-	if (!command_finalize(&res, env))
-		return ((void *)((uintptr_t) free_command(res)));
-	i = 0;
-	while (res[i].infile)
+	if (!command_finalize(&r, env))
+		return ((void *)((uintptr_t) free_command(r)));
+	i = -1;
+	while (r[++i].infile)
 	{
-        if (!ft_strcmp("<<", res[i].infile)
-                && res[i].args && res[i].args[1])
-        {
-                free(res[i].path);
-                res[i].path = ft_strdup(res[i].args[1]);
-        }
-        i++;
+		if (!ft_strcmp("<<", r[i].infile) && r[i].args && r[i].args[1])
+		{
+			free(r[i].path);
+			r[i].path = ft_strdup(r[i].args[1]);
+		}
+		else if (!ft_strcmp("<<", r[i].infile) && r[i].args && !r[i].args[1])
+		{
+			free(r[i].path);
+			r[i].path = NULL;
+		}
 	}
-	return (res);
+	return (r);
 }

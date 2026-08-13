@@ -15,7 +15,12 @@
 
 bool	command_redir_set(t_command *cmd, t_redir *r, char ***env)
 {
-	if (!set_infile(cmd, r, env))
+	if (r[0].type == HEREDOC)
+	{
+		if (!heredocs_handler(&cmd, env))
+			return (false);
+	}
+	else if (!set_infile(cmd, r, env))
 		return (false);
 	if (!set_outfile(cmd, r, env))
 		return (false);
@@ -29,23 +34,24 @@ int32_t	is_redir(char c1, char c2)
 	if (!c1)
 		return (0);
 	if (!c2)
-		return (((c1 == '<') * I_REDIR) + ((c1 == '>') * O_REDIR));
+		return ((c1 == '<') * I_REDIR + (c1 == '>') * O_REDIR);
 	if (c1 != c2 && (c1 == '<' || c1 == '>'))
-		return (((c1 == '<') * I_REDIR) + ((c1 == '>') * O_REDIR));
-	else if (c1 != c2)
-		return (0);
+		return ((c1 == '<') * I_REDIR + (c1 == '>') * O_REDIR);
 	if (c1 == c2 && c1 == '>')
 		return (APPEND);
+	if (c1 == c2 && c1 == '<')
+		return (HEREDOC);
 	return (0);
 }
 
-static bool	fill_one_element(t_redir *r, t_command c, intmax_t i, intmax_t *n)
+static bool	fill_one_element(t_redir *r, t_command c,
+		intmax_t i, intmax_t *n)
 {
 	int32_t		t;
 	intmax_t	j;
 
 	t = is_redir(c.args[i][0], c.args[i][1]);
-	j = t != I_REDIR;
+	j = t == O_REDIR || t == APPEND;
 	r[j].type = t;
 	r[j].index[n[j]] = i;
 	r[j].index[n[j] + 1] = -1;
