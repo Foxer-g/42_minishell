@@ -77,7 +77,7 @@ static void	exec_here_doc(t_command *cmd,
 	get_next_line(-1);
 }
 
-char	*get_path_or_exit(t_command *cmd, t_command *o, char **env)
+char	*get_path_or_exit(t_command *c, t_command *o, char **env)
 {
 	char	**envpath;
 	char	*path;
@@ -85,18 +85,18 @@ char	*get_path_or_exit(t_command *cmd, t_command *o, char **env)
 
 	envpath = ft_split(ft_get_env("PATH", env), ':');
 	errno = 0;
-	path = ft_find_exec(cmd->path, (void *)envpath);
+	path = ft_find_exec(c->path, (void *)envpath);
 	if (errno == EINVAL || errno == ENOENT)
 	{
-		exit_code = 2 + (125 * ((errno == ENOENT) | !ft_strcmp("..", cmd->path)));
+		exit_code = 2 + (125 * ((errno == ENOENT) | !ft_strcmp("..", c->path)));
 		if (exit_code == 127)
-			ft_dprintf(2, "%s: Command not found", cmd->path);
+			ft_dprintf(2, "%s: Command not found", c->path);
 		else
 			ft_dprintf(2, ".: filename argument required\n"
 				".: usage: . [-p path] filename [arguments]");
 		ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
 		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
-		fail_free(cmd, path, o);
+		fail_free(c, path, o);
 		exit(exit_code);
 	}
 	ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
