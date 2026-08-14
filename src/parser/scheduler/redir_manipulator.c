@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redir_manipulator.c                                :+:      :+:    :+:   */
+/*   redir_manipulator.c                                 ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/12 04:06:32 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/12 04:06:33 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/14 04:59:04 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ bool	set_outfile(t_command *cmd, t_redir *r, char ***env)
 		return (!parsing_error(MALLOC, "", env));
 	i = 0;
 	while (r[1].file[i])
-		ft_ffopen(r[1].file[i++], "w");
+		ft_ffopen(r[1].file[i++], "a");
 	ft_clear_filelist();
 	free(cmd->outfile);
 	cmd->outfile = ft_strdup(r[1].file[i - 1]);

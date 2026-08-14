@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/13 05:03:26 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/14 05:00:45 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,32 @@ static void	exec_here_doc(t_command *cmd,
 	get_next_line(-1);
 }
 
+char	*get_path_or_exit(t_command *cmd, t_command *o, char **env)
+{
+	char	**envpath;
+	char	*path;
+	int32_t	exit_code;
+
+	envpath = ft_split(ft_get_env("PATH", env), ':');
+	errno = 0;
+	path = ft_find_exec(cmd->path, (void *)envpath);
+	if (errno == EINVAL || errno == ENOENT)
+	{
+		exit_code = 2 + (125 * ((errno == ENOENT) | !ft_strcmp("..", cmd->path)));
+		if (exit_code == 127)
+			ft_dprintf(2, "%s: Command not found", cmd->path);
+		else
+			ft_dprintf(2, ".: filename argument required\n"
+				".: usage: . [-p path] filename [arguments]");
+		ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
+		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
+		fail_free(cmd, path, o);
+		exit(exit_code);
+	}
+	ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
+	return (path);
+}
+
 // @doc execute
 // @kind func
 // @desc Ececute a prepared command with a specific stdin and stdout file.
@@ -90,7 +116,6 @@ void	execute(t_command *cmd, t_command *o, char **env)
 	const int32_t	exit_code[] = {[ENOENT] = 127, [EACCES] = 126,};
 	int32_t			failed;
 	char			*path;
-	char			**envpath;
 
 	path = NULL;
 	if (!ft_strcmp(cmd->infile, "<<"))
@@ -98,9 +123,7 @@ void	execute(t_command *cmd, t_command *o, char **env)
 	failed = safe_exec_setup(cmd);
 	if (failed == 0)
 	{
-		envpath = ft_split(ft_get_env("PATH", env), ':');
-		path = ft_find_exec(cmd->path, (void *)envpath);
-		ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
+		path = get_path_or_exit(cmd, o, env);
 		sig_child();
 		if (!ft_strcmp(cmd->infile, "<<"))
 			execve(path, cmd->args + 1, env);
@@ -122,9 +145,9 @@ static void	proceed_to_fork(t_command *command,
 	pid = fork();
 	if (!pid)
 	{
+		sig_child();
 		if (builtin && has_pipe(o))
 		{
-			sig_child();
 			pid = builtin(*command, env);
 			ft_free_nt_tab(*env, ft_nt_tablen((void *)*env));
 			fail_free(command, NULL, o);
