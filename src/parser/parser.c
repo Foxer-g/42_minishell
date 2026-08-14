@@ -1,6 +1,4 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
 /*   parser.c                                            ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
@@ -30,6 +28,7 @@ t_command	*parser(char *input, char ***env)
 	if (!tmp)
 		return (NULL);
 	token_lst = tokenizer(tmp, env);
+	free(tmp);
 	if (!token_lst)
 		return (NULL);
 	if (check_invalid_paterns(token_lst, env))
