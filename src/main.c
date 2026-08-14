@@ -6,7 +6,7 @@
 /*   By: rboutelo  rboutelo@student.42angouleme.fr       ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/07 23:46:31 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/14 01:38:03 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/14 18:46:01 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,11 @@ int32_t	main(int32_t ac, char **av, const char **aenv)
 	env = ft_copy_env(aenv);
 	ft_set_exit_code(0, &env);
 	if (!ft_get_env("USER", env))
-		ft_set_env("USER", &env, ft_strdup(""));
+		ft_set_env("USER", &env, "");
 	if (!ft_get_env("PWD", env))
 	{
 		getcwd(pathbuf, PATH_MAX);
-		ft_set_env("PWD", &env, ft_strdup(""));
+		ft_set_env("PWD", &env, "");
 	}
 	rl_outstream = stderr;
 	if (!isatty(STDIN_FILENO))
