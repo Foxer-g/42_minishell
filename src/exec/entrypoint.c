@@ -128,17 +128,23 @@ static int32_t	wait_forks(t_command **cmdsc, char ***env)
 int32_t	entrypoint(t_command *cmds, char ***env)
 {
 	t_command	*cmdsc;
+	t_command	*last;
 	int32_t		status;
 
+	if (!cmds->infile)
+		return (0);
 	cmdsc = cmds;
 	if (!setup_pipe(cmds))
 		return (-256);
 	while (cmds->infile)
+	{
+		last = cmds;
 		execution_pipeline(cmds++, cmdsc, env);
+	}
 	status = wait_forks(&cmdsc, env);
 	sig_init();
 	ft_clear_filelist();
-	if ((cmdsc - 1)->builtin)
+	if (last->builtin)
 		return (status);
 	return (ft_get_exit_code_from_status(status));
 }
