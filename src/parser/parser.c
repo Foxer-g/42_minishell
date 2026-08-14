@@ -21,11 +21,15 @@
 
 t_command	*parser(char *input, char ***env)
 {
+	char		*tmp;
 	t_token		*token_lst;
 	t_command	*raw_commands;
 	t_command	*filtered_commands;
 
-	token_lst = tokenizer(input, env);
+	tmp = ft_strtrim(input, " \t");
+	if (!tmp)
+		return (NULL);
+	token_lst = tokenizer(tmp, env);
 	if (!token_lst)
 		return (NULL);
 	if (check_invalid_paterns(token_lst, env))
