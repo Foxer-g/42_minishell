@@ -52,7 +52,7 @@ bool	redir_apply(t_command *cmd, char ***env)
 		if (!heredocs_handler(&cmd, env))
 			return (free_redir(r));
 	}
-	else if (!command_redir_set(cmd, r, env))
+	if (!command_redir_set(cmd, r, env))
 		return (free_redir(r));
 	tmp = cmddup_without_redir(*cmd);
 	if (!tmp)
