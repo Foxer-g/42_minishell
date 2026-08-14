@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
-/*   utils.c                                             ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
+/*   expand_utils.c                                      ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/06 08:56:36 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/12 06:21:00 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/14 05:28:58 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,23 +16,14 @@
 
 static	uintmax_t	eovn(const char *s)
 {
+	uintmax_t	len;
+
 	if (*s == '?')
 		return (1);
-	return (
-		ft_min(
-			ft_min(
-				ft_min(
-					ft_strlen_until(s, '\''),
-					ft_strlen_until(s, '"')
-				),
-				ft_strlen_until(s, '=')
-			),
-			ft_min(
-				ft_strlen_until(s, ' '),
-				ft_strlen_until(s, '$')
-			)
-		)
-	);
+	len = 0;
+	while (ft_isalnum(s[len]) || s[len] == '_')
+		len++;
+	return (len);
 }
 
 static intmax_t	splice_var(char **ar, uintmax_t ind, char *evn, char *var)
@@ -47,7 +38,7 @@ static intmax_t	splice_var(char **ar, uintmax_t ind, char *evn, char *var)
 			ft_memmove(&(*ar)[ind + ft_strlen(var)], eov, ft_strlen(eov) + 1);
 		return ((intmax_t)ft_strlen(var));
 	}
-	*ar = ft_recalloc(*ar, LEN(*ar), LEN(*ar) - LEN(evn) - 1 + LEN(var), 1);
+	*ar = ft_recalloc(*ar, LEN(*ar), LEN(*ar) - LEN(evn) + LEN(var), 1);
 	if (!*ar)
 		return (-1);
 	eov = &(*ar)[ind + 1] + ft_strlen(evn);

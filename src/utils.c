@@ -6,7 +6,7 @@
 /*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 07:31:09 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/14 00:28:46 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/14 02:20:04 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ char	*join_tab(char **tab)
 char	*prompt(char **env)
 {
 	char	*str_prompt;
-	char	*out[2];
+	char	*out;
 	char	*path;
 	char	*usr;
 
@@ -60,13 +60,11 @@ char	*prompt(char **env)
 	str_prompt = ft_extend(str_prompt, PROMPT_C);
 	free(path);
 	if (isatty(STDIN_FILENO))
-		out[0] = readline(str_prompt);
+		out = readline(str_prompt);
 	else
-		out[0] = readline(NULL);
+		out = readline(NULL);
 	free(str_prompt);
-	out[1] = ft_strtrim(out[0], " \t");
-	free(out[0]);
-	return (out[1]);
+	return (out);
 }
 
 /*
