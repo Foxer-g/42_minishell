@@ -121,7 +121,8 @@ char	**cmddup_without_redir(t_command cmd)
 	ft_bzero(i, sizeof(i));
 	while (cmd.args[i[0]])
 	{
-		if (is_redir(cmd.args[i[0]][0], cmd.args[i[0]][1]))
+		if (cmd.args[i[0]][0]
+			&& is_redir(cmd.args[i[0]][0], cmd.args[i[0]][1]))
 		{
 			i[0] += 2;
 			continue ;

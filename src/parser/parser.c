@@ -32,10 +32,7 @@ t_command	*parser(char *input, char ***env)
 	if (!token_lst)
 		return (NULL);
 	if (check_invalid_paterns(token_lst, env))
-	{
-		free_token(token_lst);
-		return (NULL);
-	}
+		return (free_token(token_lst));
 	raw_commands = command_gen(&token_lst, env);
 	free_token(token_lst);
 	if (!raw_commands)
