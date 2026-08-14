@@ -59,7 +59,7 @@ bool	strtrim_cmd_end(t_command *cmd, char ***env)
 	i = 0;
 	while ((*cmd).args[i])
 	{
-		tmp[i] = ft_strtrim((*cmd).args[i], " ");
+		tmp[i] = ft_strtrim((*cmd).args[i], " \t");
 		if (!tmp[i])
 		{
 			ft_free_nt_tab(tmp, i);

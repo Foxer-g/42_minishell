@@ -39,37 +39,6 @@ bool	heredocs_handler(t_command **cmd, char ***env)
 	return (true);
 }
 
-/*
-bool	redir_apply(t_command **cmd, char ***env)
-{
-	t_redir		*r;
-	char		**tmp;
-	intmax_t	i;
-
-	i = -1;
-	while ((*cmd)[++i].infile)
-	{
-		r = find_redir((*cmd)[i], env);
-		if (!r)
-			return (!parsing_error(MALLOC, "", env));
-		if (!command_redir_set(&(*cmd)[i], r, env))
-			return (!free_redir(r));
-		tmp = cmddup_without_redir((*cmd)[i]);
-		if (!tmp)
-			return (!free_redir(r));
-		if (!command_exec_set(&(*cmd)[i], tmp, ft_nt_tablen((void *)tmp)))
-		{
-			ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
-			return (!free_redir(r));
-		}
-		ft_free_nt_tab(tmp, ft_nt_tablen((void *)tmp));
-		free_redir(r);
-	}
-	ft_clear_filelist();
-	return (true);
-}
-*/
-
 bool	redir_apply(t_command *cmd, char ***env)
 {
 	t_redir	*r;

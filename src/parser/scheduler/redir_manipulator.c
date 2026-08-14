@@ -81,6 +81,7 @@ bool	set_outfile(t_command *cmd, t_redir *r, char ***env)
 	i = 0;
 	while (r[1].file[i])
 		ft_ffopen(r[1].file[i++], "w");
+	ft_clear_filelist();
 	free(cmd->outfile);
 	cmd->outfile = ft_strdup(r[1].file[i - 1]);
 	if (!cmd->outfile)
