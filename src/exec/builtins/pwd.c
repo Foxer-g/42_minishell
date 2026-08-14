@@ -16,9 +16,13 @@ int	pwd(t_command cmd, char ***env)
 {
 	char	*pwd;
 
+	(void)env;
 	if (cmd.infd < 0 || cmd.outfd < 0)
 		return (1);
-	pwd = ft_get_env("PWD", *env);
+	pwd = getcwd(NULL, PATH_MAX);
+	if (!pwd)
+		return (1);
 	ft_dprintf(cmd.outfd, "%s\n", pwd);
+	free(pwd);
 	return (0);
 }
