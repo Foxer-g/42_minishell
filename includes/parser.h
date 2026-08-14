@@ -82,7 +82,7 @@ bool		iscmd_chr(char c);
 bool		tkn_from_split(t_token **tkn, int64_t *i, char *split, char ***env);
 int32_t		short_type(char *token);
 int32_t		composed_type(char *token);
-void		free_token(t_token *token_lst);
+void		*free_token(t_token *token_lst);
 int64_t		get_token_len(char *input, int64_t start);
 int32_t		get_token_type(char *token);
 void		quote_to_command(t_token *tkn);

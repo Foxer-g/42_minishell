@@ -122,7 +122,7 @@ int32_t	composed_type(char *tkn)
 // @desc Free a NULL terminated [[t_token]] array.
 // @param token_lst: [[t_token]], Token array to free.
 
-void	free_token(t_token *token_lst)
+void	*free_token(t_token *token_lst)
 {
 	int64_t	i;
 
@@ -135,4 +135,5 @@ void	free_token(t_token *token_lst)
 		i++;
 	}
 	free(token_lst);
+	return (NULL);
 }
