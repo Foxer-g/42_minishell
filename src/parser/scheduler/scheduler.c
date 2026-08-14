@@ -96,16 +96,16 @@ static t_command	*piping(t_command *cmd, char ***env)
 
 	if (!pipes)
 		return (full_cmd_dup(cmd, env));
-	if (pipes == (void *)-1 || !is_valid_pipes(pipes, env))
+	if (pipes == (void *)-1)
 		return ((void *)((uintptr_t) !parsing_error(INV_PIPES, "|", env)));
+	if (!is_valid_pipes(pipes, env))
+		return (free((void *)pipes), NULL);
 	res = ft_calloc(cmd_len(cmd) / 2 + 2, sizeof(t_command));
 	if (!res)
 	{
 		free((void *)pipes);
 		return ((void *)((uintptr_t) !parsing_error(MALLOC, "", env)));
 	}
-	if (!is_valid_pipes(pipes, env))
-		return ((void *)((uintptr_t) free_command(res)));
 	ft_bzero(i, sizeof(i));
 	while (cmd[i[0]].path || cmd[i[0]].args)
 	{

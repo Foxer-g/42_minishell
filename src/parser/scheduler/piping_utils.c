@@ -35,10 +35,7 @@ intmax_t	*find_pipe(t_command *cmd, char ***env)
 		if (cmd[i[0]].path && cmd[i[0]].path[0] == '|')
 			res[++res[0]] = i[0];
 	if (res[res[0]] == i[0] - 1)
-	{
-		free(res);
-		return ((void *)-1);
-	}
+		return (free(res), (void *)-1);
 	return (res);
 }
 
