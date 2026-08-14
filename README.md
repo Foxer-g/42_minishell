@@ -57,7 +57,7 @@ Minishell have some integrated builtins which are :
  - `env` : Display the content of an environement variable.
  - `exit` : Exit the program with a designated exit code.
 
- # Ressources :
+ # Resources :
 > - **Bash man** : [manual](https://www.gnu.org/software/bash/manual/bash.html)
 > - **Gif creation made with** : [VHS by Charm team](https://github.com/charmbracelet/vhs)
 
