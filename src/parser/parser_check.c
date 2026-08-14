@@ -28,7 +28,7 @@ bool	parsing_error(char *message, char *token, char ***env)
 	write(2, message, ft_strlen(message));
 	write(2, token, ft_strlen(token));
 	write(2, "\n", 1);
-	ft_set_exit_code(1, env);
+	ft_set_exit_code(2, env);
 	return (true);
 }
 
