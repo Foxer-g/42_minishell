@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/12 06:15:56 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/12 06:18:16 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/14 06:22:41 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,17 @@ bool	expand(t_command *cmd, char ***env)
 bool	expand_here_doc(char **line, char ***env)
 {
 	uintmax_t	i;
+	intmax_t	n;
 
 	i = 0;
 	while (*line && (*line)[i])
 	{
 		if ((*line)[i] == '$' && (*line)[i + 1])
 		{
-			if (handle_var(line, i, *env))
+			n = handle_var(line, i, *env);
+			if (n < 0)
 				return (!parsing_error(MALLOC, "", env));
+			i += n - 1;
 		}
 		i++;
 	}

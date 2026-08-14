@@ -13,6 +13,32 @@
 #define EXEC_SOURCE
 #include "minishell.h"
 
+char	*get_path_or_exit(t_command *c, t_command *o, char **env)
+{
+	char	**envpath;
+	char	*path;
+	int32_t	exit_code;
+
+	envpath = ft_split(ft_get_env("PATH", env), ':');
+	errno = 0;
+	path = ft_find_exec(c->path, (void *)envpath);
+	if (errno == EINVAL || errno == ENOENT)
+	{
+		exit_code = 2 + (125 * ((errno == ENOENT) | !ft_strcmp("..", c->path)));
+		if (exit_code == 127)
+			ft_dprintf(2, "%s: Command not found", c->path);
+		else
+			ft_dprintf(2, ".: filename argument required\n"
+				".: usage: . [-p path] filename [arguments]");
+		ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
+		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
+		fail_free(c, path, o);
+		exit(exit_code);
+	}
+	ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
+	return (path);
+}
+
 void	cleanup(t_command *command, pid_t pid)
 {
 	command->pid = pid;

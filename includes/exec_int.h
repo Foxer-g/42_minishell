@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/05/19 17:30:32 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/12 06:26:23 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/14 05:42:19 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,5 @@ intmax_t	handle_var(char **ar, uintmax_t ind, char **env);
 void		cleanup(t_command *command, pid_t pid);
 t_cmd_fun	get_builtin(t_command *cmd);
 void		fail_free(t_command *cmd, char *path, t_command *o);
+char		*get_path_or_exit(t_command *c, t_command *o, char **env);
 #endif // EXEC_INT_H
