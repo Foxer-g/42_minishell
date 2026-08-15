@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
-/*   entrypoint.c                                        ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
-/*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
-/*   By: rboutelo rboutelo@student.42angouleme.fr        ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
-/*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
-/*   Created: 2026/04/26 01:31:07 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/15 04:15:29 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*                                                        :::      ::::::::   */
+/*   entrypoint.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/26 01:31:07 by rboutelo          #+#    #+#             */
+/*   Updated: 2026/08/15 06:15:05 by rboutelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static int	setup_here_doc(t_command *cmd,
 	if (pipe(target_pipe) < 0)
 		return (-1);
 	*used_pipe = true;
-	cmd->infd = target_pipe[RE];
+	cmd->infd = ft_to_ffile(target_pipe[RE]);
 	cmd->hd_pipe = target_pipe[WE];
 	return (target_pipe[0]);
 }
@@ -140,6 +140,8 @@ int32_t	entrypoint(t_command *cmds, char ***env)
 	{
 		last = cmds;
 		execution_pipeline(cmds++, cmdsc, env);
+		if ((cmds - 1)->builtin && (cmds - 1)->pid == 130)
+			break ;
 	}
 	status = wait_forks(&cmdsc, env);
 	sig_init();

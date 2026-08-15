@@ -3,10 +3,10 @@
 /*                                                       ⠀⠀⠀⠀⠀⠀⣴⣾⣿⣿⣿⠷⢠⣤⡀      */
 /*   cmd_handler.c                                       ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                       ⣴⠛⢿⡟⠛⢿⣦⠹⣿⡆⣿⣿⣿⣿⣷⢩⡶⠃   */
-/*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
+/*   By: rboutelo <rboutelo@student.42angouleme.fr>      ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/15 04:06:04 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/15 06:33:28 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,36 +47,6 @@ int32_t	safe_exec_setup(t_command *cmd)
 	return (0);
 }
 
-// @doc setup_here_doc
-// @kind func
-// @desc Sets up a here doc for a single command
-// @param target_pipe: [[t_ffile]][2], The pipe to set up and use.
-// @param used_pipe: bool, true if the pipe is used, false if opening it failed.
-// @param env: char **, The environment.
-// @returns [[t_ffile]], The read end of the pipe.
-static void	exec_here_doc(t_command *cmd,
-	const char *delimiter, char **env)
-{
-	char	*line;
-
-	line = get_next_line(STDIN_FILENO);
-	while (line)
-	{
-		if (line[ft_strlen(line) - 1] == '\n')
-			line[ft_strlen(line) - 1] = '\0';
-		if (!ft_strcmp(line, delimiter))
-			break ;
-		expand_here_doc(&line, &env);
-		write(cmd->hd_pipe, line, ft_strlen(line));
-		write(cmd->hd_pipe, "\n", 1);
-		free(line);
-		line = get_next_line(STDIN_FILENO);
-	}
-	free(line);
-	ft_ffclose(&cmd->hd_pipe);
-	get_next_line(-1);
-}
-
 // @doc execute
 // @kind func
 // @desc Ececute a prepared command with a specific stdin and stdout file.
@@ -92,9 +62,11 @@ void	execute(t_command *cmd, t_command *o, char **env)
 	char			*path;
 
 	path = NULL;
+	failed = false;
 	if (!ft_strcmp(cmd->infile, "<<"))
-		exec_here_doc(cmd, *cmd->args, env);
-	failed = safe_exec_setup(cmd);
+		failed = !exec_here_doc(cmd, *cmd->args, env);
+	if (!failed)
+		failed = safe_exec_setup(cmd);
 	if (failed == 0)
 	{
 		path = get_path_or_exit(cmd, o, env);
