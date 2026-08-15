@@ -7,7 +7,7 @@ COMMAND_GEN_SRCS_DIR = $(PARSING_SRCS_DIR)command_gen/
 COMMAND_UTILS_SRCS_DIR = $(PARSING_SRCS_DIR)command_utils/
 SCHEDULER_SRCS_DIR = $(PARSING_SRCS_DIR)scheduler/
 
-EXEC_FILES = cmd_handler.c entrypoint.c expand_core.c expand_utils.c handling_utils.c quote_utils.c heredoc_episode_two_electric_boogaloo.c
+EXEC_FILES = cmd_handler.c entrypoint.c expand_core.c expand_utils.c handling_utils.c quote_utils.c heredoc_helpers.c
 BUILTINS_FILES = cd.c echo.c env.c exit.c export.c pwd.c unset.c
 
 PARSING_FILES = parser_check.c parser.c
