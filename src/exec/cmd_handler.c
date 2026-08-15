@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/14 05:41:47 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/15 04:06:04 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,21 +152,17 @@ bool	exec_single(t_command *command, t_command *o, char ***env)
 	t_cmd_fun	builtin;
 
 	builtin = get_builtin(command);
-	if (builtin && !has_pipe(o))
+	if ((builtin && !has_pipe(o)) || !command->path || !*command->path)
 	{
-		if (!ft_strcmp("<<", command->infile))
-			exec_here_doc(command, *command->args, *env);
-		pid = builtin(*command, env);
 		command->builtin = true;
-		cleanup(command, pid);
-		return (true);
-	}
-	else if (!command->path || !*command->path)
-	{
-		if (!ft_strcmp("<<", command->infile))
-			exec_here_doc(command, *command->args, *env);
 		pid = 0;
-		command->builtin = true;
+		if (!ft_strcmp("<<", command->infile))
+		{
+			if (!here_doc_drain(command, *command->args))
+				pid = 130;
+		}
+		else if (command->path && *command->path)
+			pid = builtin(*command, env);
 		cleanup(command, pid);
 		return (true);
 	}
