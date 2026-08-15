@@ -43,15 +43,15 @@ bool	is_valid_pipes(const intmax_t *pipes, char ***env)
 {
 	intmax_t	i;
 
-	i = 0;
 	if (pipes[0] == 0)
-		return (parsing_error(SYNTAX, "|", env));
+		return (!parsing_error(SYNTAX, "|", env));
+	i = 0;
 	while (++i <= pipes[0])
 	{
 		if (pipes[i] == 0)
-			return (false);
+			return (!parsing_error(INV_PIPES, "|", env));
 		if (i < pipes[0] && pipes[i] + 1 == pipes[i + 1])
-			return (false);
+			return (!parsing_error(INV_PIPES, "|", env));
 	}
 	return (true);
 }
