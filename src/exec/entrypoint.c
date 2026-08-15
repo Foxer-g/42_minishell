@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   entrypoint.c                                       :+:      :+:    :+:   */
+/*   entrypoint.c                                        ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/26 01:31:07 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/15 06:15:05 by rboutelo         ###   ########.fr       */
+/*   Updated: 2026/08/15 19:37:08 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,9 +144,8 @@ int32_t	entrypoint(t_command *cmds, char ***env)
 			break ;
 	}
 	status = wait_forks(&cmdsc, env);
-	sig_init();
 	ft_clear_filelist();
 	if (last->builtin)
 		return (status);
-	return (ft_get_exit_code_from_status(status));
+	return (ft_atoi(ft_get_env("?", *env)));
 }
