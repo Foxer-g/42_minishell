@@ -13,12 +13,15 @@
 #define EXEC_SOURCES
 #include "minishell.h"
 
-static void	sig_tagle(int32_t signal, siginfo_t *info, void *context)
+static void	sig_heredoc(int32_t signal, siginfo_t *info, void *context)
 {
 	(void)info;
 	(void)context;
 	if (signal == SIGINT)
+	{
 		g_sig_handle = SIGINT;
+		write(STDOUT_FILENO, "\n", 1);
+	}
 }
 
 static void	set_up_signals(struct sigaction *old)
@@ -26,7 +29,7 @@ static void	set_up_signals(struct sigaction *old)
 	struct sigaction	sa;
 
 	sa.sa_handler = SIG_IGN;
-	sa.sa_sigaction = sig_tagle;
+	sa.sa_sigaction = sig_heredoc;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, old);
