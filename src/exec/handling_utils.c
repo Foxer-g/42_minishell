@@ -6,7 +6,7 @@
 /*   By: neumann </var/spool/mail/neumann>               ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/08/12 06:22:23 by neumann            ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/12 08:28:47 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/14 18:31:13 by neumann            ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,10 @@ char	*get_path_or_exit(t_command *c, t_command *o, char **env)
 	{
 		exit_code = 2 + (125 * ((errno == ENOENT) | !ft_strcmp("..", c->path)));
 		if (exit_code == 127)
-			ft_dprintf(2, "%s: Command not found", c->path);
+			ft_dprintf(2, "%s: Command not found\n", c->path);
 		else
 			ft_dprintf(2, ".: filename argument required\n"
-				".: usage: . [-p path] filename [arguments]");
+				".: usage: . [-p path] filename [arguments]\n");
 		ft_free_nt_tab(envpath, ft_nt_tablen((void *)envpath));
 		ft_free_nt_tab(env, ft_nt_tablen((void *)env));
 		fail_free(c, path, o);
