@@ -98,18 +98,17 @@ t_redir	*find_redir(t_command c, char ***env)
 	r = redir_calloc(n, env);
 	if (!r)
 		return (NULL);
-	n = 0;
-	while (c.args[n])
+	n = -1;
+	while (c.args[++n])
 	{
 		if (c.args[n][0] && is_redir(c.args[n][0], c.args[n][1])
 			&& (!c.args[n + 1]
-				|| is_redir(c.args[n + 1][0], c.args[n + 1][1])))
+			|| is_redir(c.args[n + 1][0], c.args[n + 1][1])))
 		{
 			free_redir(r);
 			parsing_error(PARSING, c.args[n + 1], env);
 			return (NULL);
 		}
-		n++;
 	}
 	if (!fill_redir(r, c, env))
 	{
