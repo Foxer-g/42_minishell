@@ -6,7 +6,7 @@
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/07 23:50:08 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/07 23:56:31 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/16 05:21:46 by toespino         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,28 +92,28 @@ static bool	fill_redir(t_redir *r, t_command c, char ***env)
 t_redir	*find_redir(t_command c, char ***env)
 {
 	t_redir		*r;
+	intmax_t	i;
 	intmax_t	n;
 
 	n = args_len(c) + 1;
 	r = redir_calloc(n, env);
 	if (!r)
 		return (NULL);
-	n = -1;
-	while (c.args[++n])
+	i = -1;
+	while (c.args[++i])
 	{
-		if (c.args[n][0] && is_redir(c.args[n][0], c.args[n][1])
-			&& (!c.args[n + 1]
-			|| is_redir(c.args[n + 1][0], c.args[n + 1][1])))
+		if (!c.args[i][0] || !is_redir(c.args[i][0], c.args[i][1]))
+			continue ;
+		if (!c.args[i + 1] || !c.args[i + 1][0]
+			|| is_redir(c.args[i + 1][0], c.args[i + 1][1])
+			|| !ft_strcmp(c.args[i + 1], "|"))
 		{
 			free_redir(r);
-			parsing_error(PARSING, c.args[n + 1], env);
+			parsing_error(PARSING, c.args[i], env);
 			return (NULL);
 		}
 	}
 	if (!fill_redir(r, c, env))
-	{
-		free_redir(r);
-		return (NULL);
-	}
+		return ((void *)((uintptr_t) free_redir(r)));
 	return (r);
 }
