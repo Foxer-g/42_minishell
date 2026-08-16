@@ -1,0 +1,12 @@
+def build(bld):
+	sources = [
+		"command_duplication.c",
+		"command_manipulator.c",
+		"command_lens.c",
+	]
+	lparse = bld.objects(
+		source		= sources,
+		features	= "c",
+		target		= "cmdutlsobjs",
+		includes	= bld.env.INCLUDES_ROOT
+	)

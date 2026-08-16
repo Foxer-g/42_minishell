@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.fr>      ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/15 19:31:47 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/16 01:50:27 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ static void	proceed_to_fork(t_command *command,
 	if (!pid)
 	{
 		sig_child();
+		rl_clear_history();
 		if (builtin && has_pipe(o))
 		{
 			pid = builtin(*command, env);
@@ -100,12 +101,9 @@ static void	proceed_to_fork(t_command *command,
 			ft_clear_filelist();
 			exit(pid);
 		}
-		else
-		{
-			if (command->infd < 0 || command->outfd < 0)
-				exit(1);
-			execute(command, o, *env);
-		}
+		if (command->infd < 0 || command->outfd < 0)
+			exit(1);
+		execute(command, o, *env);
 	}
 	else if (pid < 0)
 		return ;

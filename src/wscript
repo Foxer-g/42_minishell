@@ -3,7 +3,8 @@ def build(bld):
 		"main.c"
 	]
 	lminishsources = [
-		"utils.c"
+		"signals.c",
+		"utils.c",
 	]
 	minishell = bld.program(
 		source		= sources,

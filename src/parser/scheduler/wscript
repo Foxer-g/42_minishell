@@ -1,9 +1,11 @@
 def build(bld):
 	sources = [
-		"scheduler.c",
+		"redir_manipulator.c",
 		"scheduler_utils.c",
-		"redir_utils.c",
+		"heredoc_utils.c",
 		"piping_utils.c",
+		"redir_utils.c",
+		"scheduler.c",
 	]
 	lschedule = bld.objects(
 		source		= sources,

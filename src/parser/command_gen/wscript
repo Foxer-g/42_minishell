@@ -2,7 +2,6 @@ def build(bld):
 	sources = [
 		"command_gen.c",
 		"command_gen_utils.c",
-		"type_manipulator.c",
 	]
 	lcmd_gen = bld.objects(
 		source		= sources,

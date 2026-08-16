@@ -1,0 +1,17 @@
+def build(bld):
+	sources = [
+		"export.c",
+		"unset.c",
+		"echo.c",
+		"exit.c",
+		"env.c",
+		"pwd.c",
+		"cd.c",
+	]
+	lexec = bld.objects(
+		source		= sources,
+		features	= "c",
+		target		= "builtinsobjs",
+		includes	= bld.env.INCLUDES_ROOT,
+		use			= "ft"
+	)
