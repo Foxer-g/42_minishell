@@ -21,11 +21,10 @@ bool	command_finalize(t_command **cmd, char ***env)
 	i = -1;
 	while ((*cmd)[++i].infile)
 	{
-		if (!RMV_QT(&(*cmd)[i], true)
-			&& !RMV_QT(&(*cmd)[i], false))
-			return (!parsing_error(MALLOC, "", env));
 		if (!cmddup_without_empty(&(*cmd)[i], env))
 			return (false);
+		if (!RMV_QT(&(*cmd)[i], true) && !RMV_QT(&(*cmd)[i], false))
+			return (!parsing_error(MALLOC, "", env));
 	}
 	return (true);
 }
