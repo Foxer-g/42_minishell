@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/26 01:31:07 by rboutelo          #+#    #+#             */
-/*   Updated: 2026/08/15 19:37:08 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/16 07:02:24 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ static int8_t	execution_pipeline(t_command *cmd, t_command *o, char ***env)
 {
 	t_ffile	here_doc_pipe[2];
 	bool	pipe_used;
-	bool	status;
 
 	pipe_used = false;
 	if (!ft_strcmp(cmd->infile, "<<"))
@@ -51,6 +50,8 @@ static int8_t	execution_pipeline(t_command *cmd, t_command *o, char ***env)
 		if (cmd->infd != STDIN_FILENO)
 			ft_ffclose(&cmd->infd);
 		cmd->infd = ft_ffopen(cmd->infile, "r");
+		if (cmd->infd < 0)
+			perror("minishell");
 	}
 	if (ft_strcmp(cmd->outfile, "stdout"))
 	{
@@ -61,8 +62,7 @@ static int8_t	execution_pipeline(t_command *cmd, t_command *o, char ***env)
 		else
 			cmd->outfd = ft_ffopen(cmd->outfile, "a");
 	}
-	status = exec_single(cmd, o, env);
-	return (status);
+	return (exec_single(cmd, o, env));
 }
 
 // @doc setup_pipe
