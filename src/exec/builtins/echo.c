@@ -6,11 +6,16 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.fr>      ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/06/03 01:40:00 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/15 06:33:34 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/16 01:56:25 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+bool	is_n(int32_t c)
+{
+	return (c == 'n');
+}
 
 int	echo(t_command cmd, char ***env)
 {
@@ -20,9 +25,11 @@ int	echo(t_command cmd, char ***env)
 	if (cmd.infd < 0 || cmd.outfd < 0)
 		return (1);
 	nl = true;
-	cmd.args++;
-	if (*cmd.args)
-		nl = !!ft_strncmp(*cmd.args, "-n", 2);
+	while (*(++cmd.args))
+	{
+		if (**cmd.args != '-' || !ft_str_is_valid((*cmd.args) + 1, is_n))
+			break ;
+	}
 	if (!nl)
 		cmd.args++;
 	while (*cmd.args)

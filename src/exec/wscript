@@ -1,12 +1,18 @@
 def build(bld):
 	sources = [
+		"expand_core.c",
+		"heredoc_helpers.c",
 		"cmd_handler.c",
-		"entrypoint.c"
+		"expand_utils.c",
+		"quote_utils.c",
+		"entrypoint.c",
+		"handling_utils.c",
 	]
 	lexec = bld.objects(
 		source		= sources,
 		features	= "c",
 		target		= "execobjs",
 		includes	= bld.env.INCLUDES_ROOT,
-		use			= "ft"
+		use			= "ft builtinsobjs"
 	)
+	bld.recurse("builtins")
