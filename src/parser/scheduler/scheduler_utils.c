@@ -6,7 +6,7 @@
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/07 23:50:19 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/16 05:49:30 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/16 05:52:59 by toespino         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool	command_finalize(t_command **cmd, char ***env)
 			return (false);
 		if (!RMV_QT(&(*cmd)[i], true) && !RMV_QT(&(*cmd)[i], false))
 			return (!parsing_error(MALLOC, "", env));
-		if (ft_strcmp("\"\"", (*cmd)[i].path)
+		if ((*cmd)[i].path && ft_strcmp("\"\"", (*cmd)[i].path)
 				&& ft_strcmp("''", (*cmd)[i].path))
 		{
 					free((*cmd)[i].path);
