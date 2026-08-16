@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.fr>      ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/06/03 01:40:00 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/16 01:56:25 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/16 06:56:57 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,8 @@ int	echo(t_command cmd, char ***env)
 	{
 		if (**cmd.args != '-' || !ft_str_is_valid((*cmd.args) + 1, is_n))
 			break ;
+		nl = false;
 	}
-	if (!nl)
-		cmd.args++;
 	while (*cmd.args)
 	{
 		ft_putstr_fd(*cmd.args, cmd.outfd);
