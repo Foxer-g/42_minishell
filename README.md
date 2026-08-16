@@ -38,12 +38,12 @@ Minishell can be used with or without arguments
 If any arguments is given, the program will treat those as a regular input.
 
 *Exemple :*
-![]()
+![](https://github.com/Foxer-g/42_minishell/blob/main/gif/usage.gif)
 
 If no arguments has been given the program will act as a regular shell by displaying a prompt waiting for instruction.
 
 *Exemple :*
-![]()
+![](https://github.com/Foxer-g/42_minishell/blob/main/gif/usage_in_shell.gif)
 
 ## Builtin
 Minishell have some integrated builtins which are :
