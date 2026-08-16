@@ -6,7 +6,7 @@
 /*   By: rboutelo <rboutelo@student.42angouleme.fr>      ⣿⣖⠾⢗⣶⣾⣿⡇⠿⠷⠸⠿⢟⣛⡵⣫     */
 /*                                                       ⠙⢿⣿⣿⣿⣿⣿⣿⣮⣭⣭⣭⡭⣶⣾⣿     */
 /*   Created: 2026/07/30 19:18:30 by rboutelo           ⠀⠀⣿⣿⣿⠛⠛⠛⣿⣿⣿⠁⠀⠀⠉⠁      */
-/*   Updated: 2026/08/16 01:50:27 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/16 03:47:49 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ bool	exec_single(t_command *command, t_command *o, char ***env)
 	t_cmd_fun	builtin;
 
 	builtin = get_builtin(command);
-	if ((builtin && !has_pipe(o)) || !command->path || !*command->path)
+	if ((builtin && !has_pipe(command)) || !command->path || !*command->path)
 	{
 		command->builtin = true;
 		pid = 0;
