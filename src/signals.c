@@ -6,7 +6,7 @@
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/12 04:23:50 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/12 04:24:05 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/16 04:34:48 by toespino         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	sig_init(void)
 	action.sa_handler = SIG_IGN;
 	action.sa_flags = 0;
 	sigaction(SIGQUIT, &action, NULL);
-	rl_catch_signals = 0;
 }
 
 void	sig_handle(int32_t signal, siginfo_t *info, void *context)
@@ -34,9 +33,9 @@ void	sig_handle(int32_t signal, siginfo_t *info, void *context)
 	if (signal == SIGINT)
 	{
 		g_sig_handle = SIGINT;
-		write(STDOUT_FILENO, "^C\n", 3);
-		rl_replace_line("", 0);
+		write(STDOUT_FILENO, "\n", 1);
 		rl_on_new_line();
+		rl_replace_line("", 0);
 		rl_redisplay();
 	}
 }
