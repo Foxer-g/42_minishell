@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   scheduler_utils.c                                  :+:      :+:    :+:   */
+/*   scheduler_utils.c                                   ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/07 23:50:19 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/16 05:52:59 by toespino         ###   ########.fr       */
+/*   Updated: 2026/08/18 06:48:38 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ bool	command_finalize(t_command **cmd, char ***env)
 		if ((*cmd)[i].path && ft_strcmp("\"\"", (*cmd)[i].path)
 				&& ft_strcmp("''", (*cmd)[i].path))
 		{
-					free((*cmd)[i].path);
-					(*cmd)[i].path = ft_strdup((*cmd)[i].args[0]);
-					if (!(*cmd)[i].path)
-						return (!parsing_error(MALLOC, "", env));
+			free((*cmd)[i].path);
+			(*cmd)[i].path = ft_strdup((*cmd)[i].args[0]);
+			if (!(*cmd)[i].path)
+				return (!parsing_error(MALLOC, "", env));
 		}
 	}
 	return (true);
