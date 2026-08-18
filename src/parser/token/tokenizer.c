@@ -1,19 +1,14 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*   tokenizer.c                                         ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
-/*   By: f0xer <f0xer@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/08 04:23:12 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/11 22:51:23 by toespino         ###   ########.fr       */
+/*   Created: 2026/05/08 04:23:12 by toespino          #+#    #+#             */
+/*   Updated: 2026/08/18 11:30:33 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
-
-// @doc F0xer
-// @kind san
-// @desc Things have been done to squeeze tokenizer in 25 lines.
-// @level 48
 
 #include "parser.h"
 

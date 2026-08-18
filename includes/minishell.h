@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   minishell.h                                         ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/24 01:44:34 by f0xer             #+#    #+#             */
-/*   Updated: 2026/08/15 06:15:05 by rboutelo         ###   ########.fr       */
+/*   Created: 2026/04/24 01:44:34 by toespino          #+#    #+#             */
+/*   Updated: 2026/08/18 11:28:27 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,17 +52,6 @@ typedef struct s_command
 	char	*outfile;
 	bool	builtin;
 }	t_command;
-
-enum e_builtin
-{
-	CD = '\0',
-	PWD = 'd',
-	ECHO = 'h',
-	EXIT = 'i',
-	EXPORT = 'p',
-	UNSET = 's',
-	ENV = 'v',
-};
 
 extern volatile sig_atomic_t	g_sig_handle;
 
