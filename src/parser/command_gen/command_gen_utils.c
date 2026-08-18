@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   command_gen_utils.c                                :+:      :+:    :+:   */
+/*   command_gen_utils.c                                 ⠀⢀⣀⣀⣛⡑⢶⣬⣭⢩⣶⣿⣷⣭⢻⣦⡀    */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rboutelo <rboutelo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/07 23:49:46 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/15 06:15:05 by rboutelo         ###   ########.fr       */
+/*   Updated: 2026/08/18 12:22:43 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "parser.h"
 
 static bool	ends_with_space(const char *s)
 {

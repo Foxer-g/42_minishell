@@ -6,12 +6,11 @@
 /*   By: toespino <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/07 23:50:19 by toespino          #+#    #+#             */
-/*   Updated: 2026/08/18 06:48:38 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
+/*   Updated: 2026/08/18 12:23:12 by rboutelo           ⠀⠀⠙⠛⠉⠀⠀⠀⠻⠿⠟           */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "parser.h"
 #define RMV_QT remove_quotes
 
 bool	command_finalize(t_command **cmd, char ***env)
